@@ -323,8 +323,19 @@
     border-radius: 12px;
     transform: rotate(2deg);
   }
-  .adesivo-hero-1 { top: -18px; left: -22px; transform: rotate(-8deg); }
-  .adesivo-hero-2 { bottom: -16px; right: -18px; transform: rotate(6deg); background: var(--verde); }
+  .adesivo-hero-2 {
+    bottom: -16px;
+    right: -18px;
+    transform: rotate(6deg);
+    background: var(--verde);
+    font-size: 1.05rem;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 170px;
+  }
+  @media (max-width: 480px) {
+    .adesivo-hero-2 { right: 6px; bottom: -14px; font-size: 0.95rem; max-width: 145px; }
+  }
 
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; padding-top: 7rem; }
@@ -333,8 +344,8 @@
 
   /* ---------- FAIXA DE MARCAS ---------- */
   .faixa-marcas {
-    background: var(--preto);
-    color: var(--papel);
+    background: var(--branco);
+    color: var(--preto);
     padding: 1.4rem 0;
     overflow: hidden;
     border-top: 3px solid var(--preto);
@@ -343,19 +354,34 @@
   .marquee-marcas {
     display: flex;
     width: max-content;
-    animation: rolar-marcas 28s linear infinite;
-    gap: 3.5rem;
-  }
-  .marquee-marcas span {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 1.3rem;
-    text-transform: uppercase;
-    white-space: nowrap;
-    opacity: 0.9;
+    animation: rolar-marcas 150s linear infinite;
+    gap: 2.2rem;
+    align-items: center;
   }
   @keyframes rolar-marcas {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
+  }
+
+  /* Logo da marca, em formato redondo (placeholder). Veja o comentário em
+     config.marcas no <script> explicando como trocar pela logo real quando
+     você tiver o arquivo de imagem. */
+  .logo-marca {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--preto);
+    box-shadow: var(--sombra-dura-sm);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Archivo Black', sans-serif;
+    color: var(--branco);
+    font-size: 1.4rem;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+    object-fit: cover;
+    background-color: var(--branco);
   }
 
   /* ---------- SOBRE ---------- */
@@ -408,10 +434,58 @@
     background: var(--azul);
     color: var(--branco);
   }
+  .portfolio-carrossel-wrap {
+    position: relative;
+  }
   .galeria-portfolio {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 1.6rem;
+  }
+  /* Modo carrossel: ativado por JS quando um filtro (diferente de "Todos") é
+     escolhido. Os trabalhos passam a rolar na horizontal, com setas de navegação. */
+  .galeria-portfolio.modo-carrossel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+  }
+  .galeria-portfolio.modo-carrossel::-webkit-scrollbar { display: none; }
+  .galeria-portfolio.modo-carrossel .item-portfolio {
+    flex: 0 0 260px;
+    width: 260px;
+    scroll-snap-align: start;
+  }
+  .seta-portfolio {
+    display: none;
+    position: absolute;
+    top: 42%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid var(--preto);
+    background: var(--verde);
+    box-shadow: var(--sombra-dura-sm);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+  }
+  .seta-portfolio:hover, .seta-portfolio:focus-visible { transform: translateY(-50%) scale(1.08); }
+  .seta-portfolio.mostrar { display: flex; }
+  .seta-esquerda { left: -14px; }
+  .seta-direita { right: -14px; }
+  @media (max-width: 640px) {
+    .seta-portfolio { width: 38px; height: 38px; font-size: 1.15rem; }
+    .seta-esquerda { left: -6px; }
+    .seta-direita { right: -6px; }
   }
   .item-portfolio { transition: opacity 0.25s ease, transform 0.25s ease; }
   .item-portfolio.escondido { display: none; }
@@ -666,9 +740,8 @@
       </div>
     </div>
     <div class="hero-imagem-wrap reveal">
-      <div class="adesivo adesivo-hero-1">100% autêntico</div>
       <div class="bloco-gradiente" id="hero-imagem" role="img" aria-label="Foto de Viviane Carvalho gravando conteúdo UGC"></div>
-      <div class="adesivo adesivo-hero-2 fonte-marcador">UGC</div>
+      <div class="adesivo adesivo-hero-2 fonte-marcador">UGC / TikTok Seller</div>
     </div>
   </section>
 
@@ -698,7 +771,11 @@
       <span class="rotulo-secao">Portfólio</span>
       <h2 class="titulo-secao reveal">Trabalhos por nicho</h2>
       <div class="filtros" id="filtros" role="group" aria-label="Filtrar portfólio por categoria"></div>
-      <div class="galeria-portfolio" id="galeria-portfolio"></div>
+      <div class="portfolio-carrossel-wrap">
+        <button class="seta-portfolio seta-esquerda" id="seta-portfolio-esquerda" aria-label="Ver trabalhos anteriores">&#8249;</button>
+        <div class="galeria-portfolio" id="galeria-portfolio"></div>
+        <button class="seta-portfolio seta-direita" id="seta-portfolio-direita" aria-label="Ver próximos trabalhos">&#8250;</button>
+      </div>
     </div>
   </section>
 
@@ -801,9 +878,21 @@
     },
 
     // EDITE AQUI: marcas com quem você já trabalhou (aparecem na faixa rolante)
+    // Cada marca vira um "cartão de logo". Por enquanto é um placeholder: um
+    // quadrado colorido com a inicial do nome, no lugar da logo de verdade.
+    // Quando você tiver o arquivo da logo (PNG ou SVG), adicione o campo "logo"
+    // com o caminho do arquivo, por exemplo: logo: "logos/bella-cosmeticos.png".
+    // A função renderMarcas() mais abaixo já está pronta para usar esse campo:
+    // se "logo" existir, ela mostra a imagem; se não existir, mostra o placeholder.
     marcas: [
-      "Bella Cosméticos", "Sabor Caseiro", "Vittá Fitness", "Rota Viagens",
-      "Urban Moda", "Doce Ponto", "Essência Natural", "Trilha Ativa"
+      { nome: "Bella Cosméticos", inicial: "B", gradiente: "linear-gradient(135deg, var(--magenta), var(--laranja))", logo: null },
+      { nome: "Sabor Caseiro", inicial: "S", gradiente: "linear-gradient(135deg, var(--azul), var(--verde))", logo: null },
+      { nome: "Vittá Fitness", inicial: "V", gradiente: "linear-gradient(135deg, var(--preto), var(--azul))", logo: null },
+      { nome: "Rota Viagens", inicial: "R", gradiente: "linear-gradient(135deg, var(--laranja), var(--magenta))", logo: null },
+      { nome: "Urban Moda", inicial: "U", gradiente: "linear-gradient(135deg, var(--verde), var(--preto))", logo: null },
+      { nome: "Doce Ponto", inicial: "D", gradiente: "linear-gradient(135deg, var(--magenta), var(--azul))", logo: null },
+      { nome: "Essência Natural", inicial: "E", gradiente: "linear-gradient(135deg, var(--laranja), var(--verde))", logo: null },
+      { nome: "Trilha Ativa", inicial: "T", gradiente: "linear-gradient(135deg, var(--azul), var(--laranja))", logo: null }
     ],
 
     // EDITE AQUI: texto e lista da seção Sobre
@@ -821,18 +910,22 @@
     // Para trocar um bloco de gradiente por uma foto real, troque a <div class="bloco-gradiente">
     // pelo elemento <img src="caminho/da/foto.jpg" alt="descrição da foto"> no template renderizado em renderPortfolio().
     portfolio: {
-      categorias: ["Todos", "Beleza", "Moda", "Comida", "Fitness", "Viagem"],
+      categorias: ["Todos", "Beleza", "Fitness", "Dupla", "Tecnologia", "Skincare", "Bodycare", "Haircare"],
       itens: [
-        { titulo: "Resenha de skincare", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--magenta), var(--laranja))" },
+        { titulo: "Resenha de produto de beleza", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--magenta), var(--laranja))" },
         { titulo: "Unboxing de maquiagem", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--azul), var(--magenta))" },
-        { titulo: "Look do dia", categoria: "Moda", gradiente: "linear-gradient(135deg, var(--preto), var(--azul))" },
-        { titulo: "Try on de acessórios", categoria: "Moda", gradiente: "linear-gradient(135deg, var(--laranja), var(--verde))" },
-        { titulo: "Receita rápida patrocinada", categoria: "Comida", gradiente: "linear-gradient(135deg, var(--verde), var(--azul))" },
-        { titulo: "Degustação em vídeo", categoria: "Comida", gradiente: "linear-gradient(135deg, var(--magenta), var(--verde))" },
         { titulo: "Treino com suplemento", categoria: "Fitness", gradiente: "linear-gradient(135deg, var(--azul), var(--verde))" },
         { titulo: "Rotina fitness patrocinada", categoria: "Fitness", gradiente: "linear-gradient(135deg, var(--laranja), var(--preto))" },
-        { titulo: "Diário de viagem", categoria: "Viagem", gradiente: "linear-gradient(135deg, var(--magenta), var(--azul))" },
-        { titulo: "Indicação de hospedagem", categoria: "Viagem", gradiente: "linear-gradient(135deg, var(--verde), var(--laranja))" }
+        { titulo: "Vídeo em dupla com marca parceira", categoria: "Dupla", gradiente: "linear-gradient(135deg, var(--magenta), var(--verde))" },
+        { titulo: "Conteúdo em dupla para lançamento", categoria: "Dupla", gradiente: "linear-gradient(135deg, var(--preto), var(--magenta))" },
+        { titulo: "Unboxing de gadget", categoria: "Tecnologia", gradiente: "linear-gradient(135deg, var(--azul), var(--preto))" },
+        { titulo: "Resenha de acessório tech", categoria: "Tecnologia", gradiente: "linear-gradient(135deg, var(--verde), var(--azul))" },
+        { titulo: "Rotina de skincare noturna", categoria: "Skincare", gradiente: "linear-gradient(135deg, var(--verde), var(--magenta))" },
+        { titulo: "Resenha de sérum facial", categoria: "Skincare", gradiente: "linear-gradient(135deg, var(--laranja), var(--magenta))" },
+        { titulo: "Hidratação corporal patrocinada", categoria: "Bodycare", gradiente: "linear-gradient(135deg, var(--magenta), var(--azul))" },
+        { titulo: "Resenha de esfoliante corporal", categoria: "Bodycare", gradiente: "linear-gradient(135deg, var(--verde), var(--laranja))" },
+        { titulo: "Rotina de cuidados com o cabelo", categoria: "Haircare", gradiente: "linear-gradient(135deg, var(--azul), var(--laranja))" },
+        { titulo: "Resenha de shampoo e máscara", categoria: "Haircare", gradiente: "linear-gradient(135deg, var(--preto), var(--verde))" }
       ]
     },
 
@@ -883,9 +976,21 @@
   document.getElementById("hero-imagem").textContent = "Foto / vídeo de apresentação";
 
   // Faixa de marcas (duplicada para permitir loop contínuo do marquee)
+  // Se a marca tiver "logo" preenchido, mostra a imagem redonda. Se não, mostra
+  // o placeholder (círculo colorido com a inicial do nome).
+  function renderCartaoMarca(marca) {
+    if (marca.logo) {
+      return `<img class="logo-marca" src="${marca.logo}" alt="Logo da ${marca.nome}">`;
+    }
+    return `<div class="logo-marca" style="background:${marca.gradiente}" role="img" aria-label="Logo da ${marca.nome}">${marca.inicial}</div>`;
+  }
+
+  // A lista se repete várias vezes antes de duplicar, garantindo que a faixa
+  // sempre preencha telas largas e o loop fique contínuo, sem espaço em branco.
   const marcasContainer = document.getElementById("marquee-marcas");
-  const listaMarcasDuplicada = [...config.marcas, ...config.marcas];
-  marcasContainer.innerHTML = listaMarcasDuplicada.map(m => `<span>${m}</span>`).join("");
+  const metadeMarcas = Array(6).fill(config.marcas).flat();
+  const listaMarcasDuplicada = [...metadeMarcas, ...metadeMarcas];
+  marcasContainer.innerHTML = listaMarcasDuplicada.map(renderCartaoMarca).join("");
 
   // Sobre
   // Para usar uma foto real, troque a div#sobre-imagem por:
@@ -900,6 +1005,8 @@
   // Portfólio + filtros
   const galeria = document.getElementById("galeria-portfolio");
   const filtrosContainer = document.getElementById("filtros");
+  const setaEsquerda = document.getElementById("seta-portfolio-esquerda");
+  const setaDireita = document.getElementById("seta-portfolio-direita");
 
   function renderPortfolio(categoriaAtiva) {
     galeria.innerHTML = config.portfolio.itens.map(item => {
@@ -912,7 +1019,23 @@
           <h3>${item.titulo}</h3>
         </div>`;
     }).join("");
+
+    // Na aba "Todos" mantém a grade normal. Em qualquer outro filtro, vira
+    // um carrossel horizontal com setas de navegação.
+    const ehCarrossel = categoriaAtiva !== "Todos";
+    galeria.classList.toggle("modo-carrossel", ehCarrossel);
+    setaEsquerda.classList.toggle("mostrar", ehCarrossel);
+    setaDireita.classList.toggle("mostrar", ehCarrossel);
+    galeria.scrollLeft = 0;
   }
+
+  function rolarGaleria(direcao) {
+    const distancia = 260 + 26; // largura do item + gap aproximado
+    galeria.scrollBy({ left: distancia * direcao, behavior: "smooth" });
+  }
+
+  setaEsquerda.addEventListener("click", () => rolarGaleria(-1));
+  setaDireita.addEventListener("click", () => rolarGaleria(1));
 
   filtrosContainer.innerHTML = config.portfolio.categorias.map((cat, i) =>
     `<button class="filtro-btn" data-categoria="${cat}" aria-pressed="${i === 0}">${cat}</button>`
