@@ -882,8 +882,8 @@
       <h1>Eu sou <span class="destaque" id="hero-nome">Viviane Carvalho</span></h1>
       <p class="hero-frase" id="hero-frase"></p>
       <div class="hero-cta">
-        <a href="#contato" class="botao botao--magenta">Fale comigo</a>
-        <a href="#portfolio" class="botao botao--outline">Ver portfólio</a>
+        <a href="#contato" class="botao botao--magenta" id="cta-fale-comigo">Fale comigo</a>
+        <a href="#portfolio" class="botao botao--outline" id="cta-ver-portfolio">Ver portfólio</a>
       </div>
     </div>
     <div class="hero-imagem-wrap reveal">
@@ -1010,6 +1010,71 @@
 </footer>
 
 <script>
+  /* =========================================================================
+     ANALYTICS: registra visitas, cliques e vídeos vistos no Supabase, para
+     alimentar o painel administrativo em /login. Client separado e mínimo,
+     usado só para GRAVAR: a chave "anon" abaixo só tem permissão de INSERT
+     nessas tabelas, nunca de leitura (ver setup.sql do painel).
+     ========================================================================= */
+  const analytics = (function () {
+    const SUPABASE_URL = "https://hfaftvzvbvvkpfjtzfxu.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmYWZ0dnp2YnZ2a3BmanR6Znh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMTI5NDYsImV4cCI6MjA5OTU4ODk0Nn0.kUTdXKhKFFLw9tRyqD5GDDkD9VuIrzfpip47RHCBQ2Q";
+
+    function idDaSessao() {
+      let id = sessionStorage.getItem("pf_session_id");
+      if (!id) {
+        id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        sessionStorage.setItem("pf_session_id", id);
+      }
+      return id;
+    }
+
+    function registrarEvento(eventType, eventName, metadata) {
+      fetch(`${SUPABASE_URL}/rest/v1/portfolio_events`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          event_type: eventType,
+          event_name: eventName || null,
+          session_id: idDaSessao(),
+          page_path: window.location.pathname,
+          metadata: metadata || null,
+        }),
+      }).catch(() => {
+        // Falha ao registrar analytics nunca deve atrapalhar a navegação do visitante.
+      });
+    }
+
+    function registrarLead(lead) {
+      fetch(`${SUPABASE_URL}/rest/v1/portfolio_leads`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify(lead),
+      }).catch(() => {});
+    }
+
+    // Evita contar o mesmo vídeo várias vezes se o visitante passar o mouse
+    // repetidamente durante a mesma visita.
+    const videosJaContados = new Set();
+    function registrarVideoViewUmaVez(id, titulo, categoria) {
+      if (!id || videosJaContados.has(id)) return;
+      videosJaContados.add(id);
+      registrarEvento("video_view", id, { title: titulo, category: categoria });
+    }
+
+    registrarEvento("page_view");
+
+    return { registrarEvento, registrarLead, registrarVideoViewUmaVez };
+  })();
+
   /* =========================================================================
      OBJETO DE CONFIGURAÇÃO
      Edite todo o conteúdo do site aqui. Não é necessário mexer no HTML ou
@@ -1222,7 +1287,7 @@
   // Se não, mostra o bloco de gradiente placeholder.
   function renderItemPortfolio(item) {
     const midia = item.youtube
-      ? `<div class="video-wrap">
+      ? `<div class="video-wrap" data-youtube-id="${item.youtube}" data-titulo="${item.titulo}" data-categoria="${item.categoria}">
           <span class="categoria-tag categoria-tag-video">${item.categoria}</span>
           <iframe src="https://www.youtube-nocookie.com/embed/${item.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3" title="${item.titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
           <div class="video-overlay" aria-hidden="true"></div>
@@ -1248,6 +1313,7 @@
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [100] }), "*");
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+        analytics.registrarVideoViewUmaVez(wrap.dataset.youtubeId, wrap.dataset.titulo, wrap.dataset.categoria);
       });
       wrap.addEventListener("mouseleave", () => {
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
@@ -1338,6 +1404,18 @@
   document.getElementById("contato-instagram").href = config.contato.instagramLink;
   document.getElementById("contato-instagram").innerHTML += ` (${config.contato.instagramUsuario})`;
 
+  // Analytics: cliques nos botões diretos de contato e nos CTAs do topo.
+  document.getElementById("contato-whatsapp").addEventListener("click", () =>
+    analytics.registrarEvento("button_click", "contact_whatsapp"));
+  document.getElementById("contato-email").addEventListener("click", () =>
+    analytics.registrarEvento("button_click", "contact_email"));
+  document.getElementById("contato-instagram").addEventListener("click", () =>
+    analytics.registrarEvento("button_click", "contact_instagram"));
+  document.getElementById("cta-fale-comigo").addEventListener("click", () =>
+    analytics.registrarEvento("button_click", "hero_fale_comigo"));
+  document.getElementById("cta-ver-portfolio").addEventListener("click", () =>
+    analytics.registrarEvento("button_click", "hero_ver_portfolio"));
+
   // Rodapé
   document.getElementById("rodape-nome").textContent = config.hero.nome;
   document.getElementById("rodape-redes").innerHTML = config.redesRodape.map(r =>
@@ -1388,6 +1466,17 @@
     const nome = document.getElementById("campo-nome").value.trim();
     const email = document.getElementById("campo-email").value.trim();
     const mensagem = document.getElementById("campo-mensagem").value.trim();
+
+    analytics.registrarEvento("button_click", "contact_form_submit");
+    analytics.registrarLead({
+      name: nome,
+      email: email,
+      phone: null,
+      brand: null,
+      budget: null,
+      message: mensagem,
+      source: "contact",
+    });
 
     const assunto = encodeURIComponent(`Contato pelo site, ${nome}`);
     const corpo = encodeURIComponent(
