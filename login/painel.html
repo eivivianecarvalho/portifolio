@@ -553,6 +553,257 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ---------- Aba Finanças ---------- */
+    .oculto {
+      display: none !important;
+    }
+
+    .financas-seletor {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .financas-seletor-ano {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--fonte-titulo);
+      font-size: 17px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .financas-seletor-ano button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-branco);
+      border-radius: var(--raio-pequeno);
+      color: var(--cor-texto-suave);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .financas-seletor-ano button:hover {
+      border-color: var(--cor-coral);
+      color: var(--cor-coral);
+    }
+
+    .financas-meses {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .financas-mes-btn {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-branco);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cor-texto-suave);
+      white-space: nowrap;
+    }
+
+    .financas-mes-btn:hover {
+      border-color: var(--cor-coral);
+      color: var(--cor-grafite);
+    }
+
+    .financas-mes-btn.ativo {
+      background: var(--cor-coral);
+      border-color: var(--cor-coral);
+      color: var(--cor-branco);
+    }
+
+    .grade-financas {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .bloco-financas {
+      margin-bottom: 20px;
+    }
+
+    .cabecalho-bloco-financas {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .cabecalho-bloco-financas h3 {
+      font-size: 17px;
+    }
+
+    .botao-adicionar {
+      padding: 8px 16px;
+      border: 1px solid var(--cor-coral);
+      background: var(--cor-branco);
+      color: var(--cor-coral);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .botao-adicionar:hover {
+      background: var(--cor-coral);
+      color: var(--cor-branco);
+    }
+
+    .tabela-financas-wrap {
+      overflow-x: auto;
+    }
+
+    .tabela-financas {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 480px;
+    }
+
+    .tabela-financas th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--cor-texto-suave);
+      padding: 0 10px 10px;
+      border-bottom: 1px solid var(--cor-borda);
+      white-space: nowrap;
+    }
+
+    .tabela-financas td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--cor-borda);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .tabela-financas tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tabela-financas tr.linha-mes-atual {
+      background: rgba(212, 87, 42, 0.05);
+    }
+
+    .acoes-tabela {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .botao-icone {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-branco);
+      border-radius: var(--raio-pequeno);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .botao-icone:hover {
+      border-color: var(--cor-coral);
+      background: var(--cor-creme);
+    }
+
+    .badge-tipo {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge-tipo.badge-necessidades {
+      background: rgba(45, 122, 79, 0.12);
+      color: var(--cor-sucesso);
+    }
+
+    .badge-tipo.badge-desejos {
+      background: rgba(212, 87, 42, 0.12);
+      color: var(--cor-coral-escuro);
+    }
+
+    .link-mes {
+      background: none;
+      border: none;
+      color: var(--cor-coral);
+      font-weight: 600;
+      padding: 0;
+    }
+
+    .link-mes:hover {
+      color: var(--cor-coral-escuro);
+    }
+
+    /* ---------- Modal (adicionar/editar lançamento financeiro) ---------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 24, 22, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-caixa {
+      width: 100%;
+      max-width: 420px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--cor-branco);
+      border-radius: var(--raio-grande);
+      box-shadow: var(--sombra-media);
+      padding: 28px;
+    }
+
+    .modal-caixa h3 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .campo-checkbox label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--cor-grafite);
+      font-weight: 500;
+    }
+
+    .modal-acoes {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .grade-financas {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grade-financas {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -573,6 +824,10 @@
           <button class="nav-item" data-tab="portfolio">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
             Portfólio
+          </button>
+          <button class="nav-item" data-tab="financas">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Finanças
           </button>
         </nav>
       </div>
@@ -598,6 +853,30 @@
         <button data-periodo="7d">7d</button>
         <button data-periodo="30d">30d</button>
         <button data-periodo="90d">90d</button>
+      </div>
+
+      <!-- Seletor de mês/ano, só aparece na aba Finanças -->
+      <div class="financas-seletor" id="financas-seletor">
+        <div class="financas-seletor-ano">
+          <button type="button" id="financas-ano-anterior" aria-label="Ano anterior">‹</button>
+          <span id="financas-ano-atual">2026</span>
+          <button type="button" id="financas-ano-seguinte" aria-label="Próximo ano">›</button>
+        </div>
+        <div class="financas-meses" id="financas-meses">
+          <button type="button" class="financas-mes-btn" data-mes="0">Anual</button>
+          <button type="button" class="financas-mes-btn" data-mes="1">Jan</button>
+          <button type="button" class="financas-mes-btn" data-mes="2">Fev</button>
+          <button type="button" class="financas-mes-btn" data-mes="3">Mar</button>
+          <button type="button" class="financas-mes-btn" data-mes="4">Abr</button>
+          <button type="button" class="financas-mes-btn" data-mes="5">Mai</button>
+          <button type="button" class="financas-mes-btn" data-mes="6">Jun</button>
+          <button type="button" class="financas-mes-btn" data-mes="7">Jul</button>
+          <button type="button" class="financas-mes-btn" data-mes="8">Ago</button>
+          <button type="button" class="financas-mes-btn" data-mes="9">Set</button>
+          <button type="button" class="financas-mes-btn" data-mes="10">Out</button>
+          <button type="button" class="financas-mes-btn" data-mes="11">Nov</button>
+          <button type="button" class="financas-mes-btn" data-mes="12">Dez</button>
+        </div>
       </div>
 
       <div id="aviso-erro-carregamento" class="faixa-erro aviso-erro-carregamento oculto" style="display:none;"></div>
@@ -667,7 +946,27 @@
           </div>
         </div>
       </section>
+
+      <!-- ========= ABA: FINANÇAS ========= -->
+      <section class="painel-aba" id="aba-financas">
+        <div id="aviso-erro-financas" class="faixa-erro oculto"></div>
+        <div id="financas-conteudo"></div>
+      </section>
     </main>
+  </div>
+
+  <!-- Modal reutilizável para adicionar/editar renda, gasto ou objetivo -->
+  <div class="modal-overlay oculto" id="modal-overlay">
+    <div class="modal-caixa">
+      <h3 id="modal-titulo">Novo lançamento</h3>
+      <form id="modal-form">
+        <div id="modal-campos"></div>
+        <div class="modal-acoes">
+          <button type="button" class="botao botao-secundario" id="modal-cancelar">Cancelar</button>
+          <button type="submit" class="botao" id="modal-salvar">Salvar</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -679,6 +978,21 @@
     let todosEventos = [];
     let todosLeads = [];
     let periodoAtual = 'tudo';
+
+    // Estado da aba Finanças: dados em cache + mês/ano em exibição.
+    let todasRendas = [];
+    let todosGastos = [];
+    let todasMetas = [];
+    let mesSelecionado = new Date().getMonth() + 1; // 1-12; usamos 0 para "Anual"
+    let anoSelecionado = new Date().getFullYear();
+    let modalTipoAtual = null;
+    let modalIdEdicao = null;
+
+    const NOMES_MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const NOMES_MESES_COMPLETOS = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+    ];
 
     /**
      * Busca todas as linhas de uma tabela, contornando o limite de 1000
@@ -1000,11 +1314,497 @@
       });
     }
 
+    /* ========================================================================
+       ABA FINANÇAS: rendas, gastos e metas de guardado/investido, organizados
+       por mês/ano. Diferente do Portfólio, aqui o usuário adiciona, edita e
+       apaga lançamentos direto no painel.
+       ======================================================================== */
+    function formatarMoeda(valor) {
+      return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatarDataCurta(dataISO) {
+      if (!dataISO) return '-';
+      const [, mes, dia] = dataISO.split('-');
+      return `${dia}/${mes}`;
+    }
+
+    function badgeTipo(tipo) {
+      if (!tipo) return '-';
+      const classe = tipo === 'Desejos' ? 'badge-desejos' : 'badge-necessidades';
+      return `<span class="badge-tipo ${classe}">${tipo}</span>`;
+    }
+
+    function itensDoMes(lista, mes, ano) {
+      return lista.filter((item) => item.mes === mes && item.ano === ano);
+    }
+
+    function somar(lista, campo) {
+      return lista.reduce((total, item) => total + Number(item[campo] || 0), 0);
+    }
+
+    /**
+     * Busca de novo as três tabelas de finanças e redesenha a aba. Chamado
+     * depois de qualquer criação, edição ou exclusão de lançamento.
+     */
+    async function recarregarFinancas() {
+      try {
+        [todasRendas, todosGastos, todasMetas] = await Promise.all([
+          buscarTudo('financas_rendas'),
+          buscarTudo('financas_gastos'),
+          buscarTudo('financas_metas'),
+        ]);
+        document.getElementById('aviso-erro-financas').classList.add('oculto');
+      } catch (erro) {
+        console.error('Erro ao carregar dados financeiros:', erro);
+        const aviso = document.getElementById('aviso-erro-financas');
+        aviso.textContent = 'Não foi possível carregar os dados financeiros. Verifique se o financas-setup.sql já foi executado no Supabase.';
+        aviso.classList.remove('oculto');
+      }
+      renderizarFinancas();
+    }
+
+    function renderizarFinancas() {
+      if (mesSelecionado === 0) {
+        renderizarFinancasAnual();
+      } else {
+        renderizarFinancasMensal();
+      }
+    }
+
+    function renderizarFinancasMensal() {
+      const container = document.getElementById('financas-conteudo');
+      const rendasMes = itensDoMes(todasRendas, mesSelecionado, anoSelecionado)
+        .sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+      const gastosMes = itensDoMes(todosGastos, mesSelecionado, anoSelecionado);
+      const metasMes = itensDoMes(todasMetas, mesSelecionado, anoSelecionado);
+
+      const totalRendas = somar(rendasMes, 'valor');
+      const totalGastos = somar(gastosMes, 'valor');
+      const totalGuardado = somar(metasMes, 'valor_guardado');
+      const saldo = totalRendas - totalGastos - totalGuardado;
+
+      container.innerHTML = `
+        <p class="saudacao">Organizando ${NOMES_MESES_COMPLETOS[mesSelecionado - 1]} de ${anoSelecionado}.</p>
+
+        <div class="grade-numeros grade-financas">
+          <div class="cartao cartao-numero destaque">
+            <div class="rotulo">Rendas</div>
+            <div class="valor">${formatarMoeda(totalRendas)}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Gastos</div>
+            <div class="valor">${formatarMoeda(totalGastos)}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Guardado</div>
+            <div class="valor">${formatarMoeda(totalGuardado)}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Saldo</div>
+            <div class="valor">${formatarMoeda(saldo)}</div>
+          </div>
+        </div>
+
+        <div class="cartao bloco-financas">
+          <div class="cabecalho-bloco-financas">
+            <h3>Rendas</h3>
+            <button type="button" class="botao-adicionar" data-acao="nova-renda">+ Nova renda</button>
+          </div>
+          ${tabelaRendas(rendasMes)}
+        </div>
+
+        <div class="cartao bloco-financas">
+          <div class="cabecalho-bloco-financas">
+            <h3>Guardado / Investido</h3>
+            <button type="button" class="botao-adicionar" data-acao="nova-meta">+ Novo objetivo</button>
+          </div>
+          ${tabelaMetas(metasMes)}
+        </div>
+
+        <div class="cartao bloco-financas">
+          <div class="cabecalho-bloco-financas">
+            <h3>Gastos</h3>
+            <button type="button" class="botao-adicionar" data-acao="novo-gasto">+ Novo gasto</button>
+          </div>
+          ${tabelaGastos(gastosMes)}
+        </div>
+      `;
+
+      container.querySelector('[data-acao="nova-renda"]').addEventListener('click', () => abrirModal('renda'));
+      container.querySelector('[data-acao="nova-meta"]').addEventListener('click', () => abrirModal('meta'));
+      container.querySelector('[data-acao="novo-gasto"]').addEventListener('click', () => abrirModal('gasto'));
+
+      configurarAcoesTabelaFinancas(container);
+    }
+
+    function renderizarFinancasAnual() {
+      const container = document.getElementById('financas-conteudo');
+      const mesAtualReal = new Date().getMonth() + 1;
+      const anoAtualReal = new Date().getFullYear();
+
+      const linhasPorMes = [];
+      let totalRendasAno = 0;
+      let totalGastosAno = 0;
+      let totalGuardadoAno = 0;
+
+      for (let m = 1; m <= 12; m++) {
+        const rendas = somar(itensDoMes(todasRendas, m, anoSelecionado), 'valor');
+        const gastos = somar(itensDoMes(todosGastos, m, anoSelecionado), 'valor');
+        const guardado = somar(itensDoMes(todasMetas, m, anoSelecionado), 'valor_guardado');
+        totalRendasAno += rendas;
+        totalGastosAno += gastos;
+        totalGuardadoAno += guardado;
+        linhasPorMes.push({ mes: m, rendas, gastos, guardado, saldo: rendas - gastos - guardado });
+      }
+
+      const saldoAno = totalRendasAno - totalGastosAno - totalGuardadoAno;
+      const temAlgumDado = linhasPorMes.some((l) => l.rendas || l.gastos || l.guardado);
+
+      container.innerHTML = `
+        <p class="saudacao">Resumo do ano de ${anoSelecionado}.</p>
+
+        <div class="grade-numeros grade-financas">
+          <div class="cartao cartao-numero destaque">
+            <div class="rotulo">Rendas no ano</div>
+            <div class="valor">${formatarMoeda(totalRendasAno)}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Gastos no ano</div>
+            <div class="valor">${formatarMoeda(totalGastosAno)}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Guardado no ano</div>
+            <div class="valor">${formatarMoeda(totalGuardadoAno)}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Saldo do ano</div>
+            <div class="valor">${formatarMoeda(saldoAno)}</div>
+          </div>
+        </div>
+
+        <div class="cartao bloco-financas">
+          <h3 style="margin-bottom: 16px;">Resumo por mês</h3>
+          ${temAlgumDado ? `
+            <div class="tabela-financas-wrap">
+              <table class="tabela-financas">
+                <thead>
+                  <tr><th>Mês</th><th>Rendas</th><th>Gastos</th><th>Guardado</th><th>Saldo</th></tr>
+                </thead>
+                <tbody>
+                  ${linhasPorMes.map((l) => `
+                    <tr class="${l.mes === mesAtualReal && anoSelecionado === anoAtualReal ? 'linha-mes-atual' : ''}">
+                      <td><button type="button" class="link-mes" data-ir-para-mes="${l.mes}">${NOMES_MESES_ABREV[l.mes - 1]}</button></td>
+                      <td>${formatarMoeda(l.rendas)}</td>
+                      <td>${formatarMoeda(l.gastos)}</td>
+                      <td>${formatarMoeda(l.guardado)}</td>
+                      <td>${formatarMoeda(l.saldo)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          ` : '<p class="estado-vazio">Nenhum lançamento neste ano ainda.</p>'}
+        </div>
+      `;
+
+      container.querySelectorAll('[data-ir-para-mes]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          mesSelecionado = Number(btn.dataset.irParaMes);
+          atualizarSeletorFinancas();
+          renderizarFinancas();
+        });
+      });
+    }
+
+    function tabelaRendas(lista) {
+      if (lista.length === 0) return '<p class="estado-vazio">Nenhuma renda lançada neste mês.</p>';
+      return `
+        <div class="tabela-financas-wrap">
+          <table class="tabela-financas">
+            <thead><tr><th>Data</th><th>Descrição</th><th>Valor</th><th></th></tr></thead>
+            <tbody>
+              ${lista.map((r) => `
+                <tr>
+                  <td>${formatarDataCurta(r.data)}</td>
+                  <td>${r.descricao || '-'}</td>
+                  <td>${formatarMoeda(r.valor)}</td>
+                  <td class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-renda="${r.id}" aria-label="Editar renda">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-renda="${r.id}" aria-label="Apagar renda">🗑</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function tabelaMetas(lista) {
+      if (lista.length === 0) return '<p class="estado-vazio">Nenhum objetivo cadastrado neste mês.</p>';
+      return `
+        <div class="tabela-financas-wrap">
+          <table class="tabela-financas">
+            <thead><tr><th>Objetivo</th><th>Meta do mês</th><th>Valor guardado</th><th></th></tr></thead>
+            <tbody>
+              ${lista.map((m) => `
+                <tr>
+                  <td>${m.objetivo || '-'}</td>
+                  <td>${formatarMoeda(m.meta_mes)}</td>
+                  <td>${formatarMoeda(m.valor_guardado)}</td>
+                  <td class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-meta="${m.id}" aria-label="Editar objetivo">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-meta="${m.id}" aria-label="Apagar objetivo">🗑</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function tabelaGastos(lista) {
+      if (lista.length === 0) return '<p class="estado-vazio">Nenhum gasto lançado neste mês.</p>';
+      return `
+        <div class="tabela-financas-wrap">
+          <table class="tabela-financas">
+            <thead>
+              <tr>
+                <th>Categoria</th><th>Descrição</th><th>Pagamento</th><th>Tipo</th>
+                <th>Valor</th><th>Parcelas</th><th>Pago</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${lista.map((g) => `
+                <tr>
+                  <td>${g.categoria || '-'}</td>
+                  <td>${g.descricao || '-'}</td>
+                  <td>${g.forma_pagamento || '-'}</td>
+                  <td>${badgeTipo(g.tipo)}</td>
+                  <td>${formatarMoeda(g.valor)}</td>
+                  <td>${g.parcelas || 1}x</td>
+                  <td><input type="checkbox" data-pago="${g.id}" ${g.pago ? 'checked' : ''} aria-label="Marcar como pago" /></td>
+                  <td class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-gasto="${g.id}" aria-label="Editar gasto">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-gasto="${g.id}" aria-label="Apagar gasto">🗑</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function configurarAcoesTabelaFinancas(container) {
+      container.querySelectorAll('[data-editar-renda]').forEach((btn) => {
+        btn.addEventListener('click', () => abrirModal('renda', todasRendas.find((r) => r.id === btn.dataset.editarRenda)));
+      });
+      container.querySelectorAll('[data-apagar-renda]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarItemFinancas('financas_rendas', btn.dataset.apagarRenda));
+      });
+      container.querySelectorAll('[data-editar-meta]').forEach((btn) => {
+        btn.addEventListener('click', () => abrirModal('meta', todasMetas.find((m) => m.id === btn.dataset.editarMeta)));
+      });
+      container.querySelectorAll('[data-apagar-meta]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarItemFinancas('financas_metas', btn.dataset.apagarMeta));
+      });
+      container.querySelectorAll('[data-editar-gasto]').forEach((btn) => {
+        btn.addEventListener('click', () => abrirModal('gasto', todosGastos.find((g) => g.id === btn.dataset.editarGasto)));
+      });
+      container.querySelectorAll('[data-apagar-gasto]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarItemFinancas('financas_gastos', btn.dataset.apagarGasto));
+      });
+      container.querySelectorAll('[data-pago]').forEach((chk) => {
+        chk.addEventListener('change', () => alternarPago(chk.dataset.pago, chk.checked));
+      });
+    }
+
+    async function apagarItemFinancas(tabela, id) {
+      if (!confirm('Tem certeza que deseja apagar este lançamento?')) return;
+      try {
+        const { error } = await sb.from(tabela).delete().eq('id', id);
+        if (error) throw error;
+        await recarregarFinancas();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function alternarPago(id, pago) {
+      try {
+        const { error } = await sb.from('financas_gastos').update({ pago }).eq('id', id);
+        if (error) throw error;
+        const item = todosGastos.find((g) => g.id === id);
+        if (item) item.pago = pago;
+      } catch (erro) {
+        alert('Não foi possível atualizar. Tente novamente.');
+        console.error(erro);
+        renderizarFinancas();
+      }
+    }
+
+    /* ---------------------------------------------------------------------
+       Modal reutilizável de adicionar/editar (renda, gasto ou objetivo).
+       --------------------------------------------------------------------- */
+    const CAMPOS_FINANCAS = {
+      renda: [
+        { nome: 'data', rotulo: 'Data', tipo: 'date' },
+        { nome: 'descricao', rotulo: 'Descrição', tipo: 'text' },
+        { nome: 'valor', rotulo: 'Valor (R$)', tipo: 'number' },
+      ],
+      meta: [
+        { nome: 'objetivo', rotulo: 'Objetivo', tipo: 'text' },
+        { nome: 'meta_mes', rotulo: 'Meta do mês (R$)', tipo: 'number' },
+        { nome: 'valor_guardado', rotulo: 'Valor guardado (R$)', tipo: 'number' },
+      ],
+      gasto: [
+        { nome: 'categoria', rotulo: 'Categoria', tipo: 'text' },
+        { nome: 'descricao', rotulo: 'Descrição', tipo: 'text' },
+        { nome: 'forma_pagamento', rotulo: 'Forma de pagamento', tipo: 'text' },
+        { nome: 'tipo', rotulo: 'Tipo', tipo: 'select', opcoes: ['Necessidades', 'Desejos'] },
+        { nome: 'valor', rotulo: 'Valor (R$)', tipo: 'number' },
+        { nome: 'parcelas', rotulo: 'Parcelas', tipo: 'number' },
+        { nome: 'pago', rotulo: 'Já foi pago', tipo: 'checkbox' },
+      ],
+    };
+
+    const TITULOS_FINANCAS = { renda: 'renda', meta: 'objetivo', gasto: 'gasto' };
+    const TABELAS_FINANCAS = { renda: 'financas_rendas', meta: 'financas_metas', gasto: 'financas_gastos' };
+
+    function abrirModal(tipo, itemExistente) {
+      modalTipoAtual = tipo;
+      modalIdEdicao = itemExistente ? itemExistente.id : null;
+
+      document.getElementById('modal-titulo').textContent =
+        (itemExistente ? 'Editar ' : 'Novo(a) ') + TITULOS_FINANCAS[tipo];
+
+      document.getElementById('modal-campos').innerHTML = CAMPOS_FINANCAS[tipo].map((campo) => {
+        const valorAtual = itemExistente ? (itemExistente[campo.nome] ?? '') : '';
+
+        if (campo.tipo === 'select') {
+          return `
+            <div class="campo">
+              <label for="campo-${campo.nome}">${campo.rotulo}</label>
+              <select id="campo-${campo.nome}" name="${campo.nome}">
+                ${campo.opcoes.map((op) => `<option value="${op}" ${valorAtual === op ? 'selected' : ''}>${op}</option>`).join('')}
+              </select>
+            </div>`;
+        }
+        if (campo.tipo === 'checkbox') {
+          return `
+            <div class="campo campo-checkbox">
+              <label><input type="checkbox" id="campo-${campo.nome}" name="${campo.nome}" ${valorAtual ? 'checked' : ''} /> ${campo.rotulo}</label>
+            </div>`;
+        }
+        const passo = campo.tipo === 'number' ? 'step="0.01"' : '';
+        const valorInicial = campo.nome === 'parcelas' && valorAtual === '' ? 1 : valorAtual;
+        return `
+          <div class="campo">
+            <label for="campo-${campo.nome}">${campo.rotulo}</label>
+            <input type="${campo.tipo}" id="campo-${campo.nome}" name="${campo.nome}" value="${valorInicial}" ${passo} />
+          </div>`;
+      }).join('');
+
+      document.getElementById('modal-overlay').classList.remove('oculto');
+    }
+
+    function fecharModal() {
+      document.getElementById('modal-overlay').classList.add('oculto');
+      modalTipoAtual = null;
+      modalIdEdicao = null;
+    }
+
+    function configurarModalFinancas() {
+      document.getElementById('modal-cancelar').addEventListener('click', fecharModal);
+      document.getElementById('modal-overlay').addEventListener('click', (evento) => {
+        if (evento.target.id === 'modal-overlay') fecharModal();
+      });
+
+      document.getElementById('modal-form').addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+
+        const campos = CAMPOS_FINANCAS[modalTipoAtual];
+        const dados = {};
+        campos.forEach((campo) => {
+          const el = document.getElementById(`campo-${campo.nome}`);
+          if (campo.tipo === 'checkbox') {
+            dados[campo.nome] = el.checked;
+          } else if (campo.tipo === 'number') {
+            dados[campo.nome] = el.value === '' ? 0 : Number(el.value);
+          } else {
+            dados[campo.nome] = el.value || null;
+          }
+        });
+
+        const tabela = TABELAS_FINANCAS[modalTipoAtual];
+        const botaoSalvar = document.getElementById('modal-salvar');
+        botaoSalvar.disabled = true;
+        botaoSalvar.textContent = 'Salvando...';
+
+        try {
+          if (modalIdEdicao) {
+            const { error } = await sb.from(tabela).update(dados).eq('id', modalIdEdicao);
+            if (error) throw error;
+          } else {
+            dados.mes = mesSelecionado;
+            dados.ano = anoSelecionado;
+            const { error } = await sb.from(tabela).insert(dados);
+            if (error) throw error;
+          }
+          fecharModal();
+          await recarregarFinancas();
+        } catch (erro) {
+          alert('Não foi possível salvar. Tente novamente.');
+          console.error(erro);
+        } finally {
+          botaoSalvar.disabled = false;
+          botaoSalvar.textContent = 'Salvar';
+        }
+      });
+    }
+
+    /* ---------------------------------------------------------------------
+       Seletor de mês/ano da aba Finanças.
+       --------------------------------------------------------------------- */
+    function configurarSeletorFinancas() {
+      document.querySelectorAll('.financas-mes-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          mesSelecionado = Number(btn.dataset.mes);
+          atualizarSeletorFinancas();
+          renderizarFinancas();
+        });
+      });
+
+      document.getElementById('financas-ano-anterior').addEventListener('click', () => {
+        anoSelecionado--;
+        atualizarSeletorFinancas();
+        renderizarFinancas();
+      });
+      document.getElementById('financas-ano-seguinte').addEventListener('click', () => {
+        anoSelecionado++;
+        atualizarSeletorFinancas();
+        renderizarFinancas();
+      });
+
+      atualizarSeletorFinancas();
+    }
+
+    function atualizarSeletorFinancas() {
+      document.querySelectorAll('.financas-mes-btn').forEach((btn) => {
+        btn.classList.toggle('ativo', Number(btn.dataset.mes) === mesSelecionado);
+      });
+      document.getElementById('financas-ano-atual').textContent = anoSelecionado;
+    }
+
     /* ---------------------------------------------------------------------
        Navegação: abas, filtro de período e menu mobile.
        --------------------------------------------------------------------- */
     function configurarAbas() {
-      const titulos = { principal: 'Menu Principal', portfolio: 'Portfólio' };
+      const titulos = { principal: 'Menu Principal', portfolio: 'Portfólio', financas: 'Finanças' };
 
       document.querySelectorAll('.nav-item').forEach((botao) => {
         botao.addEventListener('click', () => {
@@ -1017,6 +1817,9 @@
           document.getElementById(`aba-${aba}`).classList.add('ativo');
 
           document.getElementById('titulo-pagina').textContent = titulos[aba];
+
+          document.querySelector('.filtro-periodo').style.display = aba === 'financas' ? 'none' : 'flex';
+          document.getElementById('financas-seletor').style.display = aba === 'financas' ? 'flex' : 'none';
 
           fecharMenuMobile();
         });
@@ -1069,6 +1872,8 @@
       configurarAbas();
       configurarFiltroPeriodo();
       configurarMenuMobile();
+      configurarModalFinancas();
+      configurarSeletorFinancas();
 
       try {
         [todosEventos, todosLeads] = await Promise.all([
@@ -1085,6 +1890,10 @@
         // Ainda assim redesenha com listas vazias, para não deixar a tela quebrada.
         redesenharTudo();
       }
+
+      // Carregamento das finanças é independente: se essas tabelas ainda não
+      // existirem no Supabase, isso não deve travar o resto do painel.
+      await recarregarFinancas();
     })();
   </script>
 </body>
