@@ -9,23 +9,25 @@
 <!-- Google Fonts (único recurso externo permitido) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Caveat:wght@600;700&family=Permanent+Marker&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Work+Sans:wght@400;500;600;700;800&family=Yellowtail&display=swap" rel="stylesheet">
 
 <style>
   /* ===========================================================
-     VARIÁVEIS DE COR (paleta sticker bomb sobre fundo de papel)
+     VARIÁVEIS DE COR (paleta de marca: base neutra, azul e pink como
+     cores principais, dourado e verde como detalhes)
      =========================================================== */
   :root {
-    --preto: #121212;
-    --azul: #2b6fff;
-    --laranja: #ff6a2b;
-    --verde: #c3f53a;
-    --magenta: #ff3da6;
-    --papel: #f7f2e7;
-    --papel-escuro: #efe8d8;
-    --branco: #ffffff;
-    --sombra-dura: 6px 6px 0 var(--preto);
-    --sombra-dura-sm: 4px 4px 0 var(--preto);
+    --azul: #0049a4;         /* cor principal: sofisticação, profundidade */
+    --azul-escuro: #003670;  /* tom mais escuro do azul, usado em faixas e cartões escuros */
+    --pink: #e4007c;         /* cor principal: feminilidade madura, autoestima */
+    --dourado: #d4af37;      /* meio tom: detalhe de criatividade e calor */
+    --verde-detalhe: #b7ffad; /* meio tom: detalhe leve, usar com moderação (10%) */
+    --branco: #fdfdfb;       /* base: clareza */
+    --off-white: #f5f1ec;    /* base: harmonia */
+    --cinza-rosado: #ccc2bc; /* base: estabilidade */
+    --texto: #3d3733;
+    --sombra-suave: 0 14px 32px rgba(0, 54, 112, 0.16);
+    --sombra-suave-sm: 0 6px 16px rgba(0, 54, 112, 0.16);
   }
 
   * { box-sizing: border-box; }
@@ -36,38 +38,26 @@
 
   body {
     margin: 0;
-    background-color: var(--papel);
-    color: var(--preto);
-    font-family: 'Poppins', sans-serif;
+    background-color: var(--off-white);
+    color: var(--texto);
+    font-family: 'Work Sans', sans-serif;
     line-height: 1.6;
     position: relative;
     overflow-x: hidden;
   }
 
-  /* Grade sutil de fundo, estilo caderno de adesivos */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(18,18,18,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(18,18,18,0.05) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
   img, .bloco-gradiente { max-width: 100%; display: block; }
 
   h1, h2, h3 {
-    font-family: 'Archivo Black', sans-serif;
-    line-height: 1.1;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    line-height: 1.15;
     margin: 0 0 0.5em 0;
-    text-transform: uppercase;
+    color: var(--azul);
   }
 
-  .fonte-manuscrita { font-family: 'Caveat', cursive; }
-  .fonte-marcador { font-family: 'Permanent Marker', cursive; }
+  .fonte-manuscrita { font-family: 'Yellowtail', cursive; }
+  .fonte-marcador { font-family: 'Yellowtail', cursive; }
 
   p { margin: 0 0 1em 0; }
 
@@ -92,12 +82,12 @@
     position: absolute;
     left: -999px;
     top: auto;
-    background: var(--verde);
-    color: var(--preto);
+    background: var(--dourado);
+    color: var(--azul-escuro);
     padding: 0.8rem 1.2rem;
     z-index: 999;
     font-weight: 700;
-    border: 3px solid var(--preto);
+    border-radius: 8px;
   }
   .pular-link:focus {
     left: 1rem;
@@ -109,82 +99,104 @@
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible {
-    outline: 3px solid var(--azul);
+    outline: 3px solid var(--dourado);
     outline-offset: 3px;
   }
 
   .rotulo-secao {
     display: inline-block;
-    background: var(--verde);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
-    padding: 0.3rem 1rem;
-    font-family: 'Permanent Marker', cursive;
-    font-size: 1.1rem;
-    transform: rotate(-3deg);
-    margin-bottom: 1.2rem;
+    font-family: 'Yellowtail', cursive;
+    font-size: 1.9rem;
+    font-weight: 400;
+    color: var(--pink);
+    margin-bottom: 0.2rem;
   }
 
   .titulo-secao {
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    margin-bottom: 1.5rem;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    margin-bottom: 0;
+    position: relative;
+  }
+  .titulo-secao::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 3px;
+    background: var(--dourado);
+    border-radius: 2px;
+    margin: 1rem 0 1.6rem 0;
   }
 
-  /* Botão estilo adesivo */
+  /* Botão elegante, em formato de pílula */
   .botao {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: 'Archivo Black', sans-serif;
-    text-transform: uppercase;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     font-size: 1rem;
     text-decoration: none;
-    background: var(--laranja);
-    color: var(--preto);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura);
-    padding: 0.9rem 1.6rem;
+    background: var(--dourado);
+    color: var(--azul-escuro);
+    border: none;
+    border-radius: 999px;
+    box-shadow: var(--sombra-suave-sm);
+    padding: 0.9rem 1.8rem;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   .botao:hover, .botao:focus-visible {
-    transform: translate(-3px, -3px);
-    box-shadow: 9px 9px 0 var(--preto);
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-suave);
   }
   .botao:active {
-    transform: translate(0, 0);
-    box-shadow: 2px 2px 0 var(--preto);
+    transform: translateY(0);
   }
   .botao--azul { background: var(--azul); color: var(--branco); }
-  .botao--verde { background: var(--verde); color: var(--preto); }
-  .botao--magenta { background: var(--magenta); color: var(--branco); }
-  .botao--outline { background: var(--papel); }
+  .botao--verde { background: var(--pink); color: var(--azul-escuro); }
+  .botao--magenta { background: var(--dourado); color: var(--azul-escuro); }
+  .botao--outline {
+    background: transparent;
+    color: var(--azul);
+    border: 2px solid var(--azul);
+    box-shadow: none;
+    padding: calc(0.9rem - 2px) calc(1.8rem - 2px);
+  }
+  .botao--outline:hover, .botao--outline:focus-visible {
+    background: var(--azul);
+    color: var(--branco);
+  }
 
   /* Bloco em gradiente (substitui fotos/vídeos reais) */
   .bloco-gradiente {
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura);
+    border: 2px solid var(--dourado);
+    border-radius: 16px;
+    box-shadow: var(--sombra-suave);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: var(--branco);
-    font-family: 'Permanent Marker', cursive;
-    font-size: 1.2rem;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.15rem;
     padding: 1rem;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
 
-  /* Adesivo decorativo (tag rotacionada) */
+  /* Emblema decorativo (fita elegante) */
   .adesivo {
     position: absolute;
-    background: var(--branco);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
-    padding: 0.4rem 0.9rem;
-    font-family: 'Caveat', cursive;
-    font-weight: 700;
-    font-size: 1.3rem;
+    background: var(--azul);
+    color: var(--branco);
+    border-radius: 999px;
+    box-shadow: var(--sombra-suave-sm);
+    padding: 0.55rem 1.3rem;
+    font-family: 'Yellowtail', cursive;
+    font-weight: 400;
+    font-size: 1.5rem;
     z-index: 2;
   }
 
@@ -193,8 +205,9 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
-    background: var(--papel);
-    border-bottom: 3px solid var(--preto);
+    background: var(--off-white);
+    border-bottom: 1px solid var(--dourado);
+    box-shadow: 0 2px 12px rgba(0, 54, 112, 0.06);
   }
   .barra-nav {
     max-width: 1180px;
@@ -205,14 +218,14 @@
     padding: 0.9rem 1.5rem;
   }
   .logo {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 1.3rem;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.4rem;
     text-decoration: none;
-    color: var(--preto);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--azul);
+    letter-spacing: 0.2px;
   }
-  .logo span { color: var(--magenta); }
+  .logo span { color: var(--dourado); }
 
   .menu-links {
     display: flex;
@@ -221,9 +234,9 @@
   }
   .menu-links a {
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 0.98rem;
-    text-transform: uppercase;
+    color: var(--texto);
     position: relative;
     padding: 0.2rem 0;
   }
@@ -231,8 +244,8 @@
     content: "";
     position: absolute;
     left: 0; bottom: -3px;
-    width: 0%; height: 3px;
-    background: var(--laranja);
+    width: 0%; height: 2px;
+    background: var(--dourado);
     transition: width 0.2s ease;
   }
   .menu-links a:hover::after,
@@ -247,17 +260,18 @@
     gap: 5px;
     width: 44px;
     height: 44px;
-    background: var(--verde);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
+    background: var(--azul);
+    border: none;
+    border-radius: 10px;
+    box-shadow: var(--sombra-suave-sm);
     cursor: pointer;
     align-items: center;
   }
   .botao-hamburguer span {
     display: block;
     width: 22px;
-    height: 3px;
-    background: var(--preto);
+    height: 2px;
+    background: var(--off-white);
     transition: transform 0.25s ease, opacity 0.25s ease;
   }
   .botao-hamburguer.aberto span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
@@ -271,11 +285,11 @@
       top: 68px;
       right: 0;
       left: 0;
-      background: var(--papel);
+      background: var(--off-white);
       flex-direction: column;
       align-items: flex-start;
       gap: 0;
-      border-bottom: 3px solid var(--preto);
+      border-bottom: 1px solid var(--dourado);
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease;
@@ -284,7 +298,7 @@
     .menu-links a {
       width: 100%;
       padding: 1rem 1.5rem;
-      border-top: 1px solid rgba(18,18,18,0.15);
+      border-top: 1px solid rgba(0,73,164,0.12);
     }
   }
 
@@ -300,13 +314,13 @@
     font-size: clamp(2.4rem, 6vw, 4.3rem);
   }
   .hero-texto .destaque {
-    color: var(--magenta);
-    -webkit-text-stroke: 1.5px var(--preto);
+    color: var(--pink);
+    font-style: italic;
   }
   .hero-frase {
     font-size: clamp(1.1rem, 2vw, 1.35rem);
     max-width: 46ch;
-    font-weight: 500;
+    font-weight: 400;
   }
   .hero-cta {
     display: flex;
@@ -317,24 +331,30 @@
   .hero-imagem-wrap {
     position: relative;
   }
-  .hero-imagem-wrap .bloco-gradiente {
+  .hero-imagem-wrap .bloco-gradiente,
+  .hero-imagem-wrap .hero-imagem {
     aspect-ratio: 4 / 5;
     width: 100%;
-    border-radius: 12px;
-    transform: rotate(2deg);
+    border-radius: 18px;
+    transform: rotate(1deg);
+  }
+  .hero-imagem-wrap .hero-imagem {
+    object-fit: cover;
+    border: 2px solid var(--dourado);
+    box-shadow: var(--sombra-suave);
   }
   .adesivo-hero-2 {
     bottom: -16px;
     right: -18px;
-    transform: rotate(6deg);
-    background: var(--verde);
-    font-size: 1.05rem;
+    transform: rotate(-4deg);
+    background: var(--azul);
+    font-size: 1.15rem;
     text-align: center;
     line-height: 1.2;
-    max-width: 170px;
+    max-width: 180px;
   }
   @media (max-width: 480px) {
-    .adesivo-hero-2 { right: 6px; bottom: -14px; font-size: 0.95rem; max-width: 145px; }
+    .adesivo-hero-2 { right: 6px; bottom: -14px; font-size: 1rem; max-width: 150px; }
   }
 
   @media (max-width: 900px) {
@@ -344,12 +364,10 @@
 
   /* ---------- FAIXA DE MARCAS ---------- */
   .faixa-marcas {
-    background: var(--branco);
-    color: var(--preto);
-    padding: 1.4rem 0;
+    background: var(--azul-escuro);
+    color: var(--off-white);
+    padding: 1.6rem 0;
     overflow: hidden;
-    border-top: 3px solid var(--preto);
-    border-bottom: 3px solid var(--preto);
   }
   .marquee-marcas {
     display: flex;
@@ -367,20 +385,22 @@
      config.marcas no <script> explicando como trocar pela logo real quando
      você tiver o arquivo de imagem. */
   .logo-marca {
-    width: 64px;
-    height: 64px;
+    width: 84px;
+    height: 84px;
     border-radius: 50%;
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
+    border: 2px solid var(--dourado);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.28);
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Archivo Black', sans-serif;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
     color: var(--branco);
-    font-size: 1.4rem;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
-    object-fit: cover;
+    font-size: 1.3rem;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    object-fit: contain;
+    padding: 7px;
     background-color: var(--branco);
   }
 
@@ -391,9 +411,16 @@
     gap: 3rem;
     align-items: center;
   }
-  .sobre-imagem .bloco-gradiente {
+  .sobre-imagem .bloco-gradiente,
+  .sobre-imagem .foto-sobre {
     aspect-ratio: 1 / 1;
     border-radius: 50%;
+  }
+  .sobre-imagem .foto-sobre {
+    width: 100%;
+    object-fit: cover;
+    border: 2px solid var(--dourado);
+    box-shadow: var(--sombra-suave);
   }
   .sobre-lista li {
     padding-left: 1.8rem;
@@ -402,10 +429,13 @@
     font-weight: 500;
   }
   .sobre-lista li::before {
-    content: "★";
+    content: "✦";
     position: absolute;
     left: 0;
-    color: var(--laranja);
+    color: var(--dourado);
+  }
+  .sobre-lista li:nth-child(even)::before {
+    color: var(--verde-detalhe);
   }
   @media (max-width: 860px) {
     .sobre-grid { grid-template-columns: 1fr; }
@@ -420,16 +450,18 @@
     margin-bottom: 2.5rem;
   }
   .filtro-btn {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    background: var(--papel);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
-    padding: 0.5rem 1.1rem;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    background: var(--branco);
+    color: var(--azul);
+    border: 2px solid var(--azul);
+    border-radius: 999px;
+    box-shadow: none;
+    padding: 0.5rem 1.2rem;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
   }
-  .filtro-btn:hover { transform: translate(-2px, -2px); }
+  .filtro-btn:hover { transform: translateY(-2px); }
   .filtro-btn[aria-pressed="true"] {
     background: var(--azul);
     color: var(--branco);
@@ -467,9 +499,10 @@
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    border: 3px solid var(--preto);
-    background: var(--verde);
-    box-shadow: var(--sombra-dura-sm);
+    border: none;
+    background: var(--dourado);
+    color: var(--azul-escuro);
+    box-shadow: var(--sombra-suave-sm);
     font-size: 1.5rem;
     font-weight: 800;
     line-height: 1;
@@ -488,113 +521,220 @@
     .seta-direita { right: -6px; }
   }
   .item-portfolio { transition: opacity 0.25s ease, transform 0.25s ease; }
-  .item-portfolio.escondido { display: none; }
   .item-portfolio .bloco-gradiente {
     aspect-ratio: 3 / 4;
-    border-radius: 10px;
+    border-radius: 14px;
     flex-direction: column;
     gap: 0.4rem;
   }
   .item-portfolio .categoria-tag {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Work Sans', sans-serif;
     font-size: 0.75rem;
-    background: rgba(0,0,0,0.35);
-    padding: 0.2rem 0.6rem;
+    font-weight: 600;
+    background: var(--verde-detalhe);
+    color: var(--azul-escuro);
+    padding: 0.2rem 0.7rem;
     border-radius: 20px;
   }
   .item-portfolio h3 {
-    font-family: 'Poppins', sans-serif;
-    text-transform: none;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--texto);
     font-size: 1rem;
     font-weight: 700;
     margin-top: 0.6rem;
   }
 
-  /* ---------- SERVIÇOS ---------- */
-  .grid-servicos {
+  /* Player de vídeo do YouTube embutido no card do portfólio */
+  .video-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--dourado);
+    box-shadow: var(--sombra-suave);
+  }
+  .video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  /* Camada transparente por cima do vídeo: impede clique direito (menu de baixar,
+     copiar link etc.) e é ela que recebe o hover, já que o player não tem controles. */
+  .video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: transparent;
+  }
+  .categoria-tag-video {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 4;
+  }
+
+  /* ---------- GALERIA DE FOTOS ---------- */
+  .galeria-fotos {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.6rem;
   }
+  .item-foto .bloco-gradiente {
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+  }
+  .foto-real {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border: 2px solid var(--dourado);
+    border-radius: 14px;
+    box-shadow: var(--sombra-suave);
+  }
+
+  /* ---------- SERVIÇOS ---------- */
+  .servicos-carrossel-wrap {
+    position: relative;
+  }
+  .grid-servicos {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.6rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+  }
+  .grid-servicos::-webkit-scrollbar { display: none; }
   .card-servico {
     background: var(--branco);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 16px;
+    box-shadow: var(--sombra-suave-sm);
     padding: 1.8rem;
-    transition: transform 0.2s ease;
+    flex: 0 0 270px;
+    width: 270px;
+    scroll-snap-align: start;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .card-servico:hover { transform: translate(-3px, -3px); }
+  .card-servico:hover { transform: translateY(-5px); box-shadow: var(--sombra-suave); }
   .card-servico .icone {
     font-size: 2.2rem;
     display: inline-block;
     margin-bottom: 0.8rem;
   }
   .card-servico h3 {
-    font-size: 1.15rem;
-    text-transform: none;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-  }
-
-  /* ---------- RESULTADOS ---------- */
-  .secao-resultados {
-    background: var(--azul);
-    color: var(--branco);
-  }
-  .secao-resultados .rotulo-secao { color: var(--preto); }
-  .grid-numeros {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.6rem;
-    text-align: center;
-  }
-  .card-numero {
-    background: var(--preto);
-    border: 3px solid var(--branco);
-    box-shadow: 6px 6px 0 rgba(255,255,255,0.4);
-    padding: 2rem 1rem;
-  }
-  .numero-valor {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: clamp(2.2rem, 5vw, 3rem);
-    color: var(--verde);
-    display: block;
-  }
-  .numero-legenda {
+    font-size: 1.2rem;
+    font-family: 'Fraunces', serif;
     font-weight: 600;
-    margin-top: 0.5rem;
   }
 
-  /* ---------- DEPOIMENTOS ---------- */
-  .grid-depoimentos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.6rem;
+  /* ---------- INVESTIMENTO ---------- */
+  .precos-unitarios {
+    background: var(--off-white);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin: 0.5rem 0 2.5rem 0;
   }
-  .card-depoimento {
-    background: var(--papel);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
-    padding: 1.8rem;
+  .precos-unitarios h3 {
+    font-family: 'Fraunces', serif;
+    color: var(--azul);
+    font-size: 1.1rem;
+    margin-bottom: 0.9rem;
+  }
+  .lista-unitarios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 2.2rem;
+  }
+  .lista-unitarios li {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .lista-unitarios li span {
+    color: var(--pink);
+    font-weight: 700;
+    margin-left: 0.3rem;
+  }
+  .grid-pacotes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.8rem;
+    align-items: start;
+  }
+  .card-pacote {
+    background: var(--branco);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 18px;
+    box-shadow: var(--sombra-suave-sm);
+    padding: 2.2rem 1.6rem 1.8rem 1.6rem;
+    text-align: center;
     position: relative;
   }
-  .card-depoimento .aspas {
-    font-family: 'Permanent Marker', cursive;
-    font-size: 2.2rem;
-    color: var(--magenta);
-    line-height: 1;
+  .card-pacote.destaque {
+    border: 2px solid var(--dourado);
+    box-shadow: var(--sombra-suave);
   }
-  .card-depoimento .autor {
-    margin-top: 1rem;
-    font-weight: 800;
+  @media (min-width: 641px) {
+    .card-pacote.destaque { transform: scale(1.04); }
   }
-  .card-depoimento .empresa {
+  .card-pacote .selo-popular {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dourado);
+    color: var(--azul-escuro);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.35rem 1.1rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .card-pacote h3 {
+    font-family: 'Fraunces', serif;
+    color: var(--azul);
+    font-size: 1.3rem;
+    margin-bottom: 0.9rem;
+  }
+  .card-pacote ul {
+    text-align: left;
+    margin-bottom: 1.2rem;
+  }
+  .card-pacote ul li {
+    padding-left: 1.4rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .card-pacote ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--dourado);
+    font-weight: 700;
+  }
+  .card-pacote .economia {
+    display: block;
+    color: var(--pink);
+    font-weight: 600;
     font-size: 0.9rem;
-    opacity: 0.75;
+    margin-bottom: 0.9rem;
   }
+  .card-pacote .preco {
+    font-family: 'Fraunces', serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--azul-escuro);
+  }
+  .card-pacote.destaque .preco { color: var(--dourado); }
 
   /* ---------- CONTATO ---------- */
-  .secao-contato { background: var(--papel-escuro); }
+  .secao-contato { background: var(--cinza-rosado); }
   .contato-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -605,28 +745,33 @@
     flex-direction: column;
     gap: 1rem;
     background: var(--branco);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 18px;
+    box-shadow: var(--sombra-suave);
     padding: 2rem;
   }
   .campo label {
     display: block;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 0.4rem;
     font-size: 0.95rem;
+    color: var(--azul);
   }
   .campo input,
   .campo textarea {
     width: 100%;
     padding: 0.8rem;
-    border: 2px solid var(--preto);
-    font-family: 'Poppins', sans-serif;
+    border: 1.5px solid rgba(0,73,164,0.35);
+    border-radius: 8px;
+    font-family: 'Work Sans', sans-serif;
     font-size: 1rem;
-    background: var(--papel);
+    background: var(--off-white);
+    color: var(--texto);
   }
   .mensagem-confirmacao {
-    background: var(--verde);
-    border: 3px solid var(--preto);
+    background: var(--pink);
+    color: var(--azul-escuro);
+    border-radius: 10px;
     padding: 0.9rem 1.1rem;
     font-weight: 700;
     display: none;
@@ -640,14 +785,15 @@
     gap: 1rem;
     text-decoration: none;
     background: var(--branco);
-    border: 3px solid var(--preto);
-    box-shadow: var(--sombra-dura-sm);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 14px;
+    box-shadow: var(--sombra-suave-sm);
     padding: 1.1rem 1.3rem;
-    color: var(--preto);
-    font-weight: 700;
-    transition: transform 0.15s ease;
+    color: var(--texto);
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .contato-item:hover { transform: translate(-3px, -3px); }
+  .contato-item:hover { transform: translateY(-3px); box-shadow: var(--sombra-suave); }
   .contato-item .icone-contato { font-size: 1.6rem; }
 
   @media (max-width: 860px) {
@@ -656,15 +802,16 @@
 
   /* ---------- RODAPÉ ---------- */
   .rodape {
-    background: var(--preto);
-    color: var(--papel);
+    background: var(--azul-escuro);
+    color: var(--off-white);
     padding: 3rem 1.5rem 2rem;
     text-align: center;
   }
   .rodape-nome {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 1.6rem;
-    text-transform: uppercase;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.7rem;
+    color: var(--branco);
   }
   .rodape-redes {
     display: flex;
@@ -675,8 +822,8 @@
   }
   .rodape-redes a {
     text-decoration: none;
-    font-weight: 700;
-    border-bottom: 2px solid var(--laranja);
+    font-weight: 600;
+    border-bottom: 2px solid var(--dourado);
   }
   .rodape-copyright {
     font-size: 0.85rem;
@@ -715,9 +862,9 @@
       <ul class="menu-links" id="menu-links">
         <li><a href="#sobre">Sobre</a></li>
         <li><a href="#portfolio">Portfólio</a></li>
+        <li><a href="#fotos">Fotos</a></li>
         <li><a href="#servicos">Serviços</a></li>
-        <li><a href="#resultados">Resultados</a></li>
-        <li><a href="#depoimentos">Depoimentos</a></li>
+        <li><a href="#investimento">Investimento</a></li>
         <li><a href="#contato">Contato</a></li>
       </ul>
     </nav>
@@ -740,7 +887,7 @@
       </div>
     </div>
     <div class="hero-imagem-wrap reveal">
-      <div class="bloco-gradiente" id="hero-imagem" role="img" aria-label="Foto de Viviane Carvalho gravando conteúdo UGC"></div>
+      <img class="hero-imagem" src="fotos/hero-viviane.jpg" alt="Foto de Viviane Carvalho">
       <div class="adesivo adesivo-hero-2 fonte-marcador">UGC / TikTok Seller</div>
     </div>
   </section>
@@ -754,12 +901,12 @@
   <section id="sobre">
     <div class="container sobre-grid">
       <div class="sobre-imagem reveal">
-        <div class="bloco-gradiente" id="sobre-imagem" role="img" aria-label="Foto de Viviane Carvalho sorrindo"></div>
+        <img class="foto-sobre" src="fotos/sobre-viviane.jpg" alt="Foto de Viviane Carvalho">
       </div>
       <div class="reveal">
         <span class="rotulo-secao">Sobre mim</span>
         <h2 class="titulo-secao">Quem entrega o seu conteúdo</h2>
-        <p id="sobre-texto"></p>
+        <div id="sobre-texto"></div>
         <ul class="sobre-lista" id="sobre-lista"></ul>
       </div>
     </div>
@@ -779,34 +926,42 @@
     </div>
   </section>
 
+  <!-- 5B. GALERIA DE FOTOS -->
+  <section id="fotos">
+    <div class="container">
+      <span class="rotulo-secao">Fotos</span>
+      <h2 class="titulo-secao reveal">Galeria de fotos</h2>
+      <div class="galeria-fotos" id="galeria-fotos"></div>
+    </div>
+  </section>
+
   <!-- 6. SERVIÇOS -->
   <section id="servicos">
     <div class="container">
       <span class="rotulo-secao">Serviços</span>
       <h2 class="titulo-secao reveal">O que eu posso criar pra sua marca</h2>
-      <div class="grid-servicos" id="grid-servicos"></div>
+      <div class="servicos-carrossel-wrap">
+        <button class="seta-portfolio seta-esquerda mostrar" id="seta-servicos-esquerda" aria-label="Ver serviços anteriores">&#8249;</button>
+        <div class="grid-servicos" id="grid-servicos"></div>
+        <button class="seta-portfolio seta-direita mostrar" id="seta-servicos-direita" aria-label="Ver próximos serviços">&#8250;</button>
+      </div>
     </div>
   </section>
 
-  <!-- 7. RESULTADOS / NÚMEROS -->
-  <section id="resultados" class="secao-resultados">
+  <!-- 6B. INVESTIMENTO -->
+  <section id="investimento">
     <div class="container">
-      <span class="rotulo-secao">Resultados</span>
-      <h2 class="titulo-secao reveal">Números que provam o meu trabalho</h2>
-      <div class="grid-numeros" id="grid-numeros"></div>
+      <span class="rotulo-secao">Investimento</span>
+      <h2 class="titulo-secao reveal">Pacotes e valores</h2>
+      <div class="precos-unitarios reveal">
+        <h3>Valores unitários</h3>
+        <ul class="lista-unitarios" id="lista-unitarios"></ul>
+      </div>
+      <div class="grid-pacotes" id="grid-pacotes"></div>
     </div>
   </section>
 
-  <!-- 8. DEPOIMENTOS -->
-  <section id="depoimentos">
-    <div class="container">
-      <span class="rotulo-secao">Depoimentos</span>
-      <h2 class="titulo-secao reveal">Quem já contratou, aprova</h2>
-      <div class="grid-depoimentos" id="grid-depoimentos"></div>
-    </div>
-  </section>
-
-  <!-- 9. CONTATO -->
+  <!-- 7. CONTATO -->
   <section id="contato" class="secao-contato">
     <div class="container">
       <span class="rotulo-secao">Contato</span>
@@ -847,7 +1002,7 @@
 
 </main>
 
-<!-- 10. RODAPÉ -->
+<!-- 8. RODAPÉ -->
 <footer class="rodape">
   <div class="rodape-nome" id="rodape-nome"></div>
   <ul class="rodape-redes" id="rodape-redes"></ul>
@@ -858,7 +1013,7 @@
   /* =========================================================================
      OBJETO DE CONFIGURAÇÃO
      Edite todo o conteúdo do site aqui. Não é necessário mexer no HTML ou
-     no CSS acima para trocar textos, serviços, marcas, depoimentos etc.
+     no CSS acima para trocar textos, serviços, marcas, portfólio etc.
      ========================================================================= */
   const config = {
 
@@ -879,25 +1034,34 @@
 
     // EDITE AQUI: marcas com quem você já trabalhou (aparecem na faixa rolante)
     // Cada marca vira um "cartão de logo". Por enquanto é um placeholder: um
-    // quadrado colorido com a inicial do nome, no lugar da logo de verdade.
+    // círculo colorido com a inicial do nome, no lugar da logo de verdade.
     // Quando você tiver o arquivo da logo (PNG ou SVG), adicione o campo "logo"
     // com o caminho do arquivo, por exemplo: logo: "logos/bella-cosmeticos.png".
-    // A função renderMarcas() mais abaixo já está pronta para usar esse campo:
+    // A função renderCartaoMarca() mais abaixo já está pronta para usar esse campo:
     // se "logo" existir, ela mostra a imagem; se não existir, mostra o placeholder.
     marcas: [
-      { nome: "Bella Cosméticos", inicial: "B", gradiente: "linear-gradient(135deg, var(--magenta), var(--laranja))", logo: null },
-      { nome: "Sabor Caseiro", inicial: "S", gradiente: "linear-gradient(135deg, var(--azul), var(--verde))", logo: null },
-      { nome: "Vittá Fitness", inicial: "V", gradiente: "linear-gradient(135deg, var(--preto), var(--azul))", logo: null },
-      { nome: "Rota Viagens", inicial: "R", gradiente: "linear-gradient(135deg, var(--laranja), var(--magenta))", logo: null },
-      { nome: "Urban Moda", inicial: "U", gradiente: "linear-gradient(135deg, var(--verde), var(--preto))", logo: null },
-      { nome: "Doce Ponto", inicial: "D", gradiente: "linear-gradient(135deg, var(--magenta), var(--azul))", logo: null },
-      { nome: "Essência Natural", inicial: "E", gradiente: "linear-gradient(135deg, var(--laranja), var(--verde))", logo: null },
-      { nome: "Trilha Ativa", inicial: "T", gradiente: "linear-gradient(135deg, var(--azul), var(--laranja))", logo: null }
+      { nome: "L'Oréal", inicial: "L", gradiente: "linear-gradient(135deg, var(--azul), var(--azul-escuro))", logo: "logos/loreal.png" },
+      { nome: "Wella Koleston", inicial: "W", gradiente: "linear-gradient(135deg, var(--pink), var(--dourado))", logo: "logos/wella-koleston.png" },
+      { nome: "Solara Vida", inicial: "S", gradiente: "linear-gradient(135deg, var(--dourado), var(--azul))", logo: "logos/solara-vida.jpeg" },
+      { nome: "Muriel Cosméticos", inicial: "M", gradiente: "linear-gradient(135deg, var(--azul-escuro), var(--pink))", logo: "logos/muriel-cosmeticos.png" },
+      { nome: "Teeva", inicial: "T", gradiente: "linear-gradient(135deg, var(--pink), var(--azul))", logo: "logos/teeva.png" },
+      { nome: "Venus Gillette", inicial: "V", gradiente: "linear-gradient(135deg, var(--dourado), var(--azul-escuro))", logo: "logos/venus-gillette.jpeg" },
+      { nome: "L'Oréal Paris Elseve", inicial: "E", gradiente: "linear-gradient(135deg, var(--azul), var(--azul-escuro))", logo: "logos/loreal-paris-elseve.jpeg" },
+      { nome: "Pantene", inicial: "P", gradiente: "linear-gradient(135deg, var(--pink), var(--dourado))", logo: "logos/pantene.png" },
+      { nome: "Creamy Skincare", inicial: "C", gradiente: "linear-gradient(135deg, var(--dourado), var(--azul))", logo: "logos/creamy-skincare.png" },
+      { nome: "Serasa Experian", inicial: "S", gradiente: "linear-gradient(135deg, var(--azul-escuro), var(--pink))", logo: "logos/serasa-experian.png" },
+      { nome: "PicPay", inicial: "P", gradiente: "linear-gradient(135deg, var(--pink), var(--azul))", logo: "logos/picpay.jpg" },
+      { nome: "Livelo", inicial: "L", gradiente: "linear-gradient(135deg, var(--dourado), var(--azul-escuro))", logo: "logos/livelo.png" },
+      { nome: "Dove", inicial: "D", gradiente: "linear-gradient(135deg, var(--azul), var(--azul-escuro))", logo: "logos/dove.jpg" },
+      { nome: "Aura Beauty", inicial: "A", gradiente: "linear-gradient(135deg, var(--pink), var(--dourado))", logo: "logos/aura-beauty.jpeg" }
     ],
 
     // EDITE AQUI: texto e lista da seção Sobre
     sobre: {
-      texto: "Oi, eu sou a Viviane! Há anos crio conteúdo autêntico para redes sociais e, hoje, ajudo marcas a se conectarem de verdade com o público através de vídeos e fotos no formato UGC. Entrego conteúdo com a cara da sua marca, pronto para impulsionar em anúncios ou publicar no feed, sempre com agilidade e profissionalismo.",
+      paragrafos: [
+        "Criadora de conteúdo UGC apaixonada por autocuidado e por mostrar que o simples também pode ser poderoso. Trago uma comunicação leve, direta e cheia de propósito, falando de beleza e bem-estar de forma real e acessível.",
+        "Com meu estilo tradicional e criativo, transformo experiências pessoais em inspiração, compartilhando resultados reais como minha jornada de autocuidado e emagrecimento. Se sua marca valoriza autenticidade e histórias que conectam, vamos criar algo que inspire e destaque o que realmente funciona."
+      ],
       pontos: [
         "Entrega rápida e dentro do prazo combinado",
         "Roteiro e briefing alinhados com os objetivos da marca",
@@ -907,27 +1071,48 @@
     },
 
     // EDITE AQUI: itens do portfólio. categoria deve ser uma das usadas em "categorias" abaixo
-    // Para trocar um bloco de gradiente por uma foto real, troque a <div class="bloco-gradiente">
-    // pelo elemento <img src="caminho/da/foto.jpg" alt="descrição da foto"> no template renderizado em renderPortfolio().
+    // Para um item ser um VÍDEO REAL do YouTube (inclusive vídeos "não listados"), preencha o
+    // campo "youtube" com o ID do vídeo (o trecho depois de youtu.be/ ou de shorts/, sem nada
+    // depois da interrogação). Para trocar um bloco de gradiente por uma foto real, troque a
+    // <div class="bloco-gradiente"> pelo elemento <img src="caminho/da/foto.jpg" alt="descrição">
+    // no template renderizado em renderPortfolio().
     portfolio: {
-      categorias: ["Todos", "Beleza", "Fitness", "Dupla", "Tecnologia", "Skincare", "Bodycare", "Haircare"],
+      categorias: ["Todos", "Beleza", "Fitness", "Dupla", "Tecnologia", "Skincare", "Bodycare", "Haircare", "TikTok Shop"],
       itens: [
-        { titulo: "Resenha de produto de beleza", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--magenta), var(--laranja))" },
-        { titulo: "Unboxing de maquiagem", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--azul), var(--magenta))" },
-        { titulo: "Treino com suplemento", categoria: "Fitness", gradiente: "linear-gradient(135deg, var(--azul), var(--verde))" },
-        { titulo: "Rotina fitness patrocinada", categoria: "Fitness", gradiente: "linear-gradient(135deg, var(--laranja), var(--preto))" },
-        { titulo: "Vídeo em dupla com marca parceira", categoria: "Dupla", gradiente: "linear-gradient(135deg, var(--magenta), var(--verde))" },
-        { titulo: "Conteúdo em dupla para lançamento", categoria: "Dupla", gradiente: "linear-gradient(135deg, var(--preto), var(--magenta))" },
-        { titulo: "Unboxing de gadget", categoria: "Tecnologia", gradiente: "linear-gradient(135deg, var(--azul), var(--preto))" },
-        { titulo: "Resenha de acessório tech", categoria: "Tecnologia", gradiente: "linear-gradient(135deg, var(--verde), var(--azul))" },
-        { titulo: "Rotina de skincare noturna", categoria: "Skincare", gradiente: "linear-gradient(135deg, var(--verde), var(--magenta))" },
-        { titulo: "Resenha de sérum facial", categoria: "Skincare", gradiente: "linear-gradient(135deg, var(--laranja), var(--magenta))" },
-        { titulo: "Hidratação corporal patrocinada", categoria: "Bodycare", gradiente: "linear-gradient(135deg, var(--magenta), var(--azul))" },
-        { titulo: "Resenha de esfoliante corporal", categoria: "Bodycare", gradiente: "linear-gradient(135deg, var(--verde), var(--laranja))" },
-        { titulo: "Rotina de cuidados com o cabelo", categoria: "Haircare", gradiente: "linear-gradient(135deg, var(--azul), var(--laranja))" },
-        { titulo: "Resenha de shampoo e máscara", categoria: "Haircare", gradiente: "linear-gradient(135deg, var(--preto), var(--verde))" }
+        { titulo: "Resenha de produto de beleza", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--azul), var(--azul-escuro))" },
+        { titulo: "Unboxing de maquiagem", categoria: "Beleza", gradiente: "linear-gradient(135deg, var(--pink), var(--dourado))" },
+        { titulo: "Resenha do Whey Mais Mu", categoria: "Fitness", youtube: "72wtptvLtNE" },
+        { titulo: "Resenha do Whey Growth", categoria: "Fitness", youtube: "MKvik03UfHk" },
+        { titulo: "Creatina Mais Mu", categoria: "Fitness", youtube: "IH0MsQISTIM" },
+        { titulo: "App do Serasa, em dupla", categoria: "Dupla", youtube: "FXngtgjzc8E" },
+        { titulo: "Site do Serasa, em dupla", categoria: "Dupla", youtube: "uVoMlojBU4o" },
+        { titulo: "Creatina Mais Mu, em dupla", categoria: "Dupla", youtube: "Elush87N4Vc" },
+        { titulo: "App do PicPay", categoria: "Tecnologia", youtube: "_qTXYLaLAUw" },
+        { titulo: "Cartão Livelo", categoria: "Tecnologia", youtube: "m_YbxnTvY4M" },
+        { titulo: "Konta IA", categoria: "Tecnologia", youtube: "zzusVuLjE-0" },
+        { titulo: "Curso de UGC", categoria: "Tecnologia", youtube: "p3UYpupyQR4" },
+        { titulo: "Peeling The Ordinary", categoria: "Skincare", youtube: "67gefR0jKv4" },
+        { titulo: "Creme de rosto Principia", categoria: "Skincare", youtube: "Uf7GanZV_jw" },
+        { titulo: "Gillette Venus", categoria: "Bodycare", youtube: "0Q7Pd2jw-J4" },
+        { titulo: "Esfoliante Dove", categoria: "Bodycare", youtube: "Dr71NwCwNFk" },
+        { titulo: "Creme clareador", categoria: "Bodycare", youtube: "k5Nn2hnWfAQ" },
+        { titulo: "Muriel Liso dos Sonhos", categoria: "Haircare", youtube: "KkT0_EQs6OU" },
+        { titulo: "Vídeo de vitrine para TikTok Shop", categoria: "TikTok Shop", gradiente: "linear-gradient(135deg, var(--azul), var(--pink))" },
+        { titulo: "Demonstração de produto para TikTok Shop", categoria: "TikTok Shop", gradiente: "linear-gradient(135deg, var(--dourado), var(--azul-escuro))" }
       ]
     },
+
+    // EDITE AQUI: fotos da galeria (aparece logo abaixo da seção de vídeos do portfólio)
+    // Cada foto fica na pasta "fotos/". Para adicionar uma nova, salve o arquivo
+    // ali dentro e acrescente uma linha com o caminho e uma descrição (o "titulo"
+    // não aparece na tela, ele só ajuda leitores de tela a entenderem a foto).
+    fotos: [
+      { titulo: "Viviane Carvalho segurando o shampoo e condicionador Elseve Collagen Lifter, da L'Oréal Paris", arquivo: "fotos/elseve-collagen-lifter.jpg" },
+      { titulo: "Viviane Carvalho segurando a máscara Pantene Reconstrução Molecular", arquivo: "fotos/pantene-reconstrucao-molecular.jpg" },
+      { titulo: "Viviane Carvalho segurando a creatina monohidratada +Mu", arquivo: "fotos/mais-mu-creatina.jpg" },
+      { titulo: "Viviane Carvalho segurando o creme calmante multirreparador Principia", arquivo: "fotos/principia-creme-calmante.jpg" },
+      { titulo: "Viviane Carvalho segurando o creme clareador para axilas e virilhas", arquivo: "fotos/creme-clareador.jpg" }
+    ],
 
     // EDITE AQUI: cards de serviços oferecidos
     servicos: [
@@ -939,21 +1124,40 @@
       { icone: "📈", titulo: "Conteúdo para anúncios", descricao: "Vídeos e fotos otimizados para performance, feitos para rodar como anúncio pago." }
     ],
 
-    // EDITE AQUI: números de resultado (valor numérico, sufixo/prefixo e legenda)
-    numeros: [
-      { valor: 150, sufixo: " mil+", legenda: "Seguidores nas redes" },
-      { valor: 12, sufixo: " mi+", legenda: "Visualizações geradas" },
-      { valor: 80, sufixo: "+", legenda: "Marcas atendidas" },
-      { valor: 8.5, sufixo: "%", legenda: "Taxa média de engajamento" }
-    ],
-
-    // EDITE AQUI: depoimentos de clientes e marcas
-    depoimentos: [
-      { texto: "A Viviane entendeu o briefing na hora e entregou um vídeo com resultado acima do esperado. Recomendo demais!", nome: "Marina Souza", empresa: "Bella Cosméticos" },
-      { texto: "Conteúdo autêntico, entrega no prazo e comunicação impecável. Já viramos parceiros fixos.", nome: "Rafael Lima", empresa: "Vittá Fitness" },
-      { texto: "O reels que ela produziu para o lançamento teve o melhor desempenho do trimestre nas nossas redes.", nome: "Camila Torres", empresa: "Urban Moda" },
-      { texto: "Profissionalismo do início ao fim. O vídeo de unboxing aumentou muito nossa conversão em anúncios.", nome: "Bruno Andrade", empresa: "Sabor Caseiro" }
-    ],
+    // EDITE AQUI: seção de investimento (valores unitários e pacotes)
+    investimento: {
+      unitarios: [
+        { item: "1 vídeo", valor: "R$ 200,00" },
+        { item: "3 fotos", valor: "R$ 79,00" },
+        { item: "Gancho extra", valor: "R$ 49,00" },
+        { item: "Renovação de ads (3 meses)", valor: "R$ 75,00" },
+        { item: "Dupla", valor: "Valores especiais" }
+      ],
+      // Marque um pacote com destaque: true para deixar ele em evidência (com selo de mais pedido).
+      pacotes: [
+        {
+          nome: "Pacote Básico",
+          destaque: false,
+          itens: ["1 vídeo", "3 fotos", "Roteiro personalizado", "Gravação", "Edição", "3 meses de uso para ads"],
+          economia: "Economize R$ 59,00",
+          preco: "R$ 220,00"
+        },
+        {
+          nome: "Pacote Gold",
+          destaque: true,
+          itens: ["5 vídeos", "5 fotos", "Roteiro personalizado", "Gravação", "Edição", "6 meses de uso para ads"],
+          economia: "Economize R$ 406,00",
+          preco: "R$ 800,00"
+        },
+        {
+          nome: "Pacote Silver",
+          destaque: false,
+          itens: ["3 vídeos", "3 fotos", "Roteiro personalizado", "Gravação", "Edição", "6 meses de uso para ads"],
+          economia: "Economize R$ 254,00",
+          preco: "R$ 500,00"
+        }
+      ]
+    },
 
     // EDITE AQUI: redes sociais exibidas no rodapé
     redesRodape: [
@@ -970,10 +1174,6 @@
   // Hero
   document.getElementById("hero-nome").textContent = config.hero.nome;
   document.getElementById("hero-frase").textContent = config.hero.frase;
-  // Para usar uma foto real no hero, troque a div#hero-imagem por:
-  // <img src="caminho/foto-hero.jpg" alt="Foto de Viviane Carvalho gravando conteúdo UGC">
-  document.getElementById("hero-imagem").style.background = "linear-gradient(135deg, var(--magenta), var(--azul))";
-  document.getElementById("hero-imagem").textContent = "Foto / vídeo de apresentação";
 
   // Faixa de marcas (duplicada para permitir loop contínuo do marquee)
   // Se a marca tiver "logo" preenchido, mostra a imagem redonda. Se não, mostra
@@ -993,12 +1193,7 @@
   marcasContainer.innerHTML = listaMarcasDuplicada.map(renderCartaoMarca).join("");
 
   // Sobre
-  // Para usar uma foto real, troque a div#sobre-imagem por:
-  // <img src="caminho/foto-sobre.jpg" alt="Foto de Viviane Carvalho sorrindo">
-  const sobreImagem = document.getElementById("sobre-imagem");
-  sobreImagem.style.background = "linear-gradient(135deg, var(--verde), var(--laranja))";
-  sobreImagem.textContent = "Foto pessoal";
-  document.getElementById("sobre-texto").textContent = config.sobre.texto;
+  document.getElementById("sobre-texto").innerHTML = config.sobre.paragrafos.map(p => `<p>${p}</p>`).join("");
   document.getElementById("sobre-lista").innerHTML =
     config.sobre.pontos.map(p => `<li>${p}</li>`).join("");
 
@@ -1008,17 +1203,64 @@
   const setaEsquerda = document.getElementById("seta-portfolio-esquerda");
   const setaDireita = document.getElementById("seta-portfolio-direita");
 
-  function renderPortfolio(categoriaAtiva) {
-    galeria.innerHTML = config.portfolio.itens.map(item => {
-      const escondido = (categoriaAtiva !== "Todos" && item.categoria !== categoriaAtiva) ? "escondido" : "";
-      return `
-        <div class="item-portfolio reveal visivel ${escondido}" data-categoria="${item.categoria}">
-          <div class="bloco-gradiente" style="background:${item.gradiente}" role="img" aria-label="Exemplo de trabalho: ${item.titulo}, categoria ${item.categoria}">
-            <span class="categoria-tag">${item.categoria}</span>
-          </div>
+  // Na aba "Todos" mostra só 1 vídeo por nicho (o primeiro cadastrado de cada
+  // categoria em config.portfolio.itens). Em qualquer outro filtro, mostra
+  // todos os vídeos daquela categoria.
+  function itensDoFiltro(categoriaAtiva) {
+    if (categoriaAtiva !== "Todos") {
+      return config.portfolio.itens.filter(item => item.categoria === categoriaAtiva);
+    }
+    const categoriasJaUsadas = new Set();
+    return config.portfolio.itens.filter(item => {
+      if (categoriasJaUsadas.has(item.categoria)) return false;
+      categoriasJaUsadas.add(item.categoria);
+      return true;
+    });
+  }
+
+  // Se o item tiver "youtube" (ID do vídeo), mostra o player embutido do YouTube.
+  // Se não, mostra o bloco de gradiente placeholder.
+  function renderItemPortfolio(item) {
+    const midia = item.youtube
+      ? `<div class="video-wrap">
+          <span class="categoria-tag categoria-tag-video">${item.categoria}</span>
+          <iframe src="https://www.youtube-nocookie.com/embed/${item.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3" title="${item.titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+          <div class="video-overlay" aria-hidden="true"></div>
+        </div>`
+      : `<div class="bloco-gradiente" style="background:${item.gradiente}" role="img" aria-label="Exemplo de trabalho: ${item.titulo}, categoria ${item.categoria}">
+          <span class="categoria-tag">${item.categoria}</span>
+        </div>`;
+    return `
+        <div class="item-portfolio reveal visivel" data-categoria="${item.categoria}">
+          ${midia}
           <h3>${item.titulo}</h3>
         </div>`;
-    }).join("");
+  }
+
+  // Toca o vídeo quando o mouse entra na área dele e pausa quando sai. A camada
+  // .video-overlay (por cima do iframe) também bloqueia o menu de clique direito
+  // (baixar vídeo, copiar link etc.), já que o player não tem controles visíveis.
+  function ativarVideosPortfolio() {
+    galeria.querySelectorAll(".video-wrap").forEach(wrap => {
+      const iframe = wrap.querySelector("iframe");
+      const overlay = wrap.querySelector(".video-overlay");
+      wrap.addEventListener("mouseenter", () => {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [100] }), "*");
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+      });
+      wrap.addEventListener("mouseleave", () => {
+        iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+      });
+      if (overlay) {
+        overlay.addEventListener("contextmenu", (e) => e.preventDefault());
+      }
+    });
+  }
+
+  function renderPortfolio(categoriaAtiva) {
+    galeria.innerHTML = itensDoFiltro(categoriaAtiva).map(renderItemPortfolio).join("");
+    ativarVideosPortfolio();
 
     // Na aba "Todos" mantém a grade normal. Em qualquer outro filtro, vira
     // um carrossel horizontal com setas de navegação.
@@ -1051,28 +1293,40 @@
 
   renderPortfolio("Todos");
 
+  // Galeria de fotos
+  document.getElementById("galeria-fotos").innerHTML = config.fotos.map(f => `
+    <div class="item-foto reveal visivel">
+      <img class="foto-real" src="${f.arquivo}" alt="${f.titulo}" loading="lazy">
+    </div>`).join("");
+
   // Serviços
-  document.getElementById("grid-servicos").innerHTML = config.servicos.map(s => `
-    <div class="card-servico reveal">
+  const gridServicos = document.getElementById("grid-servicos");
+  gridServicos.innerHTML = config.servicos.map(s => `
+    <div class="card-servico reveal visivel">
       <span class="icone" aria-hidden="true">${s.icone}</span>
       <h3>${s.titulo}</h3>
       <p>${s.descricao}</p>
     </div>`).join("");
 
-  // Resultados / números (renderiza estrutura; a contagem acontece no observer mais abaixo)
-  document.getElementById("grid-numeros").innerHTML = config.numeros.map((n, i) => `
-    <div class="card-numero reveal">
-      <span class="numero-valor" data-alvo="${n.valor}" data-sufixo="${n.sufixo}" id="numero-${i}">0${n.sufixo}</span>
-      <span class="numero-legenda">${n.legenda}</span>
-    </div>`).join("");
+  document.getElementById("seta-servicos-esquerda").addEventListener("click", () => {
+    gridServicos.scrollBy({ left: -(270 + 26), behavior: "smooth" });
+  });
+  document.getElementById("seta-servicos-direita").addEventListener("click", () => {
+    gridServicos.scrollBy({ left: 270 + 26, behavior: "smooth" });
+  });
 
-  // Depoimentos
-  document.getElementById("grid-depoimentos").innerHTML = config.depoimentos.map(d => `
-    <div class="card-depoimento reveal">
-      <span class="aspas" aria-hidden="true">"</span>
-      <p>${d.texto}</p>
-      <div class="autor">${d.nome}</div>
-      <div class="empresa">${d.empresa}</div>
+  // Investimento (valores unitários + pacotes)
+  document.getElementById("lista-unitarios").innerHTML = config.investimento.unitarios.map(u =>
+    `<li>${u.item}<span>${u.valor}</span></li>`
+  ).join("");
+
+  document.getElementById("grid-pacotes").innerHTML = config.investimento.pacotes.map(p => `
+    <div class="card-pacote reveal visivel ${p.destaque ? "destaque" : ""}">
+      ${p.destaque ? `<span class="selo-popular">★ Mais pedido</span>` : ""}
+      <h3>${p.nome}</h3>
+      <ul>${p.itens.map(item => `<li>${item}</li>`).join("")}</ul>
+      <span class="economia">${p.economia}</span>
+      <span class="preco">${p.preco}</span>
     </div>`).join("");
 
   // Contato: botões diretos
@@ -1159,36 +1413,6 @@
   }, { threshold: 0.15 });
 
   document.querySelectorAll(".reveal").forEach(el => observadorRevelacao.observe(el));
-
-  /* =========================================================================
-     COMPORTAMENTO: contagem animada dos números de resultado
-     ========================================================================= */
-  const observadorNumeros = new IntersectionObserver((entradas) => {
-    entradas.forEach(entrada => {
-      if (!entrada.isIntersecting) return;
-      const elemento = entrada.target;
-      const alvo = parseFloat(elemento.dataset.alvo);
-      const sufixo = elemento.dataset.sufixo;
-      const casasDecimais = alvo % 1 !== 0 ? 1 : 0;
-      const duracao = 1600;
-      const inicio = performance.now();
-
-      function passo(agora) {
-        const progresso = Math.min((agora - inicio) / duracao, 1);
-        const valorAtual = alvo * progresso;
-        elemento.textContent = valorAtual.toFixed(casasDecimais).replace(".", ",") + sufixo;
-        if (progresso < 1) {
-          requestAnimationFrame(passo);
-        } else {
-          elemento.textContent = alvo.toFixed(casasDecimais).replace(".", ",") + sufixo;
-        }
-      }
-      requestAnimationFrame(passo);
-      observadorNumeros.unobserve(elemento);
-    });
-  }, { threshold: 0.4 });
-
-  document.querySelectorAll(".numero-valor").forEach(el => observadorNumeros.observe(el));
 </script>
 </body>
 </html>
