@@ -804,6 +804,164 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ---------- Aba Calendário ---------- */
+    .calendario-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .cabecalho-mes-calendario {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .cabecalho-mes-calendario h3 {
+      font-size: 17px;
+      text-align: center;
+    }
+
+    .grade-dias-cabecalho {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .grade-dias-cabecalho span {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cor-texto-suave);
+      text-transform: uppercase;
+    }
+
+    .grade-dias {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .dia-celula {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-branco);
+      border-radius: var(--raio-pequeno);
+      font-size: 13px;
+      color: var(--cor-grafite);
+    }
+
+    .dia-celula:hover {
+      border-color: var(--cor-coral);
+    }
+
+    .dia-celula.fora-do-mes {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .dia-celula.hoje {
+      border: 2px solid var(--cor-coral);
+    }
+
+    .dia-celula.ativo {
+      background: var(--cor-coral);
+      border-color: var(--cor-coral);
+      color: var(--cor-branco);
+    }
+
+    .dia-pontos {
+      display: flex;
+      gap: 3px;
+      justify-content: center;
+    }
+
+    .dia-pontos i {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .bloco-agenda h3 {
+      font-size: 17px;
+      text-transform: capitalize;
+    }
+
+    .lista-compromissos {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .compromisso-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--cor-borda);
+      border-left: 4px solid var(--cor-coral);
+      border-radius: var(--raio-pequeno);
+      background: var(--cor-creme);
+    }
+
+    .info-compromisso {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .horario-compromisso {
+      font-size: 12px;
+      color: var(--cor-texto-suave);
+    }
+
+    .titulo-compromisso {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cor-grafite);
+    }
+
+    .compromisso-card.concluido .titulo-compromisso {
+      text-decoration: line-through;
+      opacity: 0.55;
+    }
+
+    .seletor-cores {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .swatch-cor {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      padding: 0;
+    }
+
+    .swatch-cor.selecionada {
+      border-color: var(--cor-grafite);
+    }
+
+    @media (max-width: 900px) {
+      .calendario-layout {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -828,6 +986,10 @@
           <button class="nav-item" data-tab="financas">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             Finanças
+          </button>
+          <button class="nav-item" data-tab="calendario">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Calendário
           </button>
         </nav>
       </div>
@@ -952,6 +1114,12 @@
         <div id="aviso-erro-financas" class="faixa-erro oculto"></div>
         <div id="financas-conteudo"></div>
       </section>
+
+      <!-- ========= ABA: CALENDÁRIO ========= -->
+      <section class="painel-aba" id="aba-calendario">
+        <div id="aviso-erro-calendario" class="faixa-erro oculto"></div>
+        <div id="calendario-conteudo"></div>
+      </section>
     </main>
   </div>
 
@@ -993,6 +1161,12 @@
       'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
       'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
     ];
+
+    // Estado da aba Calendário.
+    let todosEventosCalendario = [];
+    let mesCalendarioAtual = new Date().getMonth(); // 0-11
+    let anoCalendarioAtual = new Date().getFullYear();
+    let diaSelecionado = formatarDataISOCal(new Date());
 
     /**
      * Busca todas as linhas de uma tabela, contornando o limite de 1000
@@ -1650,7 +1824,9 @@
     /* ---------------------------------------------------------------------
        Modal reutilizável de adicionar/editar (renda, gasto ou objetivo).
        --------------------------------------------------------------------- */
-    const CAMPOS_FINANCAS = {
+    const CORES_PRESET = ['#D4572A', '#2D7A4F', '#4A7FB5', '#8B6FB5', '#C99A3E', '#6B645C'];
+
+    const CAMPOS_MODAL = {
       renda: [
         { nome: 'data', rotulo: 'Data', tipo: 'date' },
         { nome: 'descricao', rotulo: 'Descrição', tipo: 'text' },
@@ -1670,19 +1846,32 @@
         { nome: 'parcelas', rotulo: 'Parcelas', tipo: 'number' },
         { nome: 'pago', rotulo: 'Já foi pago', tipo: 'checkbox' },
       ],
+      evento: [
+        { nome: 'titulo', rotulo: 'Título', tipo: 'text' },
+        { nome: 'data', rotulo: 'Data', tipo: 'date' },
+        { nome: 'hora_inicio', rotulo: 'Horário de início (opcional)', tipo: 'time' },
+        { nome: 'hora_fim', rotulo: 'Horário de término (opcional)', tipo: 'time' },
+        { nome: 'cor', rotulo: 'Cor', tipo: 'cor' },
+        { nome: 'concluido', rotulo: 'Já concluído', tipo: 'checkbox' },
+      ],
     };
 
-    const TITULOS_FINANCAS = { renda: 'renda', meta: 'objetivo', gasto: 'gasto' };
-    const TABELAS_FINANCAS = { renda: 'financas_rendas', meta: 'financas_metas', gasto: 'financas_gastos' };
+    const TITULOS_MODAL = { renda: 'renda', meta: 'objetivo', gasto: 'gasto', evento: 'compromisso' };
+    const TABELAS_MODAL = {
+      renda: 'financas_rendas',
+      meta: 'financas_metas',
+      gasto: 'financas_gastos',
+      evento: 'calendario_eventos',
+    };
 
     function abrirModal(tipo, itemExistente) {
       modalTipoAtual = tipo;
-      modalIdEdicao = itemExistente ? itemExistente.id : null;
+      modalIdEdicao = itemExistente && itemExistente.id ? itemExistente.id : null;
 
       document.getElementById('modal-titulo').textContent =
-        (itemExistente ? 'Editar ' : 'Novo(a) ') + TITULOS_FINANCAS[tipo];
+        (modalIdEdicao ? 'Editar ' : 'Novo(a) ') + TITULOS_MODAL[tipo];
 
-      document.getElementById('modal-campos').innerHTML = CAMPOS_FINANCAS[tipo].map((campo) => {
+      document.getElementById('modal-campos').innerHTML = CAMPOS_MODAL[tipo].map((campo) => {
         const valorAtual = itemExistente ? (itemExistente[campo.nome] ?? '') : '';
 
         if (campo.tipo === 'select') {
@@ -1700,6 +1889,15 @@
               <label><input type="checkbox" id="campo-${campo.nome}" name="${campo.nome}" ${valorAtual ? 'checked' : ''} /> ${campo.rotulo}</label>
             </div>`;
         }
+        if (campo.tipo === 'cor') {
+          return `
+            <div class="campo">
+              <label>${campo.rotulo}</label>
+              <div class="seletor-cores" id="campo-${campo.nome}">
+                ${CORES_PRESET.map((c) => `<button type="button" class="swatch-cor ${(valorAtual || CORES_PRESET[0]) === c ? 'selecionada' : ''}" style="background:${c}" data-cor="${c}" aria-label="Cor ${c}"></button>`).join('')}
+              </div>
+            </div>`;
+        }
         const passo = campo.tipo === 'number' ? 'step="0.01"' : '';
         const valorInicial = campo.nome === 'parcelas' && valorAtual === '' ? 1 : valorAtual;
         return `
@@ -1708,6 +1906,16 @@
             <input type="${campo.tipo}" id="campo-${campo.nome}" name="${campo.nome}" value="${valorInicial}" ${passo} />
           </div>`;
       }).join('');
+
+      // Liga o clique nas bolinhas de cor (marca a selecionada, desmarca as outras).
+      document.querySelectorAll('.seletor-cores').forEach((grupo) => {
+        grupo.querySelectorAll('.swatch-cor').forEach((sw) => {
+          sw.addEventListener('click', () => {
+            grupo.querySelectorAll('.swatch-cor').forEach((s) => s.classList.remove('selecionada'));
+            sw.classList.add('selecionada');
+          });
+        });
+      });
 
       document.getElementById('modal-overlay').classList.remove('oculto');
     }
@@ -1727,9 +1935,14 @@
       document.getElementById('modal-form').addEventListener('submit', async (evento) => {
         evento.preventDefault();
 
-        const campos = CAMPOS_FINANCAS[modalTipoAtual];
+        const campos = CAMPOS_MODAL[modalTipoAtual];
         const dados = {};
         campos.forEach((campo) => {
+          if (campo.tipo === 'cor') {
+            const selecionada = document.querySelector(`#campo-${campo.nome} .swatch-cor.selecionada`);
+            dados[campo.nome] = selecionada ? selecionada.dataset.cor : CORES_PRESET[0];
+            return;
+          }
           const el = document.getElementById(`campo-${campo.nome}`);
           if (campo.tipo === 'checkbox') {
             dados[campo.nome] = el.checked;
@@ -1740,7 +1953,8 @@
           }
         });
 
-        const tabela = TABELAS_FINANCAS[modalTipoAtual];
+        const ehFinancas = modalTipoAtual === 'renda' || modalTipoAtual === 'meta' || modalTipoAtual === 'gasto';
+        const tabela = TABELAS_MODAL[modalTipoAtual];
         const botaoSalvar = document.getElementById('modal-salvar');
         botaoSalvar.disabled = true;
         botaoSalvar.textContent = 'Salvando...';
@@ -1750,13 +1964,19 @@
             const { error } = await sb.from(tabela).update(dados).eq('id', modalIdEdicao);
             if (error) throw error;
           } else {
-            dados.mes = mesSelecionado;
-            dados.ano = anoSelecionado;
+            if (ehFinancas) {
+              dados.mes = mesSelecionado;
+              dados.ano = anoSelecionado;
+            }
             const { error } = await sb.from(tabela).insert(dados);
             if (error) throw error;
           }
           fecharModal();
-          await recarregarFinancas();
+          if (modalTipoAtual === 'evento') {
+            await recarregarCalendario();
+          } else {
+            await recarregarFinancas();
+          }
         } catch (erro) {
           alert('Não foi possível salvar. Tente novamente.');
           console.error(erro);
@@ -1800,11 +2020,198 @@
       document.getElementById('financas-ano-atual').textContent = anoSelecionado;
     }
 
+    /* ========================================================================
+       ABA CALENDÁRIO: grade do mês + agenda do dia selecionado. Compromissos
+       são criados, editados e apagados direto no painel (mesmo modal usado
+       pelas Finanças).
+       ======================================================================== */
+    function formatarDataISOCal(data) {
+      return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+    }
+
+    function capitalizar(texto) {
+      return texto.charAt(0).toUpperCase() + texto.slice(1);
+    }
+
+    function formatarHorarioEvento(ev) {
+      if (!ev.hora_inicio) return 'Dia todo';
+      const inicio = ev.hora_inicio.slice(0, 5);
+      const fim = ev.hora_fim ? ev.hora_fim.slice(0, 5) : '';
+      return fim ? `${inicio} às ${fim}` : inicio;
+    }
+
+    async function recarregarCalendario() {
+      try {
+        todosEventosCalendario = await buscarTudo('calendario_eventos');
+        document.getElementById('aviso-erro-calendario').classList.add('oculto');
+      } catch (erro) {
+        console.error('Erro ao carregar calendário:', erro);
+        const aviso = document.getElementById('aviso-erro-calendario');
+        aviso.textContent = 'Não foi possível carregar o calendário. Verifique se o calendario-setup.sql já foi executado no Supabase.';
+        aviso.classList.remove('oculto');
+      }
+      renderizarCalendario();
+    }
+
+    async function apagarEvento(id) {
+      if (!confirm('Tem certeza que deseja apagar este compromisso?')) return;
+      try {
+        const { error } = await sb.from('calendario_eventos').delete().eq('id', id);
+        if (error) throw error;
+        await recarregarCalendario();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function alternarConcluidoEvento(id, concluido) {
+      try {
+        const { error } = await sb.from('calendario_eventos').update({ concluido }).eq('id', id);
+        if (error) throw error;
+        const item = todosEventosCalendario.find((e) => e.id === id);
+        if (item) item.concluido = concluido;
+        renderizarCalendario();
+      } catch (erro) {
+        alert('Não foi possível atualizar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    function gradeDiasHtml() {
+      const primeiroDia = new Date(anoCalendarioAtual, mesCalendarioAtual, 1);
+      const diaSemanaPrimeiro = (primeiroDia.getDay() + 6) % 7; // 0 = segunda-feira
+      const diasNoMes = new Date(anoCalendarioAtual, mesCalendarioAtual + 1, 0).getDate();
+
+      const celulas = [];
+      for (let i = 0; i < diaSemanaPrimeiro; i++) celulas.push(null);
+      for (let d = 1; d <= diasNoMes; d++) celulas.push(d);
+      while (celulas.length % 7 !== 0) celulas.push(null);
+
+      const hojeISO = formatarDataISOCal(new Date());
+
+      return celulas.map((dia) => {
+        if (!dia) return '<div class="dia-celula fora-do-mes"></div>';
+
+        const iso = `${anoCalendarioAtual}-${String(mesCalendarioAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        const eventosDoDia = todosEventosCalendario.filter((e) => e.data === iso);
+        const coresUnicas = [...new Set(eventosDoDia.map((e) => e.cor || CORES_PRESET[0]))].slice(0, 3);
+
+        const classes = ['dia-celula'];
+        if (iso === hojeISO) classes.push('hoje');
+        if (iso === diaSelecionado) classes.push('ativo');
+
+        return `
+          <button type="button" class="${classes.join(' ')}" data-dia-iso="${iso}">
+            <span class="numero-dia">${dia}</span>
+            ${coresUnicas.length ? `<span class="dia-pontos">${coresUnicas.map((c) => `<i style="background:${c}"></i>`).join('')}</span>` : ''}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function agendaDiaHtml() {
+      const eventosDoDia = todosEventosCalendario
+        .filter((e) => e.data === diaSelecionado)
+        .sort((a, b) => (a.hora_inicio || '99:99').localeCompare(b.hora_inicio || '99:99'));
+
+      const dataObj = new Date(`${diaSelecionado}T00:00:00`);
+      const formatoTitulo = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+
+      return `
+        <div class="cartao bloco-agenda">
+          <div class="cabecalho-bloco-financas">
+            <h3>${capitalizar(formatoTitulo.format(dataObj))}</h3>
+            <button type="button" class="botao-adicionar" id="botao-novo-compromisso">+ Novo compromisso</button>
+          </div>
+          ${eventosDoDia.length === 0 ? '<p class="estado-vazio">Nenhum compromisso neste dia.</p>' : `
+            <div class="lista-compromissos">
+              ${eventosDoDia.map((ev) => `
+                <div class="compromisso-card ${ev.concluido ? 'concluido' : ''}" style="border-left-color:${ev.cor || CORES_PRESET[0]}">
+                  <input type="checkbox" data-concluido-evento="${ev.id}" ${ev.concluido ? 'checked' : ''} aria-label="Marcar como concluído" />
+                  <div class="info-compromisso">
+                    <span class="horario-compromisso">${formatarHorarioEvento(ev)}</span>
+                    <span class="titulo-compromisso">${ev.titulo || 'Sem título'}</span>
+                  </div>
+                  <div class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-evento="${ev.id}" aria-label="Editar compromisso">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-evento="${ev.id}" aria-label="Apagar compromisso">🗑</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderizarCalendario() {
+      const container = document.getElementById('calendario-conteudo');
+
+      container.innerHTML = `
+        <div class="calendario-layout">
+          <div class="cartao bloco-calendario-mes">
+            <div class="cabecalho-mes-calendario">
+              <button type="button" class="botao-icone" id="calendario-mes-anterior" aria-label="Mês anterior">‹</button>
+              <h3>${NOMES_MESES_COMPLETOS[mesCalendarioAtual]} ${anoCalendarioAtual}</h3>
+              <button type="button" class="botao-icone" id="calendario-mes-seguinte" aria-label="Próximo mês">›</button>
+            </div>
+            <div class="grade-dias-cabecalho">
+              <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>
+            </div>
+            <div class="grade-dias">${gradeDiasHtml()}</div>
+            <button type="button" class="botao botao-secundario" id="botao-hoje-calendario" style="width: 100%; margin-top: 14px;">Ir para hoje</button>
+          </div>
+          <div id="agenda-dia-container">${agendaDiaHtml()}</div>
+        </div>
+      `;
+
+      document.getElementById('calendario-mes-anterior').addEventListener('click', () => {
+        mesCalendarioAtual--;
+        if (mesCalendarioAtual < 0) { mesCalendarioAtual = 11; anoCalendarioAtual--; }
+        renderizarCalendario();
+      });
+      document.getElementById('calendario-mes-seguinte').addEventListener('click', () => {
+        mesCalendarioAtual++;
+        if (mesCalendarioAtual > 11) { mesCalendarioAtual = 0; anoCalendarioAtual++; }
+        renderizarCalendario();
+      });
+      document.getElementById('botao-hoje-calendario').addEventListener('click', () => {
+        const hoje = new Date();
+        mesCalendarioAtual = hoje.getMonth();
+        anoCalendarioAtual = hoje.getFullYear();
+        diaSelecionado = formatarDataISOCal(hoje);
+        renderizarCalendario();
+      });
+
+      document.querySelectorAll('[data-dia-iso]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          diaSelecionado = btn.dataset.diaIso;
+          renderizarCalendario();
+        });
+      });
+
+      document.getElementById('botao-novo-compromisso').addEventListener('click', () => {
+        abrirModal('evento', { data: diaSelecionado });
+      });
+      document.querySelectorAll('[data-editar-evento]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          abrirModal('evento', todosEventosCalendario.find((e) => e.id === btn.dataset.editarEvento));
+        });
+      });
+      document.querySelectorAll('[data-apagar-evento]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarEvento(btn.dataset.apagarEvento));
+      });
+      document.querySelectorAll('[data-concluido-evento]').forEach((chk) => {
+        chk.addEventListener('change', () => alternarConcluidoEvento(chk.dataset.concluidoEvento, chk.checked));
+      });
+    }
+
     /* ---------------------------------------------------------------------
        Navegação: abas, filtro de período e menu mobile.
        --------------------------------------------------------------------- */
     function configurarAbas() {
-      const titulos = { principal: 'Menu Principal', portfolio: 'Portfólio', financas: 'Finanças' };
+      const titulos = { principal: 'Menu Principal', portfolio: 'Portfólio', financas: 'Finanças', calendario: 'Calendário' };
 
       document.querySelectorAll('.nav-item').forEach((botao) => {
         botao.addEventListener('click', () => {
@@ -1818,7 +2225,8 @@
 
           document.getElementById('titulo-pagina').textContent = titulos[aba];
 
-          document.querySelector('.filtro-periodo').style.display = aba === 'financas' ? 'none' : 'flex';
+          document.querySelector('.filtro-periodo').style.display =
+            (aba === 'financas' || aba === 'calendario') ? 'none' : 'flex';
           document.getElementById('financas-seletor').style.display = aba === 'financas' ? 'flex' : 'none';
 
           fecharMenuMobile();
@@ -1891,9 +2299,11 @@
         redesenharTudo();
       }
 
-      // Carregamento das finanças é independente: se essas tabelas ainda não
-      // existirem no Supabase, isso não deve travar o resto do painel.
+      // Carregamento de finanças e calendário é independente do resto: se
+      // essas tabelas ainda não existirem no Supabase, isso não deve travar
+      // o restante do painel.
       await recarregarFinancas();
+      await recarregarCalendario();
     })();
   </script>
 </body>
