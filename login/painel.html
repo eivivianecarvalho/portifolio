@@ -962,6 +962,149 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ---------- Abas Roteiros (UGC / TikTok / Insta) ---------- */
+    .cabecalho-aba-roteiros {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .cabecalho-aba-roteiros .saudacao {
+      margin-bottom: 0;
+    }
+
+    .lista-roteiros {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cartao-roteiro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-medio);
+      background: var(--cor-branco);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .cartao-roteiro:hover {
+      border-color: var(--cor-coral);
+      cursor: pointer;
+    }
+
+    .cartao-roteiro .info-roteiro {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cartao-roteiro .produto-roteiro {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--cor-grafite);
+      margin-bottom: 4px;
+    }
+
+    .cartao-roteiro .meta-roteiro {
+      font-size: 13px;
+      color: var(--cor-coral-escuro);
+      font-weight: 500;
+    }
+
+    .cartao-roteiro .previa-roteiro {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+      margin-top: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ---------- Modal grande do roteiro completo ---------- */
+    .modal-roteiro-caixa {
+      width: 100%;
+      max-width: 900px;
+      height: 85vh;
+      background: var(--cor-branco);
+      border-radius: var(--raio-grande);
+      box-shadow: var(--sombra-media);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-roteiro-cabecalho {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .modal-roteiro-cabecalho h3 {
+      font-size: 22px;
+    }
+
+    .modal-roteiro-form {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .modal-roteiro-linha-campos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .campo-roteiro-texto {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      margin-top: 6px;
+      margin-bottom: 18px;
+    }
+
+    .campo-roteiro-texto textarea {
+      flex: 1;
+      min-height: 0;
+      resize: none;
+      padding: 16px;
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-pequeno);
+      background: var(--cor-creme);
+      color: var(--cor-grafite);
+      font-family: var(--fonte-texto);
+      font-size: 15px;
+      line-height: 1.6;
+      outline: none;
+    }
+
+    .campo-roteiro-texto textarea:focus {
+      border-color: var(--cor-coral);
+      background: var(--cor-branco);
+    }
+
+    @media (max-width: 700px) {
+      .modal-roteiro-caixa {
+        height: 92vh;
+        padding: 20px;
+      }
+
+      .modal-roteiro-linha-campos {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -990,6 +1133,18 @@
           <button class="nav-item" data-tab="calendario">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             Calendário
+          </button>
+          <button class="nav-item" data-tab="roteiros-ugc">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Roteiros UGC
+          </button>
+          <button class="nav-item" data-tab="roteiros-tiktok">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Roteiros TikTok
+          </button>
+          <button class="nav-item" data-tab="roteiros-insta">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Roteiros Insta
           </button>
         </nav>
       </div>
@@ -1120,7 +1275,65 @@
         <div id="aviso-erro-calendario" class="faixa-erro oculto"></div>
         <div id="calendario-conteudo"></div>
       </section>
+
+      <!-- ========= ABAS: ROTEIROS (UGC / TikTok / Insta) ========= -->
+      <div id="aviso-erro-roteiros" class="faixa-erro oculto"></div>
+
+      <section class="painel-aba" id="aba-roteiros-ugc">
+        <div class="cabecalho-aba-roteiros">
+          <p class="saudacao">Seus roteiros de UGC, organizados num só lugar.</p>
+          <button type="button" class="botao-adicionar" data-categoria-roteiro="ugc">+ Novo roteiro</button>
+        </div>
+        <div class="lista-roteiros" id="lista-roteiros-ugc"></div>
+      </section>
+
+      <section class="painel-aba" id="aba-roteiros-tiktok">
+        <div class="cabecalho-aba-roteiros">
+          <p class="saudacao">Seus roteiros de TikTok, organizados num só lugar.</p>
+          <button type="button" class="botao-adicionar" data-categoria-roteiro="tiktok">+ Novo roteiro</button>
+        </div>
+        <div class="lista-roteiros" id="lista-roteiros-tiktok"></div>
+      </section>
+
+      <section class="painel-aba" id="aba-roteiros-insta">
+        <div class="cabecalho-aba-roteiros">
+          <p class="saudacao">Seus roteiros de Instagram, organizados num só lugar.</p>
+          <button type="button" class="botao-adicionar" data-categoria-roteiro="insta">+ Novo roteiro</button>
+        </div>
+        <div class="lista-roteiros" id="lista-roteiros-insta"></div>
+      </section>
     </main>
+  </div>
+
+  <!-- Modal grande para ler/escrever o roteiro completo sem precisar ampliar -->
+  <div class="modal-overlay oculto" id="modal-roteiro-overlay">
+    <div class="modal-roteiro-caixa">
+      <div class="modal-roteiro-cabecalho">
+        <h3 id="modal-roteiro-titulo">Novo roteiro</h3>
+        <button type="button" class="botao-icone" id="modal-roteiro-fechar" aria-label="Fechar">✕</button>
+      </div>
+      <form id="modal-roteiro-form" class="modal-roteiro-form">
+        <div class="modal-roteiro-linha-campos">
+          <div class="campo">
+            <label for="roteiro-data-postagem">Data de postagem</label>
+            <input type="date" id="roteiro-data-postagem" />
+          </div>
+          <div class="campo">
+            <label for="roteiro-produto">Produto</label>
+            <input type="text" id="roteiro-produto" placeholder="Nome do produto" />
+          </div>
+        </div>
+        <div class="campo campo-roteiro-texto">
+          <label for="roteiro-texto">Roteiro completo</label>
+          <textarea id="roteiro-texto" placeholder="Escreva o roteiro completo aqui..."></textarea>
+        </div>
+        <div class="modal-acoes">
+          <button type="button" class="botao botao-secundario oculto" id="modal-roteiro-apagar" style="margin-right: auto; color: var(--cor-erro); border-color: var(--cor-erro);">Apagar</button>
+          <button type="button" class="botao botao-secundario" id="modal-roteiro-cancelar">Cancelar</button>
+          <button type="submit" class="botao" id="modal-roteiro-salvar">Salvar</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Modal reutilizável para adicionar/editar renda, gasto ou objetivo -->
@@ -1167,6 +1380,12 @@
     let mesCalendarioAtual = new Date().getMonth(); // 0-11
     let anoCalendarioAtual = new Date().getFullYear();
     let diaSelecionado = formatarDataISOCal(new Date());
+
+    // Estado das abas Roteiros (UGC / TikTok / Insta), que compartilham a
+    // mesma tabela e a mesma lógica, diferenciadas pela coluna "categoria".
+    let todosRoteiros = [];
+    let modalRoteiroCategoriaAtual = null;
+    let modalRoteiroIdEdicao = null;
 
     /**
      * Busca todas as linhas de uma tabela, contornando o limite de 1000
@@ -2207,11 +2426,167 @@
       });
     }
 
+    /* ========================================================================
+       ABAS ROTEIROS (UGC / TikTok / Insta): mesma tabela "roteiros", cada
+       aba mostra só a sua categoria. O roteiro completo abre num modal
+       grande, com um textarea que ocupa quase a tela toda, pra dar pra ler
+       sem precisar ampliar o navegador.
+       ======================================================================== */
+    function formatarDataCompleta(dataISO) {
+      if (!dataISO) return null;
+      const [ano, mes, dia] = dataISO.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    async function recarregarRoteiros() {
+      try {
+        todosRoteiros = await buscarTudo('roteiros');
+        document.getElementById('aviso-erro-roteiros').classList.add('oculto');
+      } catch (erro) {
+        console.error('Erro ao carregar roteiros:', erro);
+        const aviso = document.getElementById('aviso-erro-roteiros');
+        aviso.textContent = 'Não foi possível carregar os roteiros. Verifique se o roteiros-setup.sql já foi executado no Supabase.';
+        aviso.classList.remove('oculto');
+      }
+      renderizarRoteiros();
+    }
+
+    function renderizarRoteiros() {
+      ['ugc', 'tiktok', 'insta'].forEach((categoria) => {
+        const lista = todosRoteiros
+          .filter((r) => r.categoria === categoria)
+          .sort((a, b) => (a.data_postagem || '9999-99-99').localeCompare(b.data_postagem || '9999-99-99'));
+
+        const container = document.getElementById(`lista-roteiros-${categoria}`);
+
+        if (lista.length === 0) {
+          container.innerHTML = '<p class="estado-vazio">Nenhum roteiro cadastrado ainda.</p>';
+          return;
+        }
+
+        container.innerHTML = lista.map((r) => `
+          <div class="cartao-roteiro" data-abrir-roteiro="${r.id}">
+            <div class="info-roteiro">
+              <div class="produto-roteiro">${r.produto || 'Sem produto definido'}</div>
+              <div class="meta-roteiro">${formatarDataCompleta(r.data_postagem) || 'Sem data de postagem'}</div>
+              <div class="previa-roteiro">${r.roteiro ? r.roteiro.slice(0, 140) : 'Roteiro ainda vazio.'}</div>
+            </div>
+            <button type="button" class="botao-icone" data-apagar-roteiro="${r.id}" aria-label="Apagar roteiro">🗑</button>
+          </div>
+        `).join('');
+
+        container.querySelectorAll('[data-abrir-roteiro]').forEach((cartao) => {
+          cartao.addEventListener('click', (evento) => {
+            if (evento.target.closest('[data-apagar-roteiro]')) return;
+            abrirModalRoteiro(categoria, todosRoteiros.find((r) => r.id === cartao.dataset.abrirRoteiro));
+          });
+        });
+        container.querySelectorAll('[data-apagar-roteiro]').forEach((btn) => {
+          btn.addEventListener('click', (evento) => {
+            evento.stopPropagation();
+            apagarRoteiro(btn.dataset.apagarRoteiro);
+          });
+        });
+      });
+    }
+
+    async function apagarRoteiro(id) {
+      if (!confirm('Tem certeza que deseja apagar este roteiro?')) return;
+      try {
+        const { error } = await sb.from('roteiros').delete().eq('id', id);
+        if (error) throw error;
+        await recarregarRoteiros();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    function abrirModalRoteiro(categoria, itemExistente) {
+      modalRoteiroCategoriaAtual = categoria;
+      modalRoteiroIdEdicao = itemExistente && itemExistente.id ? itemExistente.id : null;
+
+      document.getElementById('modal-roteiro-titulo').textContent = modalRoteiroIdEdicao ? 'Editar roteiro' : 'Novo roteiro';
+      document.getElementById('roteiro-data-postagem').value = (itemExistente && itemExistente.data_postagem) || '';
+      document.getElementById('roteiro-produto').value = (itemExistente && itemExistente.produto) || '';
+      document.getElementById('roteiro-texto').value = (itemExistente && itemExistente.roteiro) || '';
+      document.getElementById('modal-roteiro-apagar').classList.toggle('oculto', !modalRoteiroIdEdicao);
+
+      document.getElementById('modal-roteiro-overlay').classList.remove('oculto');
+    }
+
+    function fecharModalRoteiro() {
+      document.getElementById('modal-roteiro-overlay').classList.add('oculto');
+      modalRoteiroCategoriaAtual = null;
+      modalRoteiroIdEdicao = null;
+    }
+
+    function configurarModalRoteiro() {
+      document.querySelectorAll('[data-categoria-roteiro]').forEach((btn) => {
+        btn.addEventListener('click', () => abrirModalRoteiro(btn.dataset.categoriaRoteiro));
+      });
+
+      document.getElementById('modal-roteiro-fechar').addEventListener('click', fecharModalRoteiro);
+      document.getElementById('modal-roteiro-cancelar').addEventListener('click', fecharModalRoteiro);
+      document.getElementById('modal-roteiro-overlay').addEventListener('click', (evento) => {
+        if (evento.target.id === 'modal-roteiro-overlay') fecharModalRoteiro();
+      });
+
+      document.getElementById('modal-roteiro-apagar').addEventListener('click', async () => {
+        if (!modalRoteiroIdEdicao) return;
+        const idParaApagar = modalRoteiroIdEdicao;
+        fecharModalRoteiro();
+        await apagarRoteiro(idParaApagar);
+      });
+
+      document.getElementById('modal-roteiro-form').addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+
+        const dados = {
+          data_postagem: document.getElementById('roteiro-data-postagem').value || null,
+          produto: document.getElementById('roteiro-produto').value || null,
+          roteiro: document.getElementById('roteiro-texto').value || null,
+        };
+
+        const botaoSalvar = document.getElementById('modal-roteiro-salvar');
+        botaoSalvar.disabled = true;
+        botaoSalvar.textContent = 'Salvando...';
+
+        try {
+          if (modalRoteiroIdEdicao) {
+            const { error } = await sb.from('roteiros').update(dados).eq('id', modalRoteiroIdEdicao);
+            if (error) throw error;
+          } else {
+            dados.categoria = modalRoteiroCategoriaAtual;
+            const { error } = await sb.from('roteiros').insert(dados);
+            if (error) throw error;
+          }
+          fecharModalRoteiro();
+          await recarregarRoteiros();
+        } catch (erro) {
+          alert('Não foi possível salvar. Tente novamente.');
+          console.error(erro);
+        } finally {
+          botaoSalvar.disabled = false;
+          botaoSalvar.textContent = 'Salvar';
+        }
+      });
+    }
+
     /* ---------------------------------------------------------------------
        Navegação: abas, filtro de período e menu mobile.
        --------------------------------------------------------------------- */
     function configurarAbas() {
-      const titulos = { principal: 'Menu Principal', portfolio: 'Portfólio', financas: 'Finanças', calendario: 'Calendário' };
+      const titulos = {
+        principal: 'Menu Principal',
+        portfolio: 'Portfólio',
+        financas: 'Finanças',
+        calendario: 'Calendário',
+        'roteiros-ugc': 'Roteiros UGC',
+        'roteiros-tiktok': 'Roteiros TikTok',
+        'roteiros-insta': 'Roteiros Insta',
+      };
+      const abasSemFiltroPeriodo = ['financas', 'calendario', 'roteiros-ugc', 'roteiros-tiktok', 'roteiros-insta'];
 
       document.querySelectorAll('.nav-item').forEach((botao) => {
         botao.addEventListener('click', () => {
@@ -2226,7 +2601,7 @@
           document.getElementById('titulo-pagina').textContent = titulos[aba];
 
           document.querySelector('.filtro-periodo').style.display =
-            (aba === 'financas' || aba === 'calendario') ? 'none' : 'flex';
+            abasSemFiltroPeriodo.includes(aba) ? 'none' : 'flex';
           document.getElementById('financas-seletor').style.display = aba === 'financas' ? 'flex' : 'none';
 
           fecharMenuMobile();
@@ -2282,6 +2657,7 @@
       configurarMenuMobile();
       configurarModalFinancas();
       configurarSeletorFinancas();
+      configurarModalRoteiro();
 
       try {
         [todosEventos, todosLeads] = await Promise.all([
@@ -2299,11 +2675,12 @@
         redesenharTudo();
       }
 
-      // Carregamento de finanças e calendário é independente do resto: se
-      // essas tabelas ainda não existirem no Supabase, isso não deve travar
-      // o restante do painel.
+      // Carregamento de finanças, calendário e roteiros é independente do
+      // resto: se essas tabelas ainda não existirem no Supabase, isso não
+      // deve travar o restante do painel.
       await recarregarFinancas();
       await recarregarCalendario();
+      await recarregarRoteiros();
     })();
   </script>
 </body>
