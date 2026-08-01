@@ -1960,20 +1960,26 @@
 
     function tabelaGastos(lista) {
       if (lista.length === 0) return '<p class="estado-vazio">Nenhum gasto lançado neste mês.</p>';
+
+      const listaOrdenada = [...lista].sort((a, b) =>
+        (a.data_vencimento || '9999-99-99').localeCompare(b.data_vencimento || '9999-99-99')
+      );
+
       return `
         <div class="tabela-financas-wrap">
           <table class="tabela-financas">
             <thead>
               <tr>
-                <th>Categoria</th><th>Descrição</th><th>Pagamento</th><th>Tipo</th>
+                <th>Categoria</th><th>Descrição</th><th>Vencimento</th><th>Pagamento</th><th>Tipo</th>
                 <th>Valor</th><th>Parcelas</th><th>Pago</th><th></th>
               </tr>
             </thead>
             <tbody>
-              ${lista.map((g) => `
+              ${listaOrdenada.map((g) => `
                 <tr>
                   <td>${g.categoria || '-'}</td>
                   <td>${g.descricao || '-'}</td>
+                  <td>${formatarDataCompleta(g.data_vencimento) || '-'}</td>
                   <td>${g.forma_pagamento || '-'}</td>
                   <td>${badgeTipo(g.tipo)}</td>
                   <td>${formatarMoeda(g.valor)}</td>
@@ -2059,6 +2065,7 @@
       gasto: [
         { nome: 'categoria', rotulo: 'Categoria', tipo: 'text' },
         { nome: 'descricao', rotulo: 'Descrição', tipo: 'text' },
+        { nome: 'data_vencimento', rotulo: 'Data de vencimento', tipo: 'date' },
         { nome: 'forma_pagamento', rotulo: 'Forma de pagamento', tipo: 'text' },
         { nome: 'tipo', rotulo: 'Tipo', tipo: 'select', opcoes: ['Necessidades', 'Desejos'] },
         { nome: 'valor', rotulo: 'Valor (R$)', tipo: 'number' },
