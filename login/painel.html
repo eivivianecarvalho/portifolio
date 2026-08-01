@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Painel | meu.painel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Cliente Supabase (CDN) carregado antes da lógica de autenticação -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
+
+  <style>
+    /* O corpo começa invisível: só aparece depois que Auth.checkAuth() confirmar a sessão. */
+    body {
+      visibility: hidden;
+    }
+
+    body.painel-pronto {
+      visibility: visible;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      background: var(--cor-branco);
+      border-right: 1px solid var(--cor-borda);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 20;
+    }
+
+    .sidebar-topo {
+      padding: 28px 22px;
+    }
+
+    .sidebar .logo {
+      font-family: var(--fonte-titulo);
+      font-size: 21px;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+
+    .sidebar .logo span {
+      color: var(--cor-coral);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 14px;
+      border: none;
+      background: transparent;
+      border-radius: var(--raio-pequeno);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--cor-texto-suave);
+      text-align: left;
+      margin-bottom: 6px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-item svg {
+      flex-shrink: 0;
+    }
+
+    .nav-item:hover {
+      background: var(--cor-creme);
+      color: var(--cor-grafite);
+    }
+
+    .nav-item.ativo {
+      background: var(--cor-coral);
+      color: var(--cor-branco);
+    }
+
+    .sidebar-rodape {
+      padding: 18px 22px 24px;
+      border-top: 1px solid var(--cor-borda);
+    }
+
+    .rodape-email {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    /* ---------- Conteúdo ---------- */
+    .conteudo {
+      flex: 1;
+      padding: 32px 40px 60px;
+      max-width: 1180px;
+    }
+
+    .topo-conteudo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .topo-conteudo h1 {
+      font-size: 28px;
+    }
+
+    .botao-menu-mobile {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-branco);
+      border-radius: var(--raio-pequeno);
+    }
+
+    /* ---------- Filtro de período ---------- */
+    .filtro-periodo {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .filtro-periodo button {
+      padding: 9px 18px;
+      border: 1px solid var(--cor-borda);
+      background: var(--cor-branco);
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cor-texto-suave);
+      transition: all 0.15s ease;
+    }
+
+    .filtro-periodo button:hover {
+      border-color: var(--cor-coral);
+      color: var(--cor-grafite);
+    }
+
+    .filtro-periodo button.ativo {
+      background: var(--cor-coral);
+      border-color: var(--cor-coral);
+      color: var(--cor-branco);
+    }
+
+    /* ---------- Painéis das abas ---------- */
+    .painel-aba {
+      display: none;
+    }
+
+    .painel-aba.ativo {
+      display: block;
+    }
+
+    .saudacao {
+      color: var(--cor-texto-suave);
+      font-size: 15px;
+      margin-bottom: 22px;
+    }
+
+    /* ---------- Cartões de número ---------- */
+    .grade-numeros {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .cartao-numero {
+      padding: 20px;
+    }
+
+    .cartao-numero .rotulo {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .cartao-numero .valor {
+      font-family: var(--fonte-titulo);
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .cartao-numero.destaque {
+      background: var(--cor-coral);
+    }
+
+    .cartao-numero.destaque .rotulo,
+    .cartao-numero.destaque .valor {
+      color: var(--cor-branco);
+    }
+
+    /* ---------- Cartão de contato em destaque ---------- */
+    .cartao-contato {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .cartao-contato .valor {
+      font-family: var(--fonte-titulo);
+      font-size: 40px;
+      font-weight: 600;
+      color: var(--cor-coral);
+    }
+
+    .cartao-contato .texto p:first-child {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .cartao-contato .texto p.explicacao {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+      max-width: 480px;
+    }
+
+    /* ---------- Gráfico de barras (14 dias) ---------- */
+    .cartao-grafico h3 {
+      font-size: 17px;
+      margin-bottom: 20px;
+    }
+
+    .grafico-barras {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 160px;
+      padding-top: 10px;
+    }
+
+    .barra-dia {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+    }
+
+    .barra-dia .barra {
+      width: 100%;
+      max-width: 28px;
+      background: var(--cor-coral);
+      border-radius: 6px 6px 0 0;
+      min-height: 3px;
+      transition: background 0.15s ease;
+    }
+
+    .barra-dia:hover .barra {
+      background: var(--cor-coral-escuro);
+    }
+
+    .barra-dia .rotulo-dia {
+      font-size: 10px;
+      color: var(--cor-texto-suave);
+      margin-top: 8px;
+      white-space: nowrap;
+    }
+
+    /* ---------- Aba Portfólio: blocos ---------- */
+    .grade-portfolio {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .bloco-portfolio {
+      margin-bottom: 0;
+    }
+
+    .bloco-portfolio h3 {
+      font-size: 17px;
+      margin-bottom: 18px;
+    }
+
+    /* Vídeos mais vistos */
+    .lista-videos {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .item-video {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .item-video img {
+      width: 84px;
+      height: 47px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+      background: var(--cor-creme);
+    }
+
+    .item-video .info-video {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-video .titulo-video {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cor-grafite);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .barra-horizontal-fundo {
+      background: var(--cor-creme);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .barra-horizontal-preenchimento {
+      background: var(--cor-coral);
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .item-video .contagem-video {
+      font-size: 12px;
+      color: var(--cor-texto-suave);
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* Botões mais clicados / contato */
+    .lista-barras {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .linha-barra {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .linha-barra .cabecalho-barra {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .linha-barra .cabecalho-barra .nome {
+      color: var(--cor-grafite);
+      font-weight: 500;
+    }
+
+    .linha-barra .cabecalho-barra .numero {
+      color: var(--cor-texto-suave);
+    }
+
+    /* Mensagens recebidas */
+    .lista-leads {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cartao-lead {
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-medio);
+      padding: 16px;
+      cursor: pointer;
+    }
+
+    .cartao-lead .topo-lead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .selo-origem {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--cor-creme);
+      color: var(--cor-texto-suave);
+    }
+
+    .selo-origem.contact {
+      background: rgba(212, 87, 42, 0.12);
+      color: var(--cor-coral-escuro);
+    }
+
+    .selo-origem.popup {
+      background: rgba(45, 122, 79, 0.12);
+      color: var(--cor-sucesso);
+    }
+
+    .cartao-lead .nome-lead {
+      font-weight: 600;
+      font-size: 15px;
+      margin-top: 8px;
+    }
+
+    .cartao-lead .meta-lead {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+      margin-top: 3px;
+    }
+
+    .detalhes-lead {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--cor-borda);
+      font-size: 14px;
+    }
+
+    .cartao-lead.expandido .detalhes-lead {
+      display: block;
+    }
+
+    .detalhes-lead .linha-detalhe {
+      margin-bottom: 8px;
+    }
+
+    .detalhes-lead .linha-detalhe strong {
+      color: var(--cor-texto-suave);
+      font-weight: 500;
+      margin-right: 6px;
+    }
+
+    .acoes-lead {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .acoes-lead a {
+      padding: 8px 14px;
+      border-radius: var(--raio-pequeno);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--cor-borda);
+      color: var(--cor-grafite);
+    }
+
+    .acoes-lead a.whatsapp {
+      background: rgba(45, 122, 79, 0.1);
+      border-color: rgba(45, 122, 79, 0.3);
+      color: var(--cor-sucesso);
+    }
+
+    .acoes-lead a.email {
+      background: rgba(212, 87, 42, 0.1);
+      border-color: rgba(212, 87, 42, 0.3);
+      color: var(--cor-coral-escuro);
+    }
+
+    /* ---------- Estado de erro geral ---------- */
+    .aviso-erro-carregamento {
+      margin: 24px 40px;
+    }
+
+    /* ---------- Overlay do menu mobile ---------- */
+    .overlay-mobile {
+      display: none;
+    }
+
+    /* ---------- Responsivo ---------- */
+    @media (max-width: 900px) {
+      .grade-numeros {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grade-portfolio {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .botao-menu-mobile {
+        display: flex;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -270px;
+        top: 0;
+        transition: left 0.2s ease;
+        box-shadow: var(--sombra-media);
+      }
+
+      .sidebar.aberta {
+        left: 0;
+      }
+
+      .overlay-mobile.ativo {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(26, 24, 22, 0.4);
+        z-index: 15;
+      }
+
+      .conteudo {
+        padding: 24px 18px 50px;
+      }
+
+      .grade-numeros {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grade-numeros {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay-mobile" id="overlay-mobile"></div>
+
+  <div class="layout">
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-topo">
+        <div class="logo">meu<span>.</span>painel</div>
+
+        <nav>
+          <button class="nav-item ativo" data-tab="principal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+            Menu Principal
+          </button>
+          <button class="nav-item" data-tab="portfolio">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            Portfólio
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-rodape">
+        <div class="rodape-email" id="email-usuario">carregando...</div>
+        <button class="botao botao-secundario" id="botao-sair" style="width: 100%;">Sair</button>
+      </div>
+    </aside>
+
+    <!-- ================= CONTEÚDO ================= -->
+    <main class="conteudo">
+      <div class="topo-conteudo">
+        <button class="botao-menu-mobile" id="botao-menu-mobile" aria-label="Abrir menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <h1 id="titulo-pagina">Menu Principal</h1>
+      </div>
+
+      <!-- Filtro de período: refiltra dados já carregados em memória -->
+      <div class="filtro-periodo">
+        <button class="ativo" data-periodo="tudo">Tudo</button>
+        <button data-periodo="7d">7d</button>
+        <button data-periodo="30d">30d</button>
+        <button data-periodo="90d">90d</button>
+      </div>
+
+      <div id="aviso-erro-carregamento" class="faixa-erro aviso-erro-carregamento oculto" style="display:none;"></div>
+
+      <!-- ========= ABA: MENU PRINCIPAL ========= -->
+      <section class="painel-aba ativo" id="aba-principal">
+        <p class="saudacao">Olá! Aqui estão os números do seu portfólio.</p>
+
+        <div class="grade-numeros">
+          <div class="cartao cartao-numero destaque">
+            <div class="rotulo">Visitas</div>
+            <div class="valor" id="num-visitas">0</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Visitantes únicos</div>
+            <div class="valor" id="num-visitantes">0</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Cliques em botões</div>
+            <div class="valor" id="num-cliques">0</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Vídeos vistos</div>
+            <div class="valor" id="num-videos">0</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Mensagens</div>
+            <div class="valor" id="num-mensagens">0</div>
+          </div>
+        </div>
+
+        <div class="cartao cartao-contato">
+          <div class="texto">
+            <p>Clicaram para entrar em contato</p>
+            <p class="explicacao">Conta quem clicou em WhatsApp, e-mail, Instagram ou no botão de enviar o formulário.</p>
+          </div>
+          <div class="valor" id="num-contato">0</div>
+        </div>
+
+        <div class="cartao cartao-grafico">
+          <h3>Visitas nos últimos 14 dias</h3>
+          <div class="grafico-barras" id="grafico-visitas"></div>
+        </div>
+      </section>
+
+      <!-- ========= ABA: PORTFÓLIO ========= -->
+      <section class="painel-aba" id="aba-portfolio">
+        <div class="grade-portfolio">
+          <div class="cartao bloco-portfolio">
+            <h3>Vídeos mais vistos</h3>
+            <div class="lista-videos" id="lista-videos"></div>
+          </div>
+
+          <div class="cartao bloco-portfolio">
+            <h3>Botões mais clicados</h3>
+            <div class="lista-barras" id="lista-botoes"></div>
+          </div>
+
+          <div class="cartao bloco-portfolio">
+            <h3>Cliques para contato</h3>
+            <div class="lista-barras" id="lista-contato"></div>
+          </div>
+
+          <div class="cartao bloco-portfolio">
+            <h3>Mensagens recebidas</h3>
+            <div class="lista-leads" id="lista-leads"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    /* ========================================================================
+       Estado em memória: os dados são buscados uma única vez ao entrar no
+       painel. Trocar de aba ou de período só refiltra e redesenha, sem
+       consultar o banco de novo.
+       ======================================================================== */
+    let todosEventos = [];
+    let todosLeads = [];
+    let periodoAtual = 'tudo';
+
+    /**
+     * Busca todas as linhas de uma tabela, contornando o limite de 1000
+     * linhas por consulta do Supabase. Busca em blocos de 1000 usando
+     * .range(), ordenado por created_at decrescente, e concatena tudo até
+     * vir um bloco menor que 1000 (sinal de que chegou ao fim).
+     */
+    async function buscarTudo(tabela) {
+      const TAMANHO_BLOCO = 1000;
+      let resultado = [];
+      let inicio = 0;
+
+      while (true) {
+        const { data, error } = await sb
+          .from(tabela)
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(inicio, inicio + TAMANHO_BLOCO - 1);
+
+        if (error) throw error;
+
+        resultado = resultado.concat(data);
+
+        if (data.length < TAMANHO_BLOCO) break;
+        inicio += TAMANHO_BLOCO;
+      }
+
+      return resultado;
+    }
+
+    /* ---------------------------------------------------------------------
+       Filtro de período: aplica sobre os dados já carregados em memória.
+       --------------------------------------------------------------------- */
+    function filtrarPorPeriodo(lista) {
+      if (periodoAtual === 'tudo') return lista;
+
+      const dias = { '7d': 7, '30d': 30, '90d': 90 }[periodoAtual];
+      const limite = new Date();
+      limite.setDate(limite.getDate() - dias);
+
+      return lista.filter((item) => new Date(item.created_at) >= limite);
+    }
+
+    /* ---------------------------------------------------------------------
+       Funções utilitárias de agregação.
+       --------------------------------------------------------------------- */
+    function nomeLegivel(nome) {
+      if (!nome) return 'Desconhecido';
+      return nome
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (letra) => letra.toUpperCase());
+    }
+
+    function agruparContagem(lista, chave) {
+      const mapa = new Map();
+      lista.forEach((item) => {
+        const chaveValor = item[chave] || 'desconhecido';
+        mapa.set(chaveValor, (mapa.get(chaveValor) || 0) + 1);
+      });
+      return [...mapa.entries()].sort((a, b) => b[1] - a[1]);
+    }
+
+    function agruparVideos(videoViews) {
+      const mapa = new Map();
+      videoViews.forEach((evento) => {
+        const id = evento.event_name || 'desconhecido';
+        const atual = mapa.get(id) || { contagem: 0, titulo: null };
+        atual.contagem++;
+        if (!atual.titulo && evento.metadata && evento.metadata.title) {
+          atual.titulo = evento.metadata.title;
+        }
+        mapa.set(id, atual);
+      });
+      return [...mapa.entries()]
+        .map(([id, v]) => ({ id, contagem: v.contagem, titulo: v.titulo || id }))
+        .sort((a, b) => b.contagem - a.contagem);
+    }
+
+    /* ---------------------------------------------------------------------
+       Redesenho geral: chamado ao carregar os dados, trocar de aba ou
+       trocar o período.
+       --------------------------------------------------------------------- */
+    function redesenharTudo() {
+      const eventos = filtrarPorPeriodo(todosEventos);
+      const leads = filtrarPorPeriodo(todosLeads);
+
+      renderizarMenuPrincipal(eventos, leads);
+      renderizarPortfolio(eventos, leads);
+    }
+
+    function renderizarMenuPrincipal(eventos, leads) {
+      const pageViews = eventos.filter((e) => e.event_type === 'page_view');
+      const visitantesUnicos = new Set(pageViews.map((e) => e.session_id)).size;
+      const cliquesBotao = eventos.filter((e) => e.event_type === 'button_click');
+      const videoViews = eventos.filter((e) => e.event_type === 'video_view');
+      const cliquesContato = cliquesBotao.filter(
+        (e) => e.event_name && e.event_name.startsWith('contact_')
+      );
+
+      document.getElementById('num-visitas').textContent = pageViews.length;
+      document.getElementById('num-visitantes').textContent = visitantesUnicos;
+      document.getElementById('num-cliques').textContent = cliquesBotao.length;
+      document.getElementById('num-videos').textContent = videoViews.length;
+      document.getElementById('num-mensagens').textContent = leads.length;
+      document.getElementById('num-contato').textContent = cliquesContato.length;
+
+      desenharGraficoVisitas(pageViews);
+    }
+
+    function desenharGraficoVisitas(pageViews) {
+      const container = document.getElementById('grafico-visitas');
+
+      // Monta os últimos 14 dias (do mais antigo para o mais recente).
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      const dias = [];
+      for (let i = 13; i >= 0; i--) {
+        const data = new Date(hoje);
+        data.setDate(data.getDate() - i);
+        dias.push(data);
+      }
+
+      const contagens = dias.map(() => 0);
+      pageViews.forEach((evento) => {
+        const dataEvento = new Date(evento.created_at);
+        dataEvento.setHours(0, 0, 0, 0);
+        const indice = dias.findIndex((d) => d.getTime() === dataEvento.getTime());
+        if (indice !== -1) contagens[indice]++;
+      });
+
+      if (pageViews.length === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhuma visita registrada ainda.</p>';
+        return;
+      }
+
+      const maiorValor = Math.max(...contagens, 1);
+      const formatoRotulo = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' });
+      const formatoTitulo = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long' });
+
+      container.innerHTML = dias
+        .map((data, indice) => {
+          const altura = Math.round((contagens[indice] / maiorValor) * 130) + 4;
+          const titulo = `${formatoTitulo.format(data)}: ${contagens[indice]} visita(s)`;
+          return `
+            <div class="barra-dia" title="${titulo}">
+              <div class="barra" style="height:${altura}px"></div>
+              <span class="rotulo-dia">${formatoRotulo.format(data)}</span>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderizarPortfolio(eventos, leads) {
+      const videoViews = eventos.filter((e) => e.event_type === 'video_view');
+      const cliquesBotao = eventos.filter((e) => e.event_type === 'button_click');
+      const cliquesContato = cliquesBotao.filter(
+        (e) => e.event_name && e.event_name.startsWith('contact_')
+      );
+
+      renderizarVideos(videoViews);
+      renderizarBotoes(cliquesBotao);
+      renderizarContato(cliquesContato);
+      renderizarLeads(leads);
+    }
+
+    function renderizarVideos(videoViews) {
+      const container = document.getElementById('lista-videos');
+
+      if (videoViews.length === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhum vídeo visto ainda.</p>';
+        return;
+      }
+
+      const videos = agruparVideos(videoViews);
+      const maiorValor = videos[0].contagem;
+
+      container.innerHTML = videos
+        .map((video) => {
+          const largura = Math.max(Math.round((video.contagem / maiorValor) * 100), 4);
+          const url = `https://www.youtube.com/watch?v=${video.id}`;
+          const miniatura = `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`;
+          return `
+            <div class="item-video">
+              <a href="${url}" target="_blank" rel="noopener">
+                <img src="${miniatura}" alt="Miniatura do vídeo ${video.titulo}" />
+              </a>
+              <div class="info-video">
+                <a class="titulo-video" href="${url}" target="_blank" rel="noopener">${video.titulo}</a>
+                <div class="barra-horizontal-fundo">
+                  <div class="barra-horizontal-preenchimento" style="width:${largura}%"></div>
+                </div>
+                <span class="contagem-video">${video.contagem} visualização(ões)</span>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderizarBotoes(cliquesBotao) {
+      const container = document.getElementById('lista-botoes');
+
+      if (cliquesBotao.length === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhum clique registrado ainda.</p>';
+        return;
+      }
+
+      const botoes = agruparContagem(cliquesBotao, 'event_name');
+      const maiorValor = botoes[0][1];
+
+      container.innerHTML = botoes
+        .map(([nome, contagem]) => {
+          const largura = Math.max(Math.round((contagem / maiorValor) * 100), 4);
+          return `
+            <div class="linha-barra">
+              <div class="cabecalho-barra">
+                <span class="nome">${nomeLegivel(nome)}</span>
+                <span class="numero">${contagem}</span>
+              </div>
+              <div class="barra-horizontal-fundo">
+                <div class="barra-horizontal-preenchimento" style="width:${largura}%"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderizarContato(cliquesContato) {
+      const container = document.getElementById('lista-contato');
+
+      if (cliquesContato.length === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhum clique para contato ainda.</p>';
+        return;
+      }
+
+      const canais = agruparContagem(cliquesContato, 'event_name');
+      const maiorValor = canais[0][1];
+
+      container.innerHTML = canais
+        .map(([nome, contagem]) => {
+          const largura = Math.max(Math.round((contagem / maiorValor) * 100), 4);
+          const nomeCanal = nomeLegivel(nome.replace(/^contact_/, ''));
+          return `
+            <div class="linha-barra">
+              <div class="cabecalho-barra">
+                <span class="nome">${nomeCanal}</span>
+                <span class="numero">${contagem}</span>
+              </div>
+              <div class="barra-horizontal-fundo">
+                <div class="barra-horizontal-preenchimento" style="width:${largura}%"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderizarLeads(leads) {
+      const container = document.getElementById('lista-leads');
+
+      if (leads.length === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhuma mensagem por enquanto.</p>';
+        return;
+      }
+
+      const formatoData = new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      container.innerHTML = leads
+        .map((lead, indice) => {
+          const dataFormatada = formatoData.format(new Date(lead.created_at));
+          const origem = lead.source === 'popup' ? 'popup' : 'contact';
+          const rotuloOrigem = origem === 'popup' ? 'Pop-up' : 'Contato';
+
+          const telefoneDigitos = (lead.phone || '').replace(/\D/g, '');
+          const botaoWhatsapp = telefoneDigitos
+            ? `<a class="whatsapp" href="https://wa.me/${telefoneDigitos}" target="_blank" rel="noopener">WhatsApp</a>`
+            : '';
+
+          return `
+            <div class="cartao-lead" data-indice="${indice}">
+              <div class="topo-lead">
+                <span class="selo-origem ${origem}">${rotuloOrigem}</span>
+                <span class="meta-lead">${dataFormatada}</span>
+              </div>
+              <div class="nome-lead">${lead.name || 'Sem nome'}</div>
+              <div class="meta-lead">${lead.email || 'Sem e-mail'}</div>
+
+              <div class="detalhes-lead">
+                <div class="linha-detalhe"><strong>Telefone:</strong> ${lead.phone || 'Não informado'}</div>
+                <div class="linha-detalhe"><strong>Marca:</strong> ${lead.brand || 'Não informado'}</div>
+                <div class="linha-detalhe"><strong>Orçamento:</strong> ${lead.budget || 'Não informado'}</div>
+                <div class="linha-detalhe"><strong>Mensagem:</strong> ${lead.message || 'Sem mensagem'}</div>
+
+                <div class="acoes-lead">
+                  <a class="email" href="mailto:${lead.email || ''}">Responder por e-mail</a>
+                  ${botaoWhatsapp}
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      // Clique no cartão expande/recolhe os detalhes.
+      container.querySelectorAll('.cartao-lead').forEach((cartao) => {
+        cartao.addEventListener('click', (evento) => {
+          // Não recolhe o cartão se o clique foi num link de ação.
+          if (evento.target.closest('a')) return;
+          cartao.classList.toggle('expandido');
+        });
+      });
+    }
+
+    /* ---------------------------------------------------------------------
+       Navegação: abas, filtro de período e menu mobile.
+       --------------------------------------------------------------------- */
+    function configurarAbas() {
+      const titulos = { principal: 'Menu Principal', portfolio: 'Portfólio' };
+
+      document.querySelectorAll('.nav-item').forEach((botao) => {
+        botao.addEventListener('click', () => {
+          const aba = botao.dataset.tab;
+
+          document.querySelectorAll('.nav-item').forEach((b) => b.classList.remove('ativo'));
+          botao.classList.add('ativo');
+
+          document.querySelectorAll('.painel-aba').forEach((p) => p.classList.remove('ativo'));
+          document.getElementById(`aba-${aba}`).classList.add('ativo');
+
+          document.getElementById('titulo-pagina').textContent = titulos[aba];
+
+          fecharMenuMobile();
+        });
+      });
+    }
+
+    function configurarFiltroPeriodo() {
+      document.querySelectorAll('.filtro-periodo button').forEach((botao) => {
+        botao.addEventListener('click', () => {
+          document.querySelectorAll('.filtro-periodo button').forEach((b) => b.classList.remove('ativo'));
+          botao.classList.add('ativo');
+          periodoAtual = botao.dataset.periodo;
+          redesenharTudo();
+        });
+      });
+    }
+
+    function configurarMenuMobile() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay-mobile');
+      const botaoAbrir = document.getElementById('botao-menu-mobile');
+
+      botaoAbrir.addEventListener('click', () => {
+        sidebar.classList.add('aberta');
+        overlay.classList.add('ativo');
+      });
+
+      overlay.addEventListener('click', fecharMenuMobile);
+    }
+
+    function fecharMenuMobile() {
+      document.getElementById('sidebar').classList.remove('aberta');
+      document.getElementById('overlay-mobile').classList.remove('ativo');
+    }
+
+    /* ---------------------------------------------------------------------
+       Inicialização: guarda de autenticação, depois carrega os dados.
+       --------------------------------------------------------------------- */
+    (async function iniciar() {
+      const usuario = await window.Auth.checkAuth();
+      if (!usuario) return; // checkAuth já redireciona para index.html
+
+      document.getElementById('email-usuario').textContent = usuario.email;
+      document.body.classList.add('painel-pronto');
+
+      document.getElementById('botao-sair').addEventListener('click', () => {
+        window.Auth.logout();
+      });
+
+      configurarAbas();
+      configurarFiltroPeriodo();
+      configurarMenuMobile();
+
+      try {
+        [todosEventos, todosLeads] = await Promise.all([
+          buscarTudo('portfolio_events'),
+          buscarTudo('portfolio_leads'),
+        ]);
+        redesenharTudo();
+      } catch (erro) {
+        const aviso = document.getElementById('aviso-erro-carregamento');
+        aviso.style.display = 'block';
+        aviso.textContent = 'Não foi possível carregar os dados agora. Tente recarregar a página em instantes.';
+        console.error('Erro ao carregar dados do painel:', erro);
+
+        // Ainda assim redesenha com listas vazias, para não deixar a tela quebrada.
+        redesenharTudo();
+      }
+    })();
+  </script>
+</body>
+</html>
