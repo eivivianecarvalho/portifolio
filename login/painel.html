@@ -748,6 +748,21 @@
       color: var(--cor-coral-escuro);
     }
 
+    .badge-tipo.badge-aguardando {
+      background: rgba(201, 154, 62, 0.15);
+      color: #9c7a2e;
+    }
+
+    .badge-tipo.badge-respondeu {
+      background: rgba(45, 122, 79, 0.12);
+      color: var(--cor-sucesso);
+    }
+
+    .badge-tipo.badge-sem-sucesso {
+      background: rgba(196, 69, 60, 0.12);
+      color: var(--cor-erro);
+    }
+
     .link-mes {
       background: none;
       border: none;
@@ -786,6 +801,23 @@
     .modal-caixa h3 {
       font-size: 20px;
       margin-bottom: 20px;
+    }
+
+    .campo textarea {
+      padding: 12px 14px;
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-pequeno);
+      font-size: 15px;
+      font-family: var(--fonte-texto);
+      background: var(--cor-creme);
+      color: var(--cor-grafite);
+      outline: none;
+      resize: vertical;
+    }
+
+    .campo textarea:focus {
+      border-color: var(--cor-coral);
+      background: var(--cor-branco);
     }
 
     .campo-checkbox label {
@@ -1261,13 +1293,17 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             Roteiros Insta
           </button>
-          <button class="nav-item" data-tab="skincare">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C9 6 5 10.5 5 14.5a7 7 0 0 0 14 0C19 10.5 15 6 12 2z"/></svg>
-            Skincare
-          </button>
           <button class="nav-item" data-tab="instagram">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
             Instagram
+          </button>
+          <button class="nav-item" data-tab="clientes">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Clientes
+          </button>
+          <button class="nav-item" data-tab="skincare">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C9 6 5 10.5 5 14.5a7 7 0 0 0 14 0C19 10.5 15 6 12 2z"/></svg>
+            Skincare
           </button>
         </nav>
       </div>
@@ -1426,18 +1462,28 @@
         <div class="lista-roteiros" id="lista-roteiros-insta"></div>
       </section>
 
-      <!-- ========= ABA: SKINCARE ========= -->
-      <section class="painel-aba" id="aba-skincare">
-        <p class="saudacao">Sua rotina de skincare, dia a dia.</p>
-        <div id="aviso-erro-skincare" class="faixa-erro oculto"></div>
-        <div class="grade-skincare" id="grade-skincare"></div>
-      </section>
-
       <!-- ========= ABA: INSTAGRAM ========= -->
       <section class="painel-aba" id="aba-instagram">
         <p class="saudacao">Acompanhe a evolução do seu Instagram, registrada por você.</p>
         <div id="aviso-erro-instagram" class="faixa-erro oculto"></div>
         <div id="instagram-conteudo"></div>
+      </section>
+
+      <!-- ========= ABA: CLIENTES ========= -->
+      <section class="painel-aba" id="aba-clientes">
+        <div class="cabecalho-aba-roteiros">
+          <p class="saudacao">Sua lista de clientes e prospecções, com follow-up automático.</p>
+          <button type="button" class="botao-adicionar" id="botao-novo-cliente">+ Novo cliente</button>
+        </div>
+        <div id="aviso-erro-clientes" class="faixa-erro oculto"></div>
+        <div class="lista-leads" id="lista-clientes"></div>
+      </section>
+
+      <!-- ========= ABA: SKINCARE ========= -->
+      <section class="painel-aba" id="aba-skincare">
+        <p class="saudacao">Sua rotina de skincare, dia a dia.</p>
+        <div id="aviso-erro-skincare" class="faixa-erro oculto"></div>
+        <div class="grade-skincare" id="grade-skincare"></div>
       </section>
     </main>
   </div>
@@ -1531,6 +1577,9 @@
     function formatarNumero(n) {
       return (n === null || n === undefined || n === '') ? '-' : Number(n).toLocaleString('pt-BR');
     }
+
+    // Estado da aba Clientes.
+    let todosClientes = [];
 
     // Estado da aba Skincare.
     let todosItensSkincare = [];
@@ -1899,6 +1948,13 @@
       const novoMes = ((indice % 12) + 12) % 12 + 1;
       const novoAno = ano + Math.floor(indice / 12);
       return { mes: novoMes, ano: novoAno };
+    }
+
+    function somarDias(dataISO, dias) {
+      if (!dataISO) return null;
+      const data = new Date(`${dataISO}T00:00:00`);
+      data.setDate(data.getDate() + dias);
+      return formatarDataISOCal(data);
     }
 
     function somarMesesData(dataISO, quantidade) {
@@ -2285,6 +2341,14 @@
         { nome: 'comentarios', rotulo: 'Comentários', tipo: 'number' },
         { nome: 'link', rotulo: 'Link do post (opcional)', tipo: 'text' },
       ],
+      cliente: [
+        { nome: 'nicho', rotulo: 'Nicho', tipo: 'text' },
+        { nome: 'instagram_handle', rotulo: 'Instagram (@usuario)', tipo: 'text' },
+        { nome: 'instagram_link', rotulo: 'Link do Instagram (opcional)', tipo: 'text' },
+        { nome: 'email', rotulo: 'E-mail', tipo: 'text' },
+        { nome: 'abordagem', rotulo: 'Abordagem criada', tipo: 'textarea' },
+        { nome: 'data_primeiro_contato', rotulo: 'Data do primeiro contato', tipo: 'date' },
+      ],
     };
 
     const TITULOS_MODAL = {
@@ -2294,6 +2358,7 @@
       evento: 'compromisso',
       snapshot_instagram: 'registro de seguidores',
       post_instagram: 'post',
+      cliente: 'cliente',
     };
     const TABELAS_MODAL = {
       renda: 'financas_rendas',
@@ -2302,6 +2367,7 @@
       evento: 'calendario_eventos',
       snapshot_instagram: 'instagram_snapshots',
       post_instagram: 'instagram_posts',
+      cliente: 'clientes',
     };
 
     function abrirModal(tipo, itemExistente) {
@@ -2327,6 +2393,13 @@
           return `
             <div class="campo campo-checkbox">
               <label><input type="checkbox" id="campo-${campo.nome}" name="${campo.nome}" ${valorAtual ? 'checked' : ''} /> ${campo.rotulo}</label>
+            </div>`;
+        }
+        if (campo.tipo === 'textarea') {
+          return `
+            <div class="campo">
+              <label for="campo-${campo.nome}">${campo.rotulo}</label>
+              <textarea id="campo-${campo.nome}" name="${campo.nome}" rows="4">${valorAtual}</textarea>
             </div>`;
         }
         if (campo.tipo === 'cor') {
@@ -2427,6 +2500,17 @@
               }
               const { error } = await sb.from(tabela).insert(linhas);
               if (error) throw error;
+            } else if (modalTipoAtual === 'cliente') {
+              // Cliente novo: primeiro contato hoje (ou a data informada) e
+              // primeira verificação automática em 7 dias.
+              const dataContato = dados.data_primeiro_contato || formatarDataISOCal(new Date());
+              dados.data_primeiro_contato = dataContato;
+              dados.proxima_data_contato = somarDias(dataContato, 7);
+              dados.estagio_followup = 0;
+              dados.status = 'aguardando';
+              dados.respondeu = null;
+              const { error } = await sb.from(tabela).insert(dados);
+              if (error) throw error;
             } else {
               const { error } = await sb.from(tabela).insert(dados);
               if (error) throw error;
@@ -2437,6 +2521,8 @@
             await recarregarCalendario();
           } else if (modalTipoAtual === 'snapshot_instagram' || modalTipoAtual === 'post_instagram') {
             await recarregarInstagram();
+          } else if (modalTipoAtual === 'cliente') {
+            await recarregarClientes();
           } else {
             await recarregarFinancas();
           }
@@ -3105,6 +3191,183 @@
       }
     }
 
+    /* ========================================================================
+       ABA CLIENTES: lista de clientes/prospecções com follow-up automático.
+       Ao marcar "Não respondeu", o painel calcula sozinho a próxima data de
+       contato: dia 7 → +5 dias → +15 dias → "sem sucesso" (+3 meses, e
+       continua empurrando +3 meses a cada "Não respondeu" depois disso).
+       ======================================================================== */
+    async function recarregarClientes() {
+      try {
+        todosClientes = await buscarTudo('clientes');
+        document.getElementById('aviso-erro-clientes').classList.add('oculto');
+      } catch (erro) {
+        console.error('Erro ao carregar clientes:', erro);
+        const aviso = document.getElementById('aviso-erro-clientes');
+        aviso.textContent = 'Não foi possível carregar os clientes. Verifique se o clientes-setup.sql já foi executado no Supabase.';
+        aviso.classList.remove('oculto');
+      }
+      renderizarClientes();
+    }
+
+    function linkInstagramCliente(cliente) {
+      if (cliente.instagram_link) return cliente.instagram_link;
+      if (cliente.instagram_handle) {
+        const handleLimpo = cliente.instagram_handle.replace('@', '').trim();
+        return handleLimpo ? `https://www.instagram.com/${handleLimpo}` : null;
+      }
+      return null;
+    }
+
+    function badgeStatusCliente(status) {
+      const mapa = {
+        aguardando: { texto: 'Aguardando resposta', classe: 'badge-aguardando' },
+        respondeu: { texto: 'Respondeu', classe: 'badge-respondeu' },
+        sem_sucesso: { texto: 'Sem sucesso', classe: 'badge-sem-sucesso' },
+      };
+      const info = mapa[status] || mapa.aguardando;
+      return `<span class="badge-tipo ${info.classe}">${info.texto}</span>`;
+    }
+
+    function renderizarClientes() {
+      const container = document.getElementById('lista-clientes');
+
+      if (todosClientes.length === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhum cliente cadastrado ainda.</p>';
+        return;
+      }
+
+      const listaOrdenada = [...todosClientes].sort((a, b) =>
+        (a.proxima_data_contato || '9999-99-99').localeCompare(b.proxima_data_contato || '9999-99-99')
+      );
+
+      container.innerHTML = listaOrdenada.map((c) => {
+        const link = linkInstagramCliente(c);
+        const mostrarAcoes = c.status !== 'respondeu';
+        return `
+          <div class="cartao-lead" data-indice="${c.id}">
+            <div class="topo-lead">
+              ${badgeStatusCliente(c.status)}
+              <span class="meta-lead">${c.proxima_data_contato ? `Próximo contato: ${formatarDataCompleta(c.proxima_data_contato)}` : ''}</span>
+            </div>
+            <div class="nome-lead">${c.instagram_handle || 'Sem @'}${c.nicho ? ` · ${c.nicho}` : ''}</div>
+            <div class="meta-lead">${c.email || 'Sem e-mail'}</div>
+
+            <div class="detalhes-lead">
+              <div class="linha-detalhe"><strong>Nicho:</strong> ${c.nicho || 'Não informado'}</div>
+              <div class="linha-detalhe"><strong>Instagram:</strong> ${link ? `<a href="${link}" target="_blank" rel="noopener">${c.instagram_handle || link}</a>` : 'Não informado'}</div>
+              <div class="linha-detalhe"><strong>E-mail:</strong> ${c.email || 'Não informado'}</div>
+              <div class="linha-detalhe"><strong>Primeiro contato:</strong> ${formatarDataCompleta(c.data_primeiro_contato) || 'Não informado'}</div>
+              <div class="linha-detalhe"><strong>Abordagem:</strong> ${c.abordagem || 'Não informado'}</div>
+
+              <div class="acoes-lead">
+                ${mostrarAcoes ? `
+                  <button type="button" class="botao botao-secundario" data-respondeu-cliente="${c.id}">Respondeu</button>
+                  <button type="button" class="botao botao-secundario" data-nao-respondeu-cliente="${c.id}">Não respondeu</button>
+                ` : ''}
+                <button type="button" class="botao-icone" data-editar-cliente="${c.id}" aria-label="Editar cliente">✎</button>
+                <button type="button" class="botao-icone" data-apagar-cliente="${c.id}" aria-label="Apagar cliente">🗑</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.cartao-lead').forEach((cartao) => {
+        cartao.addEventListener('click', (evento) => {
+          if (evento.target.closest('a') || evento.target.closest('button')) return;
+          cartao.classList.toggle('expandido');
+        });
+      });
+
+      container.querySelectorAll('[data-respondeu-cliente]').forEach((btn) => {
+        btn.addEventListener('click', (evento) => {
+          evento.stopPropagation();
+          marcarRespondeuCliente(btn.dataset.respondeuCliente);
+        });
+      });
+      container.querySelectorAll('[data-nao-respondeu-cliente]').forEach((btn) => {
+        btn.addEventListener('click', (evento) => {
+          evento.stopPropagation();
+          marcarNaoRespondeuCliente(btn.dataset.naoRespondeuCliente);
+        });
+      });
+      container.querySelectorAll('[data-editar-cliente]').forEach((btn) => {
+        btn.addEventListener('click', (evento) => {
+          evento.stopPropagation();
+          abrirModal('cliente', todosClientes.find((c) => c.id === btn.dataset.editarCliente));
+        });
+      });
+      container.querySelectorAll('[data-apagar-cliente]').forEach((btn) => {
+        btn.addEventListener('click', (evento) => {
+          evento.stopPropagation();
+          apagarCliente(btn.dataset.apagarCliente);
+        });
+      });
+    }
+
+    async function marcarRespondeuCliente(id) {
+      try {
+        const { error } = await sb.from('clientes').update({
+          respondeu: true,
+          status: 'respondeu',
+          proxima_data_contato: null,
+        }).eq('id', id);
+        if (error) throw error;
+        await recarregarClientes();
+      } catch (erro) {
+        alert('Não foi possível atualizar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function marcarNaoRespondeuCliente(id) {
+      const cliente = todosClientes.find((c) => c.id === id);
+      if (!cliente) return;
+
+      const hoje = formatarDataISOCal(new Date());
+      let novoEstagio = (cliente.estagio_followup || 0) + 1;
+      let novoStatus = 'aguardando';
+      let novaData;
+
+      if (novoEstagio === 1) {
+        novaData = somarDias(hoje, 5);
+      } else if (novoEstagio === 2) {
+        novaData = somarDias(hoje, 15);
+      } else {
+        // Estágio 3 em diante: sem sucesso, tenta de novo a cada 3 meses.
+        novoEstagio = 3;
+        novoStatus = 'sem_sucesso';
+        novaData = somarDias(hoje, 90);
+      }
+
+      try {
+        const { error } = await sb.from('clientes').update({
+          respondeu: false,
+          estagio_followup: novoEstagio,
+          proxima_data_contato: novaData,
+          status: novoStatus,
+        }).eq('id', id);
+        if (error) throw error;
+        await recarregarClientes();
+      } catch (erro) {
+        alert('Não foi possível atualizar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function apagarCliente(id) {
+      if (!confirm('Tem certeza que deseja apagar este cliente?')) return;
+      try {
+        const { error } = await sb.from('clientes').delete().eq('id', id);
+        if (error) throw error;
+        await recarregarClientes();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
     /* ---------------------------------------------------------------------
        Navegação: abas, filtro de período e menu mobile.
        --------------------------------------------------------------------- */
@@ -3117,11 +3380,13 @@
         'roteiros-ugc': 'Roteiros UGC',
         'roteiros-tiktok': 'Roteiros TikTok',
         'roteiros-insta': 'Roteiros Insta',
-        skincare: 'Skincare',
         instagram: 'Instagram',
+        clientes: 'Clientes',
+        skincare: 'Skincare',
       };
       const abasSemFiltroPeriodo = [
-        'financas', 'calendario', 'roteiros-ugc', 'roteiros-tiktok', 'roteiros-insta', 'skincare', 'instagram',
+        'financas', 'calendario', 'roteiros-ugc', 'roteiros-tiktok', 'roteiros-insta',
+        'instagram', 'clientes', 'skincare',
       ];
 
       document.querySelectorAll('.nav-item').forEach((botao) => {
@@ -3194,6 +3459,7 @@
       configurarModalFinancas();
       configurarSeletorFinancas();
       configurarModalRoteiro();
+      document.getElementById('botao-novo-cliente').addEventListener('click', () => abrirModal('cliente'));
 
       try {
         [todosEventos, todosLeads] = await Promise.all([
@@ -3211,14 +3477,16 @@
         redesenharTudo();
       }
 
-      // Carregamento de finanças, calendário, roteiros, skincare e
-      // Instagram é independente do resto: se essas tabelas ainda não
-      // existirem no Supabase, isso não deve travar o restante do painel.
+      // Carregamento de finanças, calendário, roteiros, skincare,
+      // Instagram e clientes é independente do resto: se essas tabelas
+      // ainda não existirem no Supabase, isso não deve travar o restante
+      // do painel.
       await recarregarFinancas();
       await recarregarCalendario();
       await recarregarRoteiros();
       await recarregarSkincare();
       await recarregarInstagram();
+      await recarregarClientes();
     })();
   </script>
 </body>
