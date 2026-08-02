@@ -941,6 +941,34 @@
       text-transform: capitalize;
     }
 
+    .bloco-agenda-completa {
+      margin-top: 20px;
+    }
+
+    .bloco-agenda-completa h3 {
+      font-size: 17px;
+      margin-bottom: 18px;
+    }
+
+    .dia-agenda-completa {
+      margin-bottom: 20px;
+    }
+
+    .dia-agenda-completa:last-child {
+      margin-bottom: 0;
+    }
+
+    .dia-agenda-completa h4 {
+      font-family: var(--fonte-texto);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cor-coral-escuro);
+      text-transform: capitalize;
+      margin: 0 0 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
     .lista-compromissos {
       display: flex;
       flex-direction: column;
@@ -2694,6 +2722,48 @@
       `;
     }
 
+    function agendaCompletaMesHtml() {
+      const diasNoMes = new Date(anoCalendarioAtual, mesCalendarioAtual + 1, 0).getDate();
+      const diasComEventos = [];
+
+      for (let d = 1; d <= diasNoMes; d++) {
+        const iso = `${anoCalendarioAtual}-${String(mesCalendarioAtual + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const eventosDoDia = todosEventosCalendario
+          .filter((e) => e.data === iso)
+          .sort((a, b) => (a.hora_inicio || '99:99').localeCompare(b.hora_inicio || '99:99'));
+        if (eventosDoDia.length > 0) {
+          diasComEventos.push({ iso, eventos: eventosDoDia });
+        }
+      }
+
+      if (diasComEventos.length === 0) {
+        return '<p class="estado-vazio">Nenhum compromisso neste mês ainda.</p>';
+      }
+
+      const formatoDia = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+
+      return diasComEventos.map(({ iso, eventos }) => `
+        <div class="dia-agenda-completa">
+          <h4>${capitalizar(formatoDia.format(new Date(`${iso}T00:00:00`)))}</h4>
+          <div class="lista-compromissos">
+            ${eventos.map((ev) => `
+              <div class="compromisso-card ${ev.concluido ? 'concluido' : ''}" style="border-left-color:${ev.cor || CORES_PRESET[0]}">
+                <input type="checkbox" data-concluido-evento="${ev.id}" ${ev.concluido ? 'checked' : ''} aria-label="Marcar como concluído" />
+                <div class="info-compromisso">
+                  <span class="horario-compromisso">${formatarHorarioEvento(ev)}</span>
+                  <span class="titulo-compromisso">${ev.titulo || 'Sem título'}</span>
+                </div>
+                <div class="acoes-tabela">
+                  <button type="button" class="botao-icone" data-editar-evento="${ev.id}" aria-label="Editar compromisso">✎</button>
+                  <button type="button" class="botao-icone" data-apagar-evento="${ev.id}" aria-label="Apagar compromisso">🗑</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
     function renderizarCalendario() {
       const container = document.getElementById('calendario-conteudo');
 
@@ -2712,6 +2782,11 @@
             <button type="button" class="botao botao-secundario" id="botao-hoje-calendario" style="width: 100%; margin-top: 14px;">Ir para hoje</button>
           </div>
           <div id="agenda-dia-container">${agendaDiaHtml()}</div>
+        </div>
+
+        <div class="cartao bloco-agenda-completa">
+          <h3>Tudo que você tem pra fazer em ${NOMES_MESES_COMPLETOS[mesCalendarioAtual]}</h3>
+          ${agendaCompletaMesHtml()}
         </div>
       `;
 
