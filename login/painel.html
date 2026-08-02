@@ -214,6 +214,17 @@
       color: var(--cor-branco);
     }
 
+    .cartao-numero .media-mensal {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cor-texto-suave);
+      margin-top: 6px;
+    }
+
+    .cartao-numero.destaque .media-mensal {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
     /* ---------- Cartão de contato em destaque ---------- */
     .cartao-contato {
       display: flex;
@@ -1732,6 +1743,28 @@
       return lista.filter((item) => item.mes === mes && item.ano === ano);
     }
 
+    /**
+     * Soma uma quantidade de meses a um mês/ano (1-12), passando pro ano
+     * seguinte quando necessário. Usada para espalhar gastos parcelados
+     * pelos meses seguintes.
+     */
+    function somarMeses(mes, ano, quantidade) {
+      const indice = (mes - 1) + quantidade;
+      const novoMes = ((indice % 12) + 12) % 12 + 1;
+      const novoAno = ano + Math.floor(indice / 12);
+      return { mes: novoMes, ano: novoAno };
+    }
+
+    function somarMesesData(dataISO, quantidade) {
+      if (!dataISO) return null;
+      const [ano, mes, dia] = dataISO.split('-').map(Number);
+      const { mes: novoMes, ano: novoAno } = somarMeses(mes, ano, quantidade);
+      // Ajusta o dia caso o mês novo tenha menos dias (ex: dia 31 num mês de 30).
+      const ultimoDiaNovoMes = new Date(novoAno, novoMes, 0).getDate();
+      const novoDia = Math.min(dia, ultimoDiaNovoMes);
+      return `${novoAno}-${String(novoMes).padStart(2, '0')}-${String(novoDia).padStart(2, '0')}`;
+    }
+
     function somar(lista, campo) {
       return lista.reduce((total, item) => total + Number(item[campo] || 0), 0);
     }
@@ -1854,6 +1887,14 @@
       const saldoAno = totalRendasAno - totalGastosAno - totalGuardadoAno;
       const temAlgumDado = linhasPorMes.some((l) => l.rendas || l.gastos || l.guardado);
 
+      // Média mensal calculada só sobre os meses que já têm algum lançamento,
+      // pra não "diluir" artificialmente o valor dividindo sempre por 12.
+      const mesesComDados = linhasPorMes.filter((l) => l.rendas || l.gastos || l.guardado).length || 1;
+      const mediaRendas = totalRendasAno / mesesComDados;
+      const mediaGastos = totalGastosAno / mesesComDados;
+      const mediaGuardado = totalGuardadoAno / mesesComDados;
+      const mediaSaldo = saldoAno / mesesComDados;
+
       container.innerHTML = `
         <p class="saudacao">Resumo do ano de ${anoSelecionado}.</p>
 
@@ -1861,18 +1902,22 @@
           <div class="cartao cartao-numero destaque">
             <div class="rotulo">Rendas no ano</div>
             <div class="valor">${formatarMoeda(totalRendasAno)}</div>
+            <div class="media-mensal">Média mensal: ${formatarMoeda(mediaRendas)}</div>
           </div>
           <div class="cartao cartao-numero">
             <div class="rotulo">Gastos no ano</div>
             <div class="valor">${formatarMoeda(totalGastosAno)}</div>
+            <div class="media-mensal">Média mensal: ${formatarMoeda(mediaGastos)}</div>
           </div>
           <div class="cartao cartao-numero">
             <div class="rotulo">Guardado no ano</div>
             <div class="valor">${formatarMoeda(totalGuardadoAno)}</div>
+            <div class="media-mensal">Média mensal: ${formatarMoeda(mediaGuardado)}</div>
           </div>
           <div class="cartao cartao-numero">
             <div class="rotulo">Saldo do ano</div>
             <div class="valor">${formatarMoeda(saldoAno)}</div>
+            <div class="media-mensal">Média mensal: ${formatarMoeda(mediaSaldo)}</div>
           </div>
         </div>
 
@@ -1983,7 +2028,7 @@
                   <td>${g.forma_pagamento || '-'}</td>
                   <td>${badgeTipo(g.tipo)}</td>
                   <td>${formatarMoeda(g.valor)}</td>
-                  <td>${g.parcelas || 1}x</td>
+                  <td>${g.parcelas > 1 ? `${g.numero_parcela || 1}/${g.parcelas}` : '1x'}</td>
                   <td><input type="checkbox" data-pago="${g.id}" ${g.pago ? 'checked' : ''} aria-label="Marcar como pago" /></td>
                   <td class="acoes-tabela">
                     <button type="button" class="botao-icone" data-editar-gasto="${g.id}" aria-label="Editar gasto">✎</button>
@@ -2194,8 +2239,29 @@
               dados.mes = mesSelecionado;
               dados.ano = anoSelecionado;
             }
-            const { error } = await sb.from(tabela).insert(dados);
-            if (error) throw error;
+
+            // Gasto novo com mais de 1 parcela: cria automaticamente uma
+            // linha em cada mês seguinte, cada uma com seu próprio "Pago".
+            if (modalTipoAtual === 'gasto' && Number(dados.parcelas) > 1) {
+              const totalParcelas = Number(dados.parcelas);
+              const linhas = [];
+              for (let i = 1; i <= totalParcelas; i++) {
+                const { mes, ano } = somarMeses(mesSelecionado, anoSelecionado, i - 1);
+                linhas.push({
+                  ...dados,
+                  mes,
+                  ano,
+                  numero_parcela: i,
+                  data_vencimento: somarMesesData(dados.data_vencimento, i - 1),
+                  pago: i === 1 ? dados.pago : false,
+                });
+              }
+              const { error } = await sb.from(tabela).insert(linhas);
+              if (error) throw error;
+            } else {
+              const { error } = await sb.from(tabela).insert(dados);
+              if (error) throw error;
+            }
           }
           fecharModal();
           if (modalTipoAtual === 'evento') {
