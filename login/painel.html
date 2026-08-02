@@ -1265,6 +1265,10 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C9 6 5 10.5 5 14.5a7 7 0 0 0 14 0C19 10.5 15 6 12 2z"/></svg>
             Skincare
           </button>
+          <button class="nav-item" data-tab="instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            Instagram
+          </button>
         </nav>
       </div>
 
@@ -1428,6 +1432,13 @@
         <div id="aviso-erro-skincare" class="faixa-erro oculto"></div>
         <div class="grade-skincare" id="grade-skincare"></div>
       </section>
+
+      <!-- ========= ABA: INSTAGRAM ========= -->
+      <section class="painel-aba" id="aba-instagram">
+        <p class="saudacao">Acompanhe a evolução do seu Instagram, registrada por você.</p>
+        <div id="aviso-erro-instagram" class="faixa-erro oculto"></div>
+        <div id="instagram-conteudo"></div>
+      </section>
     </main>
   </div>
 
@@ -1512,6 +1523,14 @@
     let todosRoteiros = [];
     let modalRoteiroCategoriaAtual = null;
     let modalRoteiroIdEdicao = null;
+
+    // Estado da aba Instagram (registro manual, sem conexão com a API).
+    let todosSnapshotsInstagram = [];
+    let todosPostsInstagram = [];
+
+    function formatarNumero(n) {
+      return (n === null || n === undefined || n === '') ? '-' : Number(n).toLocaleString('pt-BR');
+    }
 
     // Estado da aba Skincare.
     let todosItensSkincare = [];
@@ -2252,14 +2271,37 @@
         { nome: 'cor', rotulo: 'Cor', tipo: 'cor' },
         { nome: 'concluido', rotulo: 'Já concluído', tipo: 'checkbox' },
       ],
+      snapshot_instagram: [
+        { nome: 'data', rotulo: 'Data', tipo: 'date' },
+        { nome: 'seguidores', rotulo: 'Seguidores', tipo: 'number' },
+        { nome: 'seguindo', rotulo: 'Seguindo', tipo: 'number' },
+        { nome: 'publicacoes', rotulo: 'Publicações', tipo: 'number' },
+      ],
+      post_instagram: [
+        { nome: 'data_publicacao', rotulo: 'Data da publicação', tipo: 'date' },
+        { nome: 'tipo_conteudo', rotulo: 'Tipo', tipo: 'select', opcoes: ['Post', 'Reel', 'Story', 'Carrossel'] },
+        { nome: 'descricao', rotulo: 'Descrição/legenda', tipo: 'text' },
+        { nome: 'curtidas', rotulo: 'Curtidas', tipo: 'number' },
+        { nome: 'comentarios', rotulo: 'Comentários', tipo: 'number' },
+        { nome: 'link', rotulo: 'Link do post (opcional)', tipo: 'text' },
+      ],
     };
 
-    const TITULOS_MODAL = { renda: 'renda', meta: 'objetivo', gasto: 'gasto', evento: 'compromisso' };
+    const TITULOS_MODAL = {
+      renda: 'renda',
+      meta: 'objetivo',
+      gasto: 'gasto',
+      evento: 'compromisso',
+      snapshot_instagram: 'registro de seguidores',
+      post_instagram: 'post',
+    };
     const TABELAS_MODAL = {
       renda: 'financas_rendas',
       meta: 'financas_metas',
       gasto: 'financas_gastos',
       evento: 'calendario_eventos',
+      snapshot_instagram: 'instagram_snapshots',
+      post_instagram: 'instagram_posts',
     };
 
     function abrirModal(tipo, itemExistente) {
@@ -2393,6 +2435,8 @@
           fecharModal();
           if (modalTipoAtual === 'evento') {
             await recarregarCalendario();
+          } else if (modalTipoAtual === 'snapshot_instagram' || modalTipoAtual === 'post_instagram') {
+            await recarregarInstagram();
           } else {
             await recarregarFinancas();
           }
@@ -2886,6 +2930,181 @@
       });
     }
 
+    /* ========================================================================
+       ABA INSTAGRAM: registro manual de seguidores ao longo do tempo e de
+       posts individuais (curtidas, comentários). Sem conexão com a API do
+       Instagram: os números são os que você mesma anota.
+       ======================================================================== */
+    async function recarregarInstagram() {
+      try {
+        [todosSnapshotsInstagram, todosPostsInstagram] = await Promise.all([
+          buscarTudo('instagram_snapshots'),
+          buscarTudo('instagram_posts'),
+        ]);
+        document.getElementById('aviso-erro-instagram').classList.add('oculto');
+      } catch (erro) {
+        console.error('Erro ao carregar dados do Instagram:', erro);
+        const aviso = document.getElementById('aviso-erro-instagram');
+        aviso.textContent = 'Não foi possível carregar os dados do Instagram. Verifique se o instagram-manual-setup.sql já foi executado no Supabase.';
+        aviso.classList.remove('oculto');
+      }
+      renderizarInstagram();
+    }
+
+    function graficoSeguidoresHtml(snapshotsAsc) {
+      if (snapshotsAsc.length === 0) {
+        return '<p class="estado-vazio">Nenhum registro ainda.</p>';
+      }
+      const maiorValor = Math.max(...snapshotsAsc.map((s) => s.seguidores || 0), 1);
+      return `
+        <div class="grafico-barras">
+          ${snapshotsAsc.map((s) => {
+            const altura = Math.round(((s.seguidores || 0) / maiorValor) * 130) + 4;
+            const dataFormatada = formatarDataCompleta(s.data) || 'Sem data';
+            const titulo = `${dataFormatada}: ${formatarNumero(s.seguidores)} seguidores`;
+            return `
+              <div class="barra-dia" title="${titulo}">
+                <div class="barra" style="height:${altura}px"></div>
+                <span class="rotulo-dia">${dataFormatada.slice(0, 5)}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function tabelaSnapshotsInstagramHtml(snapshotsAsc) {
+      if (snapshotsAsc.length === 0) return '';
+      const snapshotsDesc = [...snapshotsAsc].reverse();
+      return `
+        <div class="tabela-financas-wrap" style="margin-top: 16px;">
+          <table class="tabela-financas">
+            <thead><tr><th>Data</th><th>Seguidores</th><th>Seguindo</th><th>Publicações</th><th></th></tr></thead>
+            <tbody>
+              ${snapshotsDesc.map((s) => `
+                <tr>
+                  <td>${formatarDataCompleta(s.data) || '-'}</td>
+                  <td>${formatarNumero(s.seguidores)}</td>
+                  <td>${formatarNumero(s.seguindo)}</td>
+                  <td>${formatarNumero(s.publicacoes)}</td>
+                  <td class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-snapshot-ig="${s.id}" aria-label="Editar registro">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-snapshot-ig="${s.id}" aria-label="Apagar registro">🗑</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function tabelaPostsInstagramHtml(postsDesc) {
+      if (postsDesc.length === 0) return '<p class="estado-vazio">Nenhum post registrado ainda.</p>';
+      return `
+        <div class="tabela-financas-wrap">
+          <table class="tabela-financas">
+            <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Curtidas</th><th>Comentários</th><th></th></tr></thead>
+            <tbody>
+              ${postsDesc.map((p) => `
+                <tr>
+                  <td>${formatarDataCompleta(p.data_publicacao) || '-'}</td>
+                  <td>${p.tipo_conteudo || '-'}</td>
+                  <td>${p.link ? `<a href="${p.link}" target="_blank" rel="noopener">${p.descricao || 'Ver post'}</a>` : (p.descricao || '-')}</td>
+                  <td>${formatarNumero(p.curtidas)}</td>
+                  <td>${formatarNumero(p.comentarios)}</td>
+                  <td class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-post-ig="${p.id}" aria-label="Editar post">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-post-ig="${p.id}" aria-label="Apagar post">🗑</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderizarInstagram() {
+      const container = document.getElementById('instagram-conteudo');
+
+      const snapshotsAsc = [...todosSnapshotsInstagram].sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+      const ultimoSnapshot = snapshotsAsc[snapshotsAsc.length - 1];
+      const postsDesc = [...todosPostsInstagram].sort((a, b) => (b.data_publicacao || '').localeCompare(a.data_publicacao || ''));
+      const mediaCurtidas = postsDesc.length ? somar(postsDesc, 'curtidas') / postsDesc.length : 0;
+      const mediaComentarios = postsDesc.length ? somar(postsDesc, 'comentarios') / postsDesc.length : 0;
+
+      container.innerHTML = `
+        <div class="grade-numeros grade-financas">
+          <div class="cartao cartao-numero destaque">
+            <div class="rotulo">Seguidores</div>
+            <div class="valor">${ultimoSnapshot ? formatarNumero(ultimoSnapshot.seguidores) : '-'}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Publicações</div>
+            <div class="valor">${ultimoSnapshot ? formatarNumero(ultimoSnapshot.publicacoes) : '-'}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Média de curtidas</div>
+            <div class="valor">${formatarNumero(Math.round(mediaCurtidas))}</div>
+          </div>
+          <div class="cartao cartao-numero">
+            <div class="rotulo">Média de comentários</div>
+            <div class="valor">${formatarNumero(Math.round(mediaComentarios))}</div>
+          </div>
+        </div>
+
+        <div class="cartao bloco-financas">
+          <div class="cabecalho-bloco-financas">
+            <h3>Seguidores ao longo do tempo</h3>
+            <button type="button" class="botao-adicionar" id="botao-novo-snapshot-ig">+ Novo registro</button>
+          </div>
+          ${graficoSeguidoresHtml(snapshotsAsc)}
+          ${tabelaSnapshotsInstagramHtml(snapshotsAsc)}
+        </div>
+
+        <div class="cartao bloco-financas">
+          <div class="cabecalho-bloco-financas">
+            <h3>Posts</h3>
+            <button type="button" class="botao-adicionar" id="botao-novo-post-ig">+ Novo post</button>
+          </div>
+          ${tabelaPostsInstagramHtml(postsDesc)}
+        </div>
+      `;
+
+      document.getElementById('botao-novo-snapshot-ig').addEventListener('click', () => abrirModal('snapshot_instagram'));
+      document.getElementById('botao-novo-post-ig').addEventListener('click', () => abrirModal('post_instagram'));
+
+      container.querySelectorAll('[data-editar-snapshot-ig]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          abrirModal('snapshot_instagram', todosSnapshotsInstagram.find((s) => s.id === btn.dataset.editarSnapshotIg));
+        });
+      });
+      container.querySelectorAll('[data-apagar-snapshot-ig]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarItemInstagram('instagram_snapshots', btn.dataset.apagarSnapshotIg));
+      });
+      container.querySelectorAll('[data-editar-post-ig]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          abrirModal('post_instagram', todosPostsInstagram.find((p) => p.id === btn.dataset.editarPostIg));
+        });
+      });
+      container.querySelectorAll('[data-apagar-post-ig]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarItemInstagram('instagram_posts', btn.dataset.apagarPostIg));
+      });
+    }
+
+    async function apagarItemInstagram(tabela, id) {
+      if (!confirm('Tem certeza que deseja apagar este registro?')) return;
+      try {
+        const { error } = await sb.from(tabela).delete().eq('id', id);
+        if (error) throw error;
+        await recarregarInstagram();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
     /* ---------------------------------------------------------------------
        Navegação: abas, filtro de período e menu mobile.
        --------------------------------------------------------------------- */
@@ -2899,9 +3118,10 @@
         'roteiros-tiktok': 'Roteiros TikTok',
         'roteiros-insta': 'Roteiros Insta',
         skincare: 'Skincare',
+        instagram: 'Instagram',
       };
       const abasSemFiltroPeriodo = [
-        'financas', 'calendario', 'roteiros-ugc', 'roteiros-tiktok', 'roteiros-insta', 'skincare',
+        'financas', 'calendario', 'roteiros-ugc', 'roteiros-tiktok', 'roteiros-insta', 'skincare', 'instagram',
       ];
 
       document.querySelectorAll('.nav-item').forEach((botao) => {
@@ -2991,13 +3211,14 @@
         redesenharTudo();
       }
 
-      // Carregamento de finanças, calendário, roteiros e skincare é
-      // independente do resto: se essas tabelas ainda não existirem no
-      // Supabase, isso não deve travar o restante do painel.
+      // Carregamento de finanças, calendário, roteiros, skincare e
+      // Instagram é independente do resto: se essas tabelas ainda não
+      // existirem no Supabase, isso não deve travar o restante do painel.
       await recarregarFinancas();
       await recarregarCalendario();
       await recarregarRoteiros();
       await recarregarSkincare();
+      await recarregarInstagram();
     })();
   </script>
 </body>
