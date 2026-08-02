@@ -1299,7 +1299,7 @@
     const midia = item.youtube
       ? `<div class="video-wrap" data-youtube-id="${item.youtube}" data-titulo="${item.titulo}" data-categoria="${item.categoria}">
           <span class="categoria-tag categoria-tag-video">${item.categoria}</span>
-          <iframe src="https://www.youtube-nocookie.com/embed/${item.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3" title="${item.titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+          <iframe src="https://www.youtube-nocookie.com/embed/${item.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3&autoplay=1&mute=1&loop=1&playlist=${item.youtube}" title="${item.titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
           <div class="video-overlay" aria-hidden="true"></div>
         </div>`
       : `<div class="bloco-gradiente" style="background:${item.gradiente}" role="img" aria-label="Exemplo de trabalho: ${item.titulo}, categoria ${item.categoria}">
