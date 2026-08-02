@@ -566,8 +566,46 @@
   .video-overlay {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 4;
     background: transparent;
+  }
+  /* Capa estática (thumbnail) exibida antes do hover, para esconder o botão
+     de play nativo do YouTube. Some junto com o ícone quando o vídeo toca. */
+  .video-capa {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+    transition: opacity 0.2s ease;
+  }
+  .video-icone-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(0, 54, 112, 0.55);
+    z-index: 3;
+    transition: opacity 0.2s ease;
+  }
+  .video-icone-play::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    border-style: solid;
+    border-width: 10px 0 10px 16px;
+    border-color: transparent transparent transparent var(--branco);
+  }
+  .video-wrap.tocando .video-capa,
+  .video-wrap.tocando .video-icone-play {
+    opacity: 0;
+    pointer-events: none;
   }
   .categoria-tag-video {
     position: absolute;
@@ -1299,8 +1337,10 @@
     const midia = item.youtube
       ? `<div class="video-wrap" data-youtube-id="${item.youtube}" data-titulo="${item.titulo}" data-categoria="${item.categoria}">
           <span class="categoria-tag categoria-tag-video">${item.categoria}</span>
-          <iframe src="https://www.youtube-nocookie.com/embed/${item.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3&autoplay=1&mute=1&loop=1&playlist=${item.youtube}" title="${item.titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+          <iframe src="https://www.youtube-nocookie.com/embed/${item.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3" title="${item.titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
           <div class="video-overlay" aria-hidden="true"></div>
+          <img class="video-capa" src="https://img.youtube.com/vi/${item.youtube}/hqdefault.jpg" alt="" loading="lazy">
+          <span class="video-icone-play" aria-hidden="true"></span>
         </div>`
       : `<div class="bloco-gradiente" style="background:${item.gradiente}" role="img" aria-label="Exemplo de trabalho: ${item.titulo}, categoria ${item.categoria}">
           <span class="categoria-tag">${item.categoria}</span>
@@ -1320,12 +1360,14 @@
       const iframe = wrap.querySelector("iframe");
       const overlay = wrap.querySelector(".video-overlay");
       wrap.addEventListener("mouseenter", () => {
+        wrap.classList.add("tocando");
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [100] }), "*");
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
         analytics.registrarVideoViewUmaVez(wrap.dataset.youtubeId, wrap.dataset.titulo, wrap.dataset.categoria);
       });
       wrap.addEventListener("mouseleave", () => {
+        wrap.classList.remove("tocando");
         iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
       });
       if (overlay) {
