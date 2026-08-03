@@ -1280,6 +1280,80 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ---------- Aba Metas ---------- */
+    .grade-metas-resumo {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 20px;
+    }
+
+    .grade-metas {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .cartao-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cartao-meta.concluida {
+      opacity: 0.6;
+    }
+
+    .topo-meta {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .categoria-meta {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--cor-coral-escuro);
+      background: rgba(212, 87, 42, 0.1);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .titulo-meta {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .cartao-meta.concluida .titulo-meta {
+      text-decoration: line-through;
+    }
+
+    .descricao-meta {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+      margin: 0;
+    }
+
+    .rodape-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--cor-texto-suave);
+    }
+
+    @media (max-width: 900px) {
+      .grade-metas-resumo {
+        grid-template-columns: 1fr;
+      }
+
+      .grade-metas {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1328,6 +1402,10 @@
           <button class="nav-item" data-tab="clientes">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Clientes
+          </button>
+          <button class="nav-item" data-tab="metas">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            Metas
           </button>
           <button class="nav-item" data-tab="skincare">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C9 6 5 10.5 5 14.5a7 7 0 0 0 14 0C19 10.5 15 6 12 2z"/></svg>
@@ -1507,6 +1585,17 @@
         <div class="lista-leads" id="lista-clientes"></div>
       </section>
 
+      <!-- ========= ABA: METAS ========= -->
+      <section class="painel-aba" id="aba-metas">
+        <div class="cabecalho-aba-roteiros">
+          <p class="saudacao">Suas metas e objetivos, tudo num só lugar.</p>
+          <button type="button" class="botao-adicionar" id="botao-nova-meta">+ Nova meta</button>
+        </div>
+        <div id="aviso-erro-metas" class="faixa-erro oculto"></div>
+        <div class="grade-numeros grade-metas-resumo" id="resumo-metas"></div>
+        <div class="grade-metas" id="lista-metas"></div>
+      </section>
+
       <!-- ========= ABA: SKINCARE ========= -->
       <section class="painel-aba" id="aba-skincare">
         <p class="saudacao">Sua rotina de skincare, dia a dia.</p>
@@ -1608,6 +1697,9 @@
 
     // Estado da aba Clientes.
     let todosClientes = [];
+
+    // Estado da aba Metas.
+    let todasMetasObjetivos = [];
 
     // Estado da aba Skincare.
     let todosItensSkincare = [];
@@ -2377,6 +2469,14 @@
         { nome: 'abordagem', rotulo: 'Abordagem criada', tipo: 'textarea' },
         { nome: 'data_primeiro_contato', rotulo: 'Data do primeiro contato', tipo: 'date' },
       ],
+      objetivo: [
+        { nome: 'titulo', rotulo: 'Título', tipo: 'text' },
+        { nome: 'categoria', rotulo: 'Categoria (opcional)', tipo: 'text' },
+        { nome: 'descricao', rotulo: 'Descrição', tipo: 'textarea' },
+        { nome: 'data_alvo', rotulo: 'Prazo (opcional)', tipo: 'date' },
+        { nome: 'progresso', rotulo: 'Progresso (%)', tipo: 'number' },
+        { nome: 'concluida', rotulo: 'Já concluída', tipo: 'checkbox' },
+      ],
     };
 
     const TITULOS_MODAL = {
@@ -2387,6 +2487,7 @@
       snapshot_instagram: 'registro de seguidores',
       post_instagram: 'post',
       cliente: 'cliente',
+      objetivo: 'meta',
     };
     const TABELAS_MODAL = {
       renda: 'financas_rendas',
@@ -2396,6 +2497,7 @@
       snapshot_instagram: 'instagram_snapshots',
       post_instagram: 'instagram_posts',
       cliente: 'clientes',
+      objetivo: 'metas_objetivos',
     };
 
     function abrirModal(tipo, itemExistente) {
@@ -2551,6 +2653,8 @@
             await recarregarInstagram();
           } else if (modalTipoAtual === 'cliente') {
             await recarregarClientes();
+          } else if (modalTipoAtual === 'objetivo') {
+            await recarregarMetas();
           } else {
             await recarregarFinancas();
           }
@@ -3443,6 +3547,118 @@
       }
     }
 
+    /* ========================================================================
+       ABA METAS: cartões de meta/objetivo com categoria, prazo e barra de
+       progresso.
+       ======================================================================== */
+    async function recarregarMetas() {
+      try {
+        todasMetasObjetivos = await buscarTudo('metas_objetivos');
+        document.getElementById('aviso-erro-metas').classList.add('oculto');
+      } catch (erro) {
+        console.error('Erro ao carregar metas:', erro);
+        const aviso = document.getElementById('aviso-erro-metas');
+        aviso.textContent = 'Não foi possível carregar as metas. Verifique se o metas-setup.sql já foi executado no Supabase.';
+        aviso.classList.remove('oculto');
+      }
+      renderizarMetas();
+    }
+
+    function renderizarMetas() {
+      const container = document.getElementById('lista-metas');
+      const resumoContainer = document.getElementById('resumo-metas');
+
+      const total = todasMetasObjetivos.length;
+      const concluidas = todasMetasObjetivos.filter((m) => m.concluida).length;
+      const emAndamento = total - concluidas;
+
+      resumoContainer.innerHTML = `
+        <div class="cartao cartao-numero destaque">
+          <div class="rotulo">Total de metas</div>
+          <div class="valor">${total}</div>
+        </div>
+        <div class="cartao cartao-numero">
+          <div class="rotulo">Concluídas</div>
+          <div class="valor">${concluidas}</div>
+        </div>
+        <div class="cartao cartao-numero">
+          <div class="rotulo">Em andamento</div>
+          <div class="valor">${emAndamento}</div>
+        </div>
+      `;
+
+      if (total === 0) {
+        container.innerHTML = '<p class="estado-vazio">Nenhuma meta cadastrada ainda.</p>';
+        return;
+      }
+
+      const listaOrdenada = [...todasMetasObjetivos].sort((a, b) => {
+        if (a.concluida !== b.concluida) return a.concluida ? 1 : -1;
+        return (a.data_alvo || '9999-99-99').localeCompare(b.data_alvo || '9999-99-99');
+      });
+
+      container.innerHTML = listaOrdenada.map((m) => `
+        <div class="cartao cartao-meta ${m.concluida ? 'concluida' : ''}">
+          <div class="topo-meta">
+            <div>
+              <span class="categoria-meta">${m.categoria || 'Geral'}</span>
+              <h3 class="titulo-meta">${m.titulo || 'Sem título'}</h3>
+            </div>
+            <input type="checkbox" data-concluida-meta="${m.id}" ${m.concluida ? 'checked' : ''} aria-label="Marcar como concluída" />
+          </div>
+          ${m.descricao ? `<p class="descricao-meta">${m.descricao}</p>` : ''}
+          <div class="barra-horizontal-fundo">
+            <div class="barra-horizontal-preenchimento" style="width:${m.progresso || 0}%"></div>
+          </div>
+          <div class="rodape-meta">
+            <span>${m.progresso || 0}% concluído</span>
+            <span>${m.data_alvo ? `Prazo: ${formatarDataCompleta(m.data_alvo)}` : ''}</span>
+          </div>
+          <div class="acoes-tabela" style="justify-content: flex-end;">
+            <button type="button" class="botao-icone" data-editar-meta-obj="${m.id}" aria-label="Editar meta">✎</button>
+            <button type="button" class="botao-icone" data-apagar-meta-obj="${m.id}" aria-label="Apagar meta">🗑</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('[data-concluida-meta]').forEach((chk) => {
+        chk.addEventListener('change', () => alternarConcluidaMeta(chk.dataset.concluidaMeta, chk.checked));
+      });
+      container.querySelectorAll('[data-editar-meta-obj]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          abrirModal('objetivo', todasMetasObjetivos.find((m) => m.id === btn.dataset.editarMetaObj));
+        });
+      });
+      container.querySelectorAll('[data-apagar-meta-obj]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarMeta(btn.dataset.apagarMetaObj));
+      });
+    }
+
+    async function alternarConcluidaMeta(id, concluida) {
+      try {
+        const dados = { concluida };
+        if (concluida) dados.progresso = 100;
+        const { error } = await sb.from('metas_objetivos').update(dados).eq('id', id);
+        if (error) throw error;
+        await recarregarMetas();
+      } catch (erro) {
+        alert('Não foi possível atualizar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function apagarMeta(id) {
+      if (!confirm('Tem certeza que deseja apagar esta meta?')) return;
+      try {
+        const { error } = await sb.from('metas_objetivos').delete().eq('id', id);
+        if (error) throw error;
+        await recarregarMetas();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
     /* ---------------------------------------------------------------------
        Navegação: abas, filtro de período e menu mobile.
        --------------------------------------------------------------------- */
@@ -3457,11 +3673,12 @@
         'roteiros-insta': 'Roteiros Insta',
         instagram: 'Instagram',
         clientes: 'Clientes',
+        metas: 'Metas',
         skincare: 'Skincare',
       };
       const abasSemFiltroPeriodo = [
         'financas', 'calendario', 'roteiros-ugc', 'roteiros-tiktok', 'roteiros-insta',
-        'instagram', 'clientes', 'skincare',
+        'instagram', 'clientes', 'metas', 'skincare',
       ];
 
       document.querySelectorAll('.nav-item').forEach((botao) => {
@@ -3535,6 +3752,7 @@
       configurarSeletorFinancas();
       configurarModalRoteiro();
       document.getElementById('botao-novo-cliente').addEventListener('click', () => abrirModal('cliente'));
+      document.getElementById('botao-nova-meta').addEventListener('click', () => abrirModal('objetivo'));
 
       try {
         [todosEventos, todosLeads] = await Promise.all([
@@ -3553,15 +3771,16 @@
       }
 
       // Carregamento de finanças, calendário, roteiros, skincare,
-      // Instagram e clientes é independente do resto: se essas tabelas
-      // ainda não existirem no Supabase, isso não deve travar o restante
-      // do painel.
+      // Instagram, clientes e metas é independente do resto: se essas
+      // tabelas ainda não existirem no Supabase, isso não deve travar o
+      // restante do painel.
       await recarregarFinancas();
       await recarregarCalendario();
       await recarregarRoteiros();
       await recarregarSkincare();
       await recarregarInstagram();
       await recarregarClientes();
+      await recarregarMetas();
     })();
   </script>
 </body>
