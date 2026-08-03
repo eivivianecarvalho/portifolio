@@ -1354,6 +1354,78 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .cartao-meta-viagem {
+      grid-column: 1 / -1;
+    }
+
+    .valores-meta-financeira {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .valor-atual-meta {
+      font-family: var(--fonte-titulo);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--cor-coral);
+    }
+
+    .valor-meta-de {
+      font-size: 13px;
+      color: var(--cor-texto-suave);
+    }
+
+    .lista-destinos-viagem {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .cartao-destino {
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--raio-pequeno);
+      padding: 12px 14px;
+      background: var(--cor-creme);
+    }
+
+    .cartao-destino.concluido {
+      opacity: 0.55;
+    }
+
+    .cartao-destino.concluido h4 {
+      text-decoration: line-through;
+    }
+
+    .topo-destino {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topo-destino h4 {
+      flex: 1;
+      font-size: 14px;
+      margin: 0;
+      color: var(--cor-grafite);
+    }
+
+    .detalhes-destino {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      font-size: 12px;
+      color: var(--cor-texto-suave);
+      margin-top: 8px;
+    }
+
+    .atividades-destino {
+      font-size: 13px;
+      color: var(--cor-grafite);
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1589,7 +1661,11 @@
       <section class="painel-aba" id="aba-metas">
         <div class="cabecalho-aba-roteiros">
           <p class="saudacao">Suas metas e objetivos, tudo num só lugar.</p>
-          <button type="button" class="botao-adicionar" id="botao-nova-meta">+ Nova meta</button>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" class="botao-adicionar" id="botao-nova-meta-geral">+ Meta geral</button>
+            <button type="button" class="botao-adicionar" id="botao-nova-meta-financeira">+ Meta financeira</button>
+            <button type="button" class="botao-adicionar" id="botao-nova-meta-viagem">+ Meta de viagem</button>
+          </div>
         </div>
         <div id="aviso-erro-metas" class="faixa-erro oculto"></div>
         <div class="grade-numeros grade-metas-resumo" id="resumo-metas"></div>
@@ -1668,6 +1744,7 @@
     let anoSelecionado = new Date().getFullYear();
     let modalTipoAtual = null;
     let modalIdEdicao = null;
+    let modalMetaContextoId = null; // id da meta de viagem ao adicionar/editar um destino
 
     const NOMES_MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     const NOMES_MESES_COMPLETOS = [
@@ -1700,6 +1777,7 @@
 
     // Estado da aba Metas.
     let todasMetasObjetivos = [];
+    let todosDestinosViagem = [];
 
     // Estado da aba Skincare.
     let todosItensSkincare = [];
@@ -2477,6 +2555,32 @@
         { nome: 'progresso', rotulo: 'Progresso (%)', tipo: 'number' },
         { nome: 'concluida', rotulo: 'Já concluída', tipo: 'checkbox' },
       ],
+      objetivo_financeiro: [
+        { nome: 'titulo', rotulo: 'Título', tipo: 'text' },
+        { nome: 'categoria', rotulo: 'Categoria (opcional)', tipo: 'text' },
+        { nome: 'meta_valor', rotulo: 'Meta (R$ por mês)', tipo: 'number' },
+        { nome: 'valor_atual', rotulo: 'Quanto já tenho (R$)', tipo: 'number' },
+        { nome: 'data_alvo', rotulo: 'Prazo (opcional)', tipo: 'date' },
+      ],
+      objetivo_viagem: [
+        { nome: 'titulo', rotulo: 'Título (ex: Viagem 2027)', tipo: 'text' },
+        { nome: 'data_alvo', rotulo: 'Data alvo (opcional)', tipo: 'date' },
+        { nome: 'descricao', rotulo: 'Notas gerais (opcional)', tipo: 'textarea' },
+      ],
+      destino_viagem: [
+        { nome: 'local', rotulo: 'Para onde', tipo: 'text' },
+        { nome: 'quando', rotulo: 'Quando (opcional)', tipo: 'text' },
+        { nome: 'dias', rotulo: 'Quantos dias', tipo: 'number' },
+        { nome: 'valor_passagem', rotulo: 'Passagem (R$)', tipo: 'number' },
+        { nome: 'valor_hospedagem', rotulo: 'Hospedagem (R$)', tipo: 'number' },
+        { nome: 'atividades', rotulo: 'O que vai fazer', tipo: 'textarea' },
+      ],
+    };
+
+    const TIPO_META_POR_MODAL = {
+      objetivo: 'geral',
+      objetivo_financeiro: 'financeiro',
+      objetivo_viagem: 'viagem',
     };
 
     const TITULOS_MODAL = {
@@ -2488,6 +2592,9 @@
       post_instagram: 'post',
       cliente: 'cliente',
       objetivo: 'meta',
+      objetivo_financeiro: 'meta financeira',
+      objetivo_viagem: 'meta de viagem',
+      destino_viagem: 'destino',
     };
     const TABELAS_MODAL = {
       renda: 'financas_rendas',
@@ -2498,6 +2605,9 @@
       post_instagram: 'instagram_posts',
       cliente: 'clientes',
       objetivo: 'metas_objetivos',
+      objetivo_financeiro: 'metas_objetivos',
+      objetivo_viagem: 'metas_objetivos',
+      destino_viagem: 'meta_destinos',
     };
 
     function abrirModal(tipo, itemExistente) {
@@ -2611,6 +2721,12 @@
               dados.mes = mesSelecionado;
               dados.ano = anoSelecionado;
             }
+            if (TIPO_META_POR_MODAL[modalTipoAtual]) {
+              dados.tipo = TIPO_META_POR_MODAL[modalTipoAtual];
+            }
+            if (modalTipoAtual === 'destino_viagem') {
+              dados.meta_id = modalMetaContextoId;
+            }
 
             // Gasto novo com mais de 1 parcela: cria automaticamente uma
             // linha em cada mês seguinte, cada uma com seu próprio "Pago".
@@ -2653,7 +2769,12 @@
             await recarregarInstagram();
           } else if (modalTipoAtual === 'cliente') {
             await recarregarClientes();
-          } else if (modalTipoAtual === 'objetivo') {
+          } else if (
+            modalTipoAtual === 'objetivo' ||
+            modalTipoAtual === 'objetivo_financeiro' ||
+            modalTipoAtual === 'objetivo_viagem' ||
+            modalTipoAtual === 'destino_viagem'
+          ) {
             await recarregarMetas();
           } else {
             await recarregarFinancas();
@@ -3553,15 +3674,120 @@
        ======================================================================== */
     async function recarregarMetas() {
       try {
-        todasMetasObjetivos = await buscarTudo('metas_objetivos');
+        [todasMetasObjetivos, todosDestinosViagem] = await Promise.all([
+          buscarTudo('metas_objetivos'),
+          buscarTudo('meta_destinos'),
+        ]);
         document.getElementById('aviso-erro-metas').classList.add('oculto');
       } catch (erro) {
         console.error('Erro ao carregar metas:', erro);
         const aviso = document.getElementById('aviso-erro-metas');
-        aviso.textContent = 'Não foi possível carregar as metas. Verifique se o metas-setup.sql já foi executado no Supabase.';
+        aviso.textContent = 'Não foi possível carregar as metas. Verifique se o metas-setup.sql e o metas-viagem-financeiro-setup.sql já foram executados no Supabase.';
         aviso.classList.remove('oculto');
       }
       renderizarMetas();
+    }
+
+    function cartaoMetaGeralHtml(m) {
+      return `
+        <div class="cartao cartao-meta ${m.concluida ? 'concluida' : ''}">
+          <div class="topo-meta">
+            <div>
+              <span class="categoria-meta">${m.categoria || 'Geral'}</span>
+              <h3 class="titulo-meta">${m.titulo || 'Sem título'}</h3>
+            </div>
+            <input type="checkbox" data-concluida-meta="${m.id}" ${m.concluida ? 'checked' : ''} aria-label="Marcar como concluída" />
+          </div>
+          ${m.descricao ? `<p class="descricao-meta">${m.descricao}</p>` : ''}
+          <div class="barra-horizontal-fundo">
+            <div class="barra-horizontal-preenchimento" style="width:${m.progresso || 0}%"></div>
+          </div>
+          <div class="rodape-meta">
+            <span>${m.progresso || 0}% concluído</span>
+            <span>${m.data_alvo ? `Prazo: ${formatarDataCompleta(m.data_alvo)}` : ''}</span>
+          </div>
+          <div class="acoes-tabela" style="justify-content: flex-end;">
+            <button type="button" class="botao-icone" data-editar-meta-obj="${m.id}" aria-label="Editar meta">✎</button>
+            <button type="button" class="botao-icone" data-apagar-meta-obj="${m.id}" aria-label="Apagar meta">🗑</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function cartaoMetaFinanceiraHtml(m) {
+      const metaValor = Number(m.meta_valor || 0);
+      const valorAtual = Number(m.valor_atual || 0);
+      const percentual = metaValor > 0 ? Math.min(100, Math.round((valorAtual / metaValor) * 100)) : 0;
+      return `
+        <div class="cartao cartao-meta">
+          <div class="topo-meta">
+            <div>
+              <span class="categoria-meta">${m.categoria || 'Financeiro'}</span>
+              <h3 class="titulo-meta">${m.titulo || 'Sem título'}</h3>
+            </div>
+          </div>
+          <div class="valores-meta-financeira">
+            <span class="valor-atual-meta">${formatarMoeda(valorAtual)}</span>
+            <span class="valor-meta-de">de ${formatarMoeda(metaValor)}</span>
+          </div>
+          <div class="barra-horizontal-fundo">
+            <div class="barra-horizontal-preenchimento" style="width:${percentual}%"></div>
+          </div>
+          <div class="rodape-meta">
+            <span>${percentual}% da meta</span>
+            <span>${m.data_alvo ? `Prazo: ${formatarDataCompleta(m.data_alvo)}` : ''}</span>
+          </div>
+          <div class="acoes-tabela" style="justify-content: flex-end;">
+            <button type="button" class="botao-icone" data-editar-meta-obj="${m.id}" aria-label="Editar meta">✎</button>
+            <button type="button" class="botao-icone" data-apagar-meta-obj="${m.id}" aria-label="Apagar meta">🗑</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function cartaoMetaViagemHtml(m) {
+      const destinos = todosDestinosViagem.filter((d) => d.meta_id === m.id);
+      return `
+        <div class="cartao cartao-meta cartao-meta-viagem">
+          <div class="topo-meta">
+            <div>
+              <span class="categoria-meta">Viagem</span>
+              <h3 class="titulo-meta">${m.titulo || 'Sem título'}</h3>
+            </div>
+          </div>
+          ${m.data_alvo ? `<p class="descricao-meta">Prazo: ${formatarDataCompleta(m.data_alvo)}</p>` : ''}
+          ${m.descricao ? `<p class="descricao-meta">${m.descricao}</p>` : ''}
+
+          <div class="lista-destinos-viagem">
+            ${destinos.length === 0 ? '<p class="estado-vazio">Nenhum destino adicionado ainda.</p>' : destinos.map((d) => `
+              <div class="cartao-destino ${d.concluido ? 'concluido' : ''}">
+                <div class="topo-destino">
+                  <input type="checkbox" data-concluido-destino="${d.id}" ${d.concluido ? 'checked' : ''} aria-label="Marcar destino como feito" />
+                  <h4>${d.local || 'Sem destino definido'}</h4>
+                  <div class="acoes-tabela">
+                    <button type="button" class="botao-icone" data-editar-destino="${d.id}" aria-label="Editar destino">✎</button>
+                    <button type="button" class="botao-icone" data-apagar-destino="${d.id}" aria-label="Apagar destino">🗑</button>
+                  </div>
+                </div>
+                <div class="detalhes-destino">
+                  ${d.quando ? `<span>Quando: ${d.quando}</span>` : ''}
+                  <span>Dias: ${d.dias || '-'}</span>
+                  <span>Passagem: ${formatarMoeda(d.valor_passagem)}</span>
+                  <span>Hospedagem: ${formatarMoeda(d.valor_hospedagem)}</span>
+                </div>
+                ${d.atividades ? `<p class="atividades-destino">${d.atividades}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+
+          <button type="button" class="botao-adicionar" data-adicionar-destino="${m.id}">+ Adicionar destino</button>
+
+          <div class="acoes-tabela" style="justify-content: flex-end; margin-top: 12px;">
+            <button type="button" class="botao-icone" data-editar-meta-obj="${m.id}" aria-label="Editar viagem">✎</button>
+            <button type="button" class="botao-icone" data-apagar-meta-obj="${m.id}" aria-label="Apagar viagem">🗑</button>
+          </div>
+        </div>
+      `;
     }
 
     function renderizarMetas() {
@@ -3597,40 +3823,50 @@
         return (a.data_alvo || '9999-99-99').localeCompare(b.data_alvo || '9999-99-99');
       });
 
-      container.innerHTML = listaOrdenada.map((m) => `
-        <div class="cartao cartao-meta ${m.concluida ? 'concluida' : ''}">
-          <div class="topo-meta">
-            <div>
-              <span class="categoria-meta">${m.categoria || 'Geral'}</span>
-              <h3 class="titulo-meta">${m.titulo || 'Sem título'}</h3>
-            </div>
-            <input type="checkbox" data-concluida-meta="${m.id}" ${m.concluida ? 'checked' : ''} aria-label="Marcar como concluída" />
-          </div>
-          ${m.descricao ? `<p class="descricao-meta">${m.descricao}</p>` : ''}
-          <div class="barra-horizontal-fundo">
-            <div class="barra-horizontal-preenchimento" style="width:${m.progresso || 0}%"></div>
-          </div>
-          <div class="rodape-meta">
-            <span>${m.progresso || 0}% concluído</span>
-            <span>${m.data_alvo ? `Prazo: ${formatarDataCompleta(m.data_alvo)}` : ''}</span>
-          </div>
-          <div class="acoes-tabela" style="justify-content: flex-end;">
-            <button type="button" class="botao-icone" data-editar-meta-obj="${m.id}" aria-label="Editar meta">✎</button>
-            <button type="button" class="botao-icone" data-apagar-meta-obj="${m.id}" aria-label="Apagar meta">🗑</button>
-          </div>
-        </div>
-      `).join('');
+      container.innerHTML = listaOrdenada.map((m) => {
+        if (m.tipo === 'financeiro') return cartaoMetaFinanceiraHtml(m);
+        if (m.tipo === 'viagem') return cartaoMetaViagemHtml(m);
+        return cartaoMetaGeralHtml(m);
+      }).join('');
 
+      configurarAcoesMetas(container);
+    }
+
+    function configurarAcoesMetas(container) {
       container.querySelectorAll('[data-concluida-meta]').forEach((chk) => {
         chk.addEventListener('change', () => alternarConcluidaMeta(chk.dataset.concluidaMeta, chk.checked));
       });
       container.querySelectorAll('[data-editar-meta-obj]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          abrirModal('objetivo', todasMetasObjetivos.find((m) => m.id === btn.dataset.editarMetaObj));
+          const meta = todasMetasObjetivos.find((m) => m.id === btn.dataset.editarMetaObj);
+          const tipoModal = meta && meta.tipo === 'financeiro' ? 'objetivo_financeiro'
+            : meta && meta.tipo === 'viagem' ? 'objetivo_viagem'
+            : 'objetivo';
+          abrirModal(tipoModal, meta);
         });
       });
       container.querySelectorAll('[data-apagar-meta-obj]').forEach((btn) => {
         btn.addEventListener('click', () => apagarMeta(btn.dataset.apagarMetaObj));
+      });
+
+      container.querySelectorAll('[data-adicionar-destino]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          modalMetaContextoId = btn.dataset.adicionarDestino;
+          abrirModal('destino_viagem');
+        });
+      });
+      container.querySelectorAll('[data-editar-destino]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const destino = todosDestinosViagem.find((d) => d.id === btn.dataset.editarDestino);
+          modalMetaContextoId = destino ? destino.meta_id : null;
+          abrirModal('destino_viagem', destino);
+        });
+      });
+      container.querySelectorAll('[data-apagar-destino]').forEach((btn) => {
+        btn.addEventListener('click', () => apagarDestino(btn.dataset.apagarDestino));
+      });
+      container.querySelectorAll('[data-concluido-destino]').forEach((chk) => {
+        chk.addEventListener('change', () => alternarConcluidoDestino(chk.dataset.concluidoDestino, chk.checked));
       });
     }
 
@@ -3648,13 +3884,38 @@
     }
 
     async function apagarMeta(id) {
-      if (!confirm('Tem certeza que deseja apagar esta meta?')) return;
+      if (!confirm('Tem certeza que deseja apagar esta meta? Se for uma viagem, os destinos dela também serão apagados.')) return;
       try {
         const { error } = await sb.from('metas_objetivos').delete().eq('id', id);
         if (error) throw error;
         await recarregarMetas();
       } catch (erro) {
         alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function apagarDestino(id) {
+      if (!confirm('Tem certeza que deseja apagar este destino?')) return;
+      try {
+        const { error } = await sb.from('meta_destinos').delete().eq('id', id);
+        if (error) throw error;
+        await recarregarMetas();
+      } catch (erro) {
+        alert('Não foi possível apagar. Tente novamente.');
+        console.error(erro);
+      }
+    }
+
+    async function alternarConcluidoDestino(id, concluido) {
+      try {
+        const { error } = await sb.from('meta_destinos').update({ concluido }).eq('id', id);
+        if (error) throw error;
+        const item = todosDestinosViagem.find((d) => d.id === id);
+        if (item) item.concluido = concluido;
+        renderizarMetas();
+      } catch (erro) {
+        alert('Não foi possível atualizar. Tente novamente.');
         console.error(erro);
       }
     }
@@ -3752,7 +4013,9 @@
       configurarSeletorFinancas();
       configurarModalRoteiro();
       document.getElementById('botao-novo-cliente').addEventListener('click', () => abrirModal('cliente'));
-      document.getElementById('botao-nova-meta').addEventListener('click', () => abrirModal('objetivo'));
+      document.getElementById('botao-nova-meta-geral').addEventListener('click', () => abrirModal('objetivo'));
+      document.getElementById('botao-nova-meta-financeira').addEventListener('click', () => abrirModal('objetivo_financeiro'));
+      document.getElementById('botao-nova-meta-viagem').addEventListener('click', () => abrirModal('objetivo_viagem'));
 
       try {
         [todosEventos, todosLeads] = await Promise.all([
