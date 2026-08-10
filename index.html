@@ -738,12 +738,37 @@
     text-align: left;
   }
   .card-servico .foto-servico-wrap {
+    position: relative;
     overflow: hidden;
     border-radius: 16px;
     box-shadow: var(--sombra-suave);
     border: 3px solid var(--branco);
     margin-bottom: 1.1rem;
     transition: transform 0.25s ease;
+  }
+  .selo-servico {
+    position: absolute;
+    z-index: 2;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    white-space: nowrap;
+  }
+  .selo-icone-servico {
+    position: absolute;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 54, 112, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
   }
   .card-servico:nth-child(4n+1) .foto-servico-wrap { transform: rotate(-3deg); }
   .card-servico:nth-child(4n+2) .foto-servico-wrap { transform: rotate(2deg); }
@@ -1102,7 +1127,6 @@
           <h3>Como podemos trabalhar juntos</h3>
           <p>Escolha o formato. Ou <span class="servicos-banner-destaque">mescle tudo</span>.</p>
         </div>
-        <p class="servicos-banner-nota">Não precisa escolher só um. Crio pacotes 100% personalizados — me conta o que você precisa e a gente monta juntas.</p>
       </div>
       <div class="grid-servicos" id="grid-servicos"></div>
     </div>
@@ -1361,10 +1385,18 @@
 
     // EDITE AQUI: cards de serviços oferecidos (cada um com foto real)
     servicos: [
-      { arquivo: "fotos/servico-ugc.jpg", categoria: "Conteúdo autêntico", titulo: "UGC", descricao: "Conteúdos autênticos e naturais que apresentam o produto de forma espontânea, criando conexão com o público e aumentando a confiança na marca." },
-      { arquivo: "fotos/servico-marketplace.jpg", categoria: "Vídeos que convertem", titulo: "Clips para Marketplace", descricao: "Vídeos curtos e objetivos para Shopee, Mercado Livre, Amazon e outros marketplaces, destacando os benefícios e diferenciais do produto para ajudar na decisão de compra." },
-      { arquivo: "fotos/servico-tiktokshop.jpg", categoria: "Conteúdo nativo", titulo: "TikTok Shop", descricao: "Vídeos pensados para vender dentro do TikTok Shop, com roteiro estratégico, demonstração do produto, gatilhos de compra e CTA para conversão." },
-      { arquivo: "fotos/servico-publis.jpg", categoria: "Parceria de marca", titulo: "Publis", descricao: "Conteúdos patrocinados para divulgar sua marca de forma criativa e integrada ao meu conteúdo, gerando visibilidade, identificação e interesse pelo produto." }
+      { arquivo: "fotos/servico-ugc.jpg", categoria: "Conteúdo autêntico", titulo: "UGC", descricao: "Conteúdos autênticos e naturais que apresentam o produto de forma espontânea, criando conexão com o público e aumentando a confiança na marca.",
+        selos: [ { emoji: "📷", top: "10px", right: "10px", rot: "-8deg" } ] },
+      { arquivo: "fotos/servico-marketplace.jpg", categoria: "Vídeos que convertem", titulo: "Clips para Marketplace", descricao: "Vídeos curtos e objetivos para Shopee, Mercado Livre, Amazon e outros marketplaces, destacando os benefícios e diferenciais do produto para ajudar na decisão de compra.",
+        selos: [
+          { texto: "Amazon", cor: "#111111", corTexto: "#FF9900", top: "10px", right: "10px", rot: "-6deg" },
+          { texto: "Shopee", cor: "#EE4D2D", corTexto: "#ffffff", top: "10px", left: "10px", rot: "5deg" },
+          { texto: "Mercado Livre", cor: "#FFE600", corTexto: "#1a1a1a", bottom: "10px", right: "10px", rot: "-4deg" }
+        ] },
+      { arquivo: "fotos/servico-tiktokshop.jpg", categoria: "Conteúdo nativo", titulo: "TikTok Shop", descricao: "Vídeos pensados para vender dentro do TikTok Shop, com roteiro estratégico, demonstração do produto, gatilhos de compra e CTA para conversão.",
+        selos: [ { texto: "TikTok", cor: "#010101", corTexto: "#ffffff", top: "10px", right: "10px", rot: "6deg" } ] },
+      { arquivo: "fotos/servico-publis.jpg", categoria: "Parceria de marca", titulo: "Publis", descricao: "Conteúdos patrocinados para divulgar sua marca de forma criativa e integrada ao meu conteúdo, gerando visibilidade, identificação e interesse pelo produto.",
+        selos: [ { texto: "Instagram", cor: "#c1367f", corTexto: "#ffffff", top: "10px", right: "10px", rot: "-5deg" } ] }
     ],
 
     // EDITE AQUI: seção de investimento (valores unitários e pacotes)
@@ -1571,11 +1603,19 @@
     <span class="figurinha-fotos" style="top:${s.top}; left:${s.left}; font-size:${s.tam}; color:${s.cor}; transform:rotate(${s.rot});" aria-hidden="true">${s.emoji}</span>`).join("");
 
   // Serviços
+  const renderSeloServico = sel => {
+    const pos = ["top", "right", "bottom", "left"].filter(p => sel[p]).map(p => `${p}:${sel[p]};`).join(" ");
+    if (sel.emoji) {
+      return `<span class="selo-icone-servico" style="${pos} transform:rotate(${sel.rot});" aria-hidden="true">${sel.emoji}</span>`;
+    }
+    return `<span class="selo-servico" style="${pos} transform:rotate(${sel.rot}); background:${sel.cor}; color:${sel.corTexto};">${sel.texto}</span>`;
+  };
   const gridServicos = document.getElementById("grid-servicos");
   gridServicos.innerHTML = config.servicos.map(s => `
     <div class="card-servico reveal visivel">
       <div class="foto-servico-wrap">
         <img class="foto-servico" src="${s.arquivo}" alt="${s.titulo}" loading="lazy">
+        ${(s.selos || []).map(renderSeloServico).join("")}
       </div>
       <span class="servico-categoria">${s.categoria}</span>
       <h3>${s.titulo}</h3>
