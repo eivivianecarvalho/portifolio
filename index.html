@@ -705,15 +705,9 @@
 
   /* ---------- SERVIÇOS ---------- */
   .servicos-banner {
-    background: var(--off-white);
-    border: 1px solid rgba(212,175,55,0.4);
-    border-radius: 16px;
-    padding: 1.5rem 2rem;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
     align-items: center;
-    gap: 2.5rem;
+    gap: 0.6rem;
     margin: 1.5rem 0 2.5rem 0;
   }
   .servicos-banner h3 {
@@ -721,14 +715,22 @@
     color: var(--azul);
     font-size: 1.3rem;
     margin-bottom: 0.3rem;
+    display: inline;
   }
   .servicos-banner p { margin: 0; }
-  .servicos-banner-nota {
-    max-width: 380px;
-    font-size: 0.92rem;
-    color: var(--texto);
-  }
   .servicos-banner-destaque { color: var(--pink); font-weight: 700; }
+  .servicos-banner-exclamacao {
+    color: var(--pink);
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    line-height: 1;
+    animation: piscarExclamacao 1.3s ease-in-out infinite;
+  }
+  @keyframes piscarExclamacao {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+  }
   .grid-servicos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -1127,6 +1129,7 @@
           <h3>Como podemos trabalhar juntos</h3>
           <p>Escolha o formato. Ou <span class="servicos-banner-destaque">mescle tudo</span>.</p>
         </div>
+        <span class="servicos-banner-exclamacao" aria-hidden="true">!</span>
       </div>
       <div class="grid-servicos" id="grid-servicos"></div>
     </div>
