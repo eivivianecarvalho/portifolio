@@ -405,11 +405,12 @@
   }
 
   /* ---------- SOBRE ---------- */
-  .sobre-grid {
+  .sobre-visual {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 3rem;
+    grid-template-columns: 1fr 1.1fr 1fr;
     align-items: center;
+    gap: 1.5rem;
+    margin: 2.5rem 0;
   }
   .sobre-imagem .bloco-gradiente,
   .sobre-imagem .foto-sobre {
@@ -422,10 +423,49 @@
     border: 2px solid var(--dourado);
     box-shadow: var(--sombra-suave);
   }
+  .fatos-sobre {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .fato-sobre {
+    background: var(--off-white);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 16px;
+    padding: 1rem 1.2rem;
+    box-shadow: var(--sombra-suave-sm);
+  }
+  .fato-sobre .fato-icone {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .fato-sobre .fato-titulo {
+    font-family: 'Fraunces', serif;
+    color: var(--azul);
+    font-weight: 700;
+    font-size: 1.05rem;
+    display: block;
+  }
+  .fato-sobre .fato-texto {
+    font-size: 0.88rem;
+    color: var(--texto);
+  }
+  .sobre-texto-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .sobre-lista {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 2rem;
+    margin-top: 1rem;
+  }
   .sobre-lista li {
     padding-left: 1.8rem;
     position: relative;
-    margin-bottom: 0.7rem;
     font-weight: 500;
   }
   .sobre-lista li::before {
@@ -438,8 +478,10 @@
     color: var(--verde-detalhe);
   }
   @media (max-width: 860px) {
-    .sobre-grid { grid-template-columns: 1fr; }
-    .sobre-imagem { max-width: 280px; margin: 0 auto; }
+    .sobre-visual { grid-template-columns: 1fr; }
+    .sobre-imagem { max-width: 260px; margin: 0 auto; }
+    .fatos-sobre { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    .fato-sobre { flex: 1 1 220px; }
   }
 
   /* ---------- PORTFÓLIO ---------- */
@@ -946,13 +988,17 @@
 
   <!-- 4. SOBRE -->
   <section id="sobre">
-    <div class="container sobre-grid">
-      <div class="sobre-imagem reveal">
-        <img class="foto-sobre" src="fotos/sobre-viviane.jpg" alt="Foto de Viviane Carvalho">
+    <div class="container">
+      <span class="rotulo-secao">Sobre mim</span>
+      <h2 class="titulo-secao reveal">Quem entrega o seu conteúdo</h2>
+      <div class="sobre-visual">
+        <div class="fatos-sobre fatos-sobre-esquerda" id="fatos-sobre-esquerda"></div>
+        <div class="sobre-imagem reveal">
+          <img class="foto-sobre" src="fotos/sobre-viviane.jpg" alt="Foto de Viviane Carvalho">
+        </div>
+        <div class="fatos-sobre fatos-sobre-direita" id="fatos-sobre-direita"></div>
       </div>
-      <div class="reveal">
-        <span class="rotulo-secao">Sobre mim</span>
-        <h2 class="titulo-secao">Quem entrega o seu conteúdo</h2>
+      <div class="sobre-texto-wrap reveal">
         <div id="sobre-texto"></div>
         <ul class="sobre-lista" id="sobre-lista"></ul>
       </div>
@@ -1170,6 +1216,13 @@
 
     // EDITE AQUI: texto e lista da seção Sobre
     sobre: {
+      // EDITE AQUI: fatos rápidos que aparecem ao redor da foto (2 do lado esquerdo, 2 do direito)
+      fatos: [
+        { icone: "🕐", titulo: "Desde março de 2025", texto: "Criando conteúdo autêntico de UGC" },
+        { icone: "🤝", titulo: "+100 marcas", texto: "Já atendidas com vídeos e fotos" },
+        { icone: "💛", titulo: "Meu diferencial", texto: "Apaixonada por autocuidado e por mostrar que o simples também pode ser poderoso" },
+        { icone: "📍", titulo: "Aparecida - SP", texto: "De onde eu crio todo o conteúdo" }
+      ],
       paragrafos: [
         "Criadora de conteúdo UGC apaixonada por autocuidado e por mostrar que o simples também pode ser poderoso. Trago uma comunicação leve, direta e cheia de propósito, falando de beleza e bem-estar de forma real e acessível.",
         "Com meu estilo tradicional e criativo, transformo experiências pessoais em inspiração, compartilhando resultados reais como minha jornada de autocuidado e emagrecimento. Se sua marca valoriza autenticidade e histórias que conectam, vamos criar algo que inspire e destaque o que realmente funciona."
@@ -1318,6 +1371,18 @@
   marcasContainer.innerHTML = listaMarcasDuplicada.map(renderCartaoMarca).join("");
 
   // Sobre
+  const renderFatoSobre = f => `
+    <div class="fato-sobre reveal visivel">
+      <span class="fato-icone" aria-hidden="true">${f.icone}</span>
+      <span class="fato-titulo">${f.titulo}</span>
+      <span class="fato-texto">${f.texto}</span>
+    </div>`;
+  const fatosSobre = config.sobre.fatos;
+  const metadeFatos = Math.ceil(fatosSobre.length / 2);
+  document.getElementById("fatos-sobre-esquerda").innerHTML =
+    fatosSobre.slice(0, metadeFatos).map(renderFatoSobre).join("");
+  document.getElementById("fatos-sobre-direita").innerHTML =
+    fatosSobre.slice(metadeFatos).map(renderFatoSobre).join("");
   document.getElementById("sobre-texto").innerHTML = config.sobre.paragrafos.map(p => `<p>${p}</p>`).join("");
   document.getElementById("sobre-lista").innerHTML =
     config.sobre.pontos.map(p => `<li>${p}</li>`).join("");
