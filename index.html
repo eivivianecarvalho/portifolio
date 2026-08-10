@@ -705,31 +705,24 @@
 
   /* ---------- SERVIÇOS ---------- */
   .servicos-banner {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin: 1.5rem 0 2.5rem 0;
+    text-align: center;
+    max-width: 620px;
+    margin: 1.5rem auto 2.5rem auto;
   }
   .servicos-banner h3 {
     font-family: 'Fraunces', serif;
     color: var(--azul);
-    font-size: 1.3rem;
-    margin-bottom: 0.3rem;
-    display: inline;
+    font-size: 1.6rem;
+    margin-bottom: 0.4rem;
   }
   .servicos-banner p { margin: 0; }
   .servicos-banner-destaque { color: var(--pink); font-weight: 700; }
-  .servicos-banner-exclamacao {
-    color: var(--pink);
-    font-family: 'Fraunces', serif;
-    font-weight: 800;
-    font-size: 2.4rem;
-    line-height: 1;
-    animation: piscarExclamacao 1.3s ease-in-out infinite;
+  .reveal-divertido {
+    transform: scale(0.7) rotate(-4deg);
   }
-  @keyframes piscarExclamacao {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.15; }
+  .reveal-divertido.visivel {
+    transform: scale(1) rotate(0deg);
+    transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .grid-servicos {
     display: grid;
@@ -1124,12 +1117,9 @@
     <div class="container">
       <span class="rotulo-secao">Serviços</span>
       <h2 class="titulo-secao reveal">O que eu posso criar pra sua marca</h2>
-      <div class="servicos-banner reveal">
-        <div>
-          <h3>Como podemos trabalhar juntos</h3>
-          <p>Escolha o formato. Ou <span class="servicos-banner-destaque">mescle tudo</span>.</p>
-        </div>
-        <span class="servicos-banner-exclamacao" aria-hidden="true">!</span>
+      <div class="servicos-banner reveal reveal-divertido">
+        <h3>Como podemos trabalhar juntos</h3>
+        <p>Escolha o formato. Ou <span class="servicos-banner-destaque">mescle tudo</span>.</p>
       </div>
       <div class="grid-servicos" id="grid-servicos"></div>
     </div>
