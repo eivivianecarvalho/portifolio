@@ -704,40 +704,76 @@
   }
 
   /* ---------- SERVIÇOS ---------- */
-  .servicos-carrossel-wrap {
-    position: relative;
-  }
-  .grid-servicos {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 1.6rem;
-    padding-bottom: 0.5rem;
-    scrollbar-width: none;
-  }
-  .grid-servicos::-webkit-scrollbar { display: none; }
-  .card-servico {
-    background: var(--branco);
+  .servicos-banner {
+    background: var(--off-white);
     border: 1px solid rgba(212,175,55,0.4);
     border-radius: 16px;
-    box-shadow: var(--sombra-suave-sm);
-    padding: 1.8rem;
-    flex: 0 0 270px;
-    width: 270px;
-    scroll-snap-align: start;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 1.5rem 0 2.5rem 0;
   }
-  .card-servico:hover { transform: translateY(-5px); box-shadow: var(--sombra-suave); }
-  .card-servico .icone {
-    font-size: 2.2rem;
-    display: inline-block;
-    margin-bottom: 0.8rem;
+  .servicos-banner h3 {
+    font-family: 'Fraunces', serif;
+    color: var(--azul);
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+  }
+  .servicos-banner p { margin: 0; }
+  .servicos-banner-nota {
+    max-width: 380px;
+    font-size: 0.92rem;
+    color: var(--texto);
+  }
+  .servicos-banner-destaque { color: var(--pink); font-weight: 700; }
+  .grid-servicos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 2.2rem 1.8rem;
+  }
+  .card-servico {
+    text-align: left;
+  }
+  .card-servico .foto-servico-wrap {
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: var(--sombra-suave);
+    border: 3px solid var(--branco);
+    margin-bottom: 1.1rem;
+    transition: transform 0.25s ease;
+  }
+  .card-servico:nth-child(4n+1) .foto-servico-wrap { transform: rotate(-3deg); }
+  .card-servico:nth-child(4n+2) .foto-servico-wrap { transform: rotate(2deg); }
+  .card-servico:nth-child(4n+3) .foto-servico-wrap { transform: rotate(-2deg); }
+  .card-servico:nth-child(4n+4) .foto-servico-wrap { transform: rotate(3deg); }
+  .card-servico:hover .foto-servico-wrap { transform: rotate(0deg) scale(1.04); }
+  .foto-servico {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
+  }
+  .card-servico .servico-categoria {
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--dourado);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.3rem;
   }
   .card-servico h3 {
     font-size: 1.2rem;
     font-family: 'Fraunces', serif;
     font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .card-servico p { font-size: 0.92rem; }
+  @media (max-width: 640px) {
+    .servicos-banner { flex-direction: column; align-items: flex-start; }
   }
 
   /* ---------- INVESTIMENTO ---------- */
@@ -1061,11 +1097,14 @@
     <div class="container">
       <span class="rotulo-secao">Serviços</span>
       <h2 class="titulo-secao reveal">O que eu posso criar pra sua marca</h2>
-      <div class="servicos-carrossel-wrap">
-        <button class="seta-portfolio seta-esquerda mostrar" id="seta-servicos-esquerda" aria-label="Ver serviços anteriores">&#8249;</button>
-        <div class="grid-servicos" id="grid-servicos"></div>
-        <button class="seta-portfolio seta-direita mostrar" id="seta-servicos-direita" aria-label="Ver próximos serviços">&#8250;</button>
+      <div class="servicos-banner reveal">
+        <div>
+          <h3>Como podemos trabalhar juntos</h3>
+          <p>Escolha o formato. Ou <span class="servicos-banner-destaque">mescle tudo</span>.</p>
+        </div>
+        <p class="servicos-banner-nota">Não precisa escolher só um. Crio pacotes 100% personalizados — me conta o que você precisa e a gente monta juntas.</p>
       </div>
+      <div class="grid-servicos" id="grid-servicos"></div>
     </div>
   </section>
 
@@ -1320,14 +1359,12 @@
       { titulo: "Viviane Carvalho segurando o creme clareador para axilas e virilhas", arquivo: "fotos/creme-clareador.jpg" }
     ],
 
-    // EDITE AQUI: cards de serviços oferecidos
+    // EDITE AQUI: cards de serviços oferecidos (cada um com foto real)
     servicos: [
-      { icone: "🎬", titulo: "Vídeo UGC", descricao: "Vídeos autênticos, gravados no celular, com a linguagem real de quem recomenda um produto para uma amiga." },
-      { icone: "📲", titulo: "Reels para Instagram", descricao: "Roteiro, gravação e edição de reels pensados para reter atenção e gerar engajamento." },
-      { icone: "📦", titulo: "Unboxing", descricao: "Vídeo de abertura de produto mostrando a primeira impressão real, ótimo para gerar desejo de compra." },
-      { icone: "🛍️", titulo: "Fotos de produto", descricao: "Fotos com estética natural, prontas para o site, catálogo ou redes sociais da marca." },
-      { icone: "⭐", titulo: "Depoimento em vídeo", descricao: "Prova social gravada de forma espontânea, ideal para aumentar a confiança na sua marca." },
-      { icone: "📈", titulo: "Conteúdo para anúncios", descricao: "Vídeos e fotos otimizados para performance, feitos para rodar como anúncio pago." }
+      { arquivo: "fotos/servico-ugc.jpg", categoria: "Conteúdo autêntico", titulo: "UGC", descricao: "Conteúdos autênticos e naturais que apresentam o produto de forma espontânea, criando conexão com o público e aumentando a confiança na marca." },
+      { arquivo: "fotos/servico-marketplace.jpg", categoria: "Vídeos que convertem", titulo: "Clips para Marketplace", descricao: "Vídeos curtos e objetivos para Shopee, Mercado Livre, Amazon e outros marketplaces, destacando os benefícios e diferenciais do produto para ajudar na decisão de compra." },
+      { arquivo: "fotos/servico-tiktokshop.jpg", categoria: "Conteúdo nativo", titulo: "TikTok Shop", descricao: "Vídeos pensados para vender dentro do TikTok Shop, com roteiro estratégico, demonstração do produto, gatilhos de compra e CTA para conversão." },
+      { arquivo: "fotos/servico-publis.jpg", categoria: "Parceria de marca", titulo: "Publis", descricao: "Conteúdos patrocinados para divulgar sua marca de forma criativa e integrada ao meu conteúdo, gerando visibilidade, identificação e interesse pelo produto." }
     ],
 
     // EDITE AQUI: seção de investimento (valores unitários e pacotes)
@@ -1537,17 +1574,13 @@
   const gridServicos = document.getElementById("grid-servicos");
   gridServicos.innerHTML = config.servicos.map(s => `
     <div class="card-servico reveal visivel">
-      <span class="icone" aria-hidden="true">${s.icone}</span>
+      <div class="foto-servico-wrap">
+        <img class="foto-servico" src="${s.arquivo}" alt="${s.titulo}" loading="lazy">
+      </div>
+      <span class="servico-categoria">${s.categoria}</span>
       <h3>${s.titulo}</h3>
       <p>${s.descricao}</p>
     </div>`).join("");
-
-  document.getElementById("seta-servicos-esquerda").addEventListener("click", () => {
-    gridServicos.scrollBy({ left: -(270 + 26), behavior: "smooth" });
-  });
-  document.getElementById("seta-servicos-direita").addEventListener("click", () => {
-    gridServicos.scrollBy({ left: 270 + 26, behavior: "smooth" });
-  });
 
   // Investimento (valores unitários + pacotes)
   document.getElementById("lista-unitarios").innerHTML = config.investimento.unitarios.map(u =>
