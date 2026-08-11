@@ -1021,6 +1021,130 @@
     .marquee-marcas { animation: none; }
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+
+  /* ---------- MODAL DE CAPTURA DE LEADS ---------- */
+  .modal-leads-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(61, 55, 51, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .modal-leads-backdrop[hidden] { display: none; }
+  .modal-leads-backdrop.mostrar { opacity: 1; }
+  .modal-leads {
+    background: var(--branco);
+    border-radius: 24px;
+    box-shadow: var(--sombra-suave);
+    padding: 2.2rem;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .modal-leads-backdrop.mostrar .modal-leads {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .modal-leads-fechar {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--texto);
+    cursor: pointer;
+    padding: 0.3rem;
+  }
+  .modal-leads-eyebrow {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 0.5rem;
+  }
+  .modal-leads h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    color: var(--azul);
+    font-size: 1.5rem;
+    margin-bottom: 0.6rem;
+  }
+  .modal-leads-subtitulo {
+    color: var(--texto);
+    font-size: 0.95rem;
+    margin-bottom: 1.4rem;
+  }
+  .modal-leads-campo { margin-bottom: 1rem; }
+  .modal-leads-campo input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1.5px solid var(--cinza-rosado);
+    border-radius: 16px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.95rem;
+    background: transparent;
+    color: var(--texto);
+  }
+  .modal-leads-campo input::placeholder { color: var(--cinza-rosado); }
+  .modal-leads-campo input:focus-visible {
+    outline: 2px solid var(--azul);
+    outline-offset: 2px;
+  }
+  .modal-leads-erro-campo {
+    display: block;
+    color: #b3261e;
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+  }
+  .modal-leads-botao {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: none;
+    border-radius: 16px;
+    background: var(--azul);
+    color: var(--branco);
+    font-weight: 700;
+    font-size: 0.98rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  .modal-leads-botao:disabled { opacity: 0.65; cursor: default; }
+  .modal-leads-erro-geral {
+    color: #b3261e;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 0.9rem;
+  }
+  .modal-leads-microcopy {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--cinza-rosado);
+    margin-top: 1.2rem;
+  }
+  .modal-leads-sucesso {
+    text-align: center;
+    padding: 1.5rem 0;
+  }
+  .modal-leads-sucesso .icone-sucesso { font-size: 2.4rem; display: block; margin-bottom: 0.8rem; }
+  .modal-leads-sucesso h3 { margin-bottom: 0.4rem; }
+  .modal-leads-sucesso p { color: var(--texto); font-size: 0.95rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .modal-leads-backdrop, .modal-leads { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -1186,6 +1310,34 @@
   <p class="rodape-copyright" id="rodape-copyright"></p>
 </footer>
 
+<!-- 9. MODAL DE CAPTURA DE LEADS (aparece uma vez, depois de 10s de permanência) -->
+<div class="modal-leads-backdrop" id="modal-leads-backdrop" hidden>
+  <div class="modal-leads" role="dialog" aria-modal="true" aria-labelledby="modal-leads-titulo" id="modal-leads">
+    <button type="button" class="modal-leads-fechar" id="modal-leads-fechar" aria-label="Fechar">&times;</button>
+    <div id="modal-leads-corpo">
+      <span class="modal-leads-eyebrow">Vamos conversar?</span>
+      <h3 id="modal-leads-titulo">Curtindo o portfólio?</h3>
+      <p class="modal-leads-subtitulo">Deixa seu contato e eu mando ideias de conteúdo personalizadas pra sua marca.</p>
+      <form id="modal-leads-form" novalidate>
+        <div class="modal-leads-campo">
+          <input type="text" id="modal-leads-nome" placeholder="Seu nome" autocomplete="name" required>
+          <span class="modal-leads-erro-campo" id="modal-leads-erro-nome" hidden></span>
+        </div>
+        <div class="modal-leads-campo">
+          <input type="email" id="modal-leads-email" placeholder="Seu email" autocomplete="email" required>
+          <span class="modal-leads-erro-campo" id="modal-leads-erro-email" hidden></span>
+        </div>
+        <div class="modal-leads-campo">
+          <input type="tel" id="modal-leads-telefone" placeholder="Telefone (opcional)" autocomplete="tel" inputmode="numeric">
+        </div>
+        <button type="submit" class="modal-leads-botao" id="modal-leads-botao">Quero receber</button>
+        <p class="modal-leads-erro-geral" id="modal-leads-erro-geral" hidden>Não deu pra enviar agora. Tenta de novo?</p>
+      </form>
+      <p class="modal-leads-microcopy">Sem spam, prometo. Só conteúdo relevante.</p>
+    </div>
+  </div>
+</div>
+
 <script>
   /* =========================================================================
      ANALYTICS: registra visitas, cliques e vídeos vistos no Supabase, para
@@ -1226,8 +1378,11 @@
       });
     }
 
+    // Retorna uma Promise<boolean> (sucesso ou não), pra quem precisar reagir
+    // ao resultado (ex: o modal de captura). O formulário do rodapé ignora o
+    // retorno e mantém o comportamento de sempre (não bloqueia a navegação).
     function registrarLead(lead) {
-      fetch(`${SUPABASE_URL}/rest/v1/portfolio_leads`, {
+      return fetch(`${SUPABASE_URL}/rest/v1/portfolio_leads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1235,7 +1390,7 @@
           Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify(lead),
-      }).catch(() => {});
+      }).then(res => res.ok).catch(() => false);
     }
 
     // Evita contar o mesmo vídeo várias vezes se o visitante passar o mouse
@@ -1721,7 +1876,185 @@
 
     mensagemConfirmacao.classList.add("mostrar");
     formulario.reset();
+    sessionStorage.setItem("pf_lead_enviado_sessao", "1");
   });
+
+  /* =========================================================================
+     COMPORTAMENTO: modal de captura de leads (pop-up)
+     Reaproveita exatamente analytics.registrarLead (mesma função, schema e
+     validação de backend do formulário do rodapé). Único ponto diferente é
+     o campo "source", que já existe no schema com os valores aceitos
+     "contact" (rodapé) e "popup" (este modal) — ver setup.sql do painel.
+     ========================================================================= */
+  (function () {
+    const backdrop = document.getElementById("modal-leads-backdrop");
+    const modal = document.getElementById("modal-leads");
+    const corpo = document.getElementById("modal-leads-corpo");
+    const botaoFechar = document.getElementById("modal-leads-fechar");
+    const form = document.getElementById("modal-leads-form");
+    const campoNome = document.getElementById("modal-leads-nome");
+    const campoEmail = document.getElementById("modal-leads-email");
+    const campoTelefone = document.getElementById("modal-leads-telefone");
+    const erroNome = document.getElementById("modal-leads-erro-nome");
+    const erroEmail = document.getElementById("modal-leads-erro-email");
+    const erroGeral = document.getElementById("modal-leads-erro-geral");
+    const botaoEnviar = document.getElementById("modal-leads-botao");
+
+    const CHAVE_JA_MOSTRADO = "pf_modal_lead_mostrado";
+    const CHAVE_ENVIADO_SESSAO = "pf_lead_enviado_sessao";
+    let elementoAnteriorAoFoco = null;
+
+    function marcarComoMostrado() {
+      localStorage.setItem(CHAVE_JA_MOSTRADO, "1");
+    }
+
+    function focaveisDoModal() {
+      return Array.from(modal.querySelectorAll('input, button, [href], [tabindex]:not([tabindex="-1"])'))
+        .filter(el => !el.disabled && el.offsetParent !== null);
+    }
+
+    function aoPressionarTecla(e) {
+      if (e.key === "Escape") {
+        fecharModal();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focaveis = focaveisDoModal();
+      if (focaveis.length === 0) return;
+      const primeiro = focaveis[0];
+      const ultimo = focaveis[focaveis.length - 1];
+      if (e.shiftKey && document.activeElement === primeiro) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primeiro.focus();
+      }
+    }
+
+    function abrirModal() {
+      if (localStorage.getItem(CHAVE_JA_MOSTRADO) === "1") return;
+      if (sessionStorage.getItem(CHAVE_ENVIADO_SESSAO) === "1") return;
+      const retanguloRodape = formulario.getBoundingClientRect();
+      const rodapeVisivel = retanguloRodape.top < window.innerHeight && retanguloRodape.bottom > 0;
+      if (rodapeVisivel) return;
+
+      elementoAnteriorAoFoco = document.activeElement;
+      backdrop.hidden = false;
+      document.body.style.overflow = "hidden";
+      requestAnimationFrame(() => backdrop.classList.add("mostrar"));
+      campoNome.focus();
+      document.addEventListener("keydown", aoPressionarTecla);
+      analytics.registrarEvento("button_click", "lead_modal_aberto");
+    }
+
+    function fecharModal() {
+      backdrop.classList.remove("mostrar");
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", aoPressionarTecla);
+      marcarComoMostrado();
+      setTimeout(() => { backdrop.hidden = true; }, 200);
+      if (elementoAnteriorAoFoco && elementoAnteriorAoFoco.focus) elementoAnteriorAoFoco.focus();
+    }
+
+    botaoFechar.addEventListener("click", fecharModal);
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) fecharModal();
+    });
+
+    // Máscara de telefone brasileiro: (11) 91234-5678
+    campoTelefone.addEventListener("input", () => {
+      const digitos = campoTelefone.value.replace(/\D/g, "").slice(0, 11);
+      let formatado = digitos;
+      if (digitos.length > 10) {
+        formatado = digitos.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+      } else if (digitos.length > 6) {
+        formatado = digitos.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+      } else if (digitos.length > 2) {
+        formatado = digitos.replace(/(\d{2})(\d{0,4})/, "($1) $2");
+      } else if (digitos.length > 0) {
+        formatado = digitos.replace(/(\d{0,2})/, "($1");
+      }
+      campoTelefone.value = formatado;
+    });
+
+    function limparErros() {
+      erroNome.hidden = true;
+      erroNome.textContent = "";
+      erroEmail.hidden = true;
+      erroEmail.textContent = "";
+      erroGeral.hidden = true;
+    }
+
+    function validar(nome, email) {
+      let valido = true;
+      if (!nome) {
+        erroNome.textContent = "Preenche seu nome, por favor.";
+        erroNome.hidden = false;
+        valido = false;
+      }
+      const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailValido) {
+        erroEmail.textContent = "Digita um e-mail válido.";
+        erroEmail.hidden = false;
+        valido = false;
+      }
+      return valido;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      limparErros();
+      const nome = campoNome.value.trim();
+      const email = campoEmail.value.trim();
+      const telefone = campoTelefone.value.trim();
+
+      if (!validar(nome, email)) return;
+
+      botaoEnviar.disabled = true;
+      botaoEnviar.textContent = "Enviando...";
+
+      const sucesso = await analytics.registrarLead({
+        name: nome,
+        email: email,
+        phone: telefone || null,
+        brand: null,
+        budget: null,
+        message: null,
+        source: "popup",
+      });
+
+      if (!sucesso) {
+        botaoEnviar.disabled = false;
+        botaoEnviar.textContent = "Quero receber";
+        erroGeral.hidden = false;
+        return;
+      }
+
+      analytics.registrarEvento("button_click", "lead_modal_submit");
+      sessionStorage.setItem(CHAVE_ENVIADO_SESSAO, "1");
+      marcarComoMostrado();
+
+      corpo.innerHTML = `
+        <div class="modal-leads-sucesso">
+          <span class="icone-sucesso" aria-hidden="true">✦</span>
+          <h3>Recebi seu contato!</h3>
+          <p>Já te chamo com ideias de conteúdo pra sua marca.</p>
+        </div>`;
+      setTimeout(fecharModal, 3000);
+    });
+
+    // Gatilho: 10s de tempo ATIVO na página (pausa se a aba fica em segundo plano)
+    let segundosAtivos = 0;
+    const intervaloContador = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      segundosAtivos += 1;
+      if (segundosAtivos >= 10) {
+        clearInterval(intervaloContador);
+        abrirModal();
+      }
+    }, 1000);
+  })();
 
   /* =========================================================================
      COMPORTAMENTO: animação de entrada ao rolar a página (IntersectionObserver)
