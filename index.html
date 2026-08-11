@@ -1885,8 +1885,10 @@
      validação de backend do formulário do rodapé). Único ponto diferente é
      o campo "source", que já existe no schema com os valores aceitos
      "contact" (rodapé) e "popup" (este modal) — ver setup.sql do painel.
+     Fica isolado num try/catch: se algo aqui falhar, o resto do site (menu,
+     portfólio, formulário do rodapé etc.) continua funcionando normalmente.
      ========================================================================= */
-  (function () {
+  try {
     const backdrop = document.getElementById("modal-leads-backdrop");
     const modal = document.getElementById("modal-leads");
     const corpo = document.getElementById("modal-leads-corpo");
@@ -2054,7 +2056,9 @@
         abrirModal();
       }
     }, 1000);
-  })();
+  } catch (erro) {
+    console.error("Modal de captura de leads falhou ao iniciar:", erro);
+  }
 
   /* =========================================================================
      COMPORTAMENTO: animação de entrada ao rolar a página (IntersectionObserver)
