@@ -906,6 +906,179 @@
   }
   .card-pacote.destaque .preco { color: var(--dourado); }
 
+  /* ---------- OFERTA DE FIM DE ANO ---------- */
+  .secao-oferta-fim-de-ano {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul) 55%, var(--azul-escuro) 100%);
+    background-size: 220% 220%;
+    color: var(--branco);
+    animation: fluxo-gradiente-oferta 12s ease infinite;
+  }
+  .secao-oferta-fim-de-ano::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(212,175,55,0.55) 2px, transparent 2px),
+      radial-gradient(circle, rgba(228,0,124,0.45) 2px, transparent 2px),
+      radial-gradient(circle, rgba(183,255,173,0.35) 1.5px, transparent 1.5px);
+    background-size: 70px 70px, 110px 110px, 50px 50px;
+    background-position: 0 0, 35px 55px, 20px 90px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .secao-oferta-fim-de-ano .container { position: relative; z-index: 1; }
+  .secao-oferta-fim-de-ano .titulo-secao { color: var(--branco); }
+  .secao-oferta-fim-de-ano .titulo-secao::after { background: var(--dourado); }
+  .adesivo-festivo {
+    position: absolute;
+    font-size: 2.2rem;
+    line-height: 1;
+    animation: flutuar-adesivo-festivo 3.2s ease-in-out infinite;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
+  }
+  .adesivo-festivo-1 { top: -6px; right: 14%; animation-delay: 0s; }
+  .adesivo-festivo-2 { top: 34px; right: 2%; font-size: 1.5rem; animation-delay: 0.6s; }
+  .adesivo-festivo-3 { top: 4px; left: 1%; font-size: 1.7rem; animation-delay: 1.1s; }
+  .adesivo-festivo-4 { top: 150px; right: 22%; font-size: 1.3rem; animation-delay: 1.6s; }
+  .adesivo-festivo-5 { bottom: 4%; right: 3%; font-size: 1.8rem; animation-delay: 0.3s; }
+  .adesivo-festivo-6 { bottom: 6%; left: 2%; font-size: 1.4rem; animation-delay: 2s; }
+  @media (max-width: 700px) {
+    .adesivo-festivo { display: none; }
+  }
+
+  /* Chapeuzinho de Papai Noel em cima do "l" de "Natal" */
+  .letra-com-chapeu { position: relative; display: inline-block; }
+  .chapeu-noel {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-38%) rotate(-8deg);
+    width: 22px;
+    height: auto;
+  }
+  .selo-oferta-fim-de-ano {
+    display: inline-block;
+    background: var(--pink);
+    color: var(--branco);
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
+    box-shadow: 0 0 0 rgba(228,0,124,0.55);
+    animation: pulso-selo-oferta 1.8s ease-in-out infinite;
+  }
+  .oferta-fim-de-ano-subtitulo {
+    max-width: 620px;
+    font-size: 1.05rem;
+    color: var(--cinza-rosado);
+    margin-bottom: 2.6rem;
+  }
+  .oferta-fim-de-ano-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2.4rem;
+    align-items: start;
+  }
+  .cartao-combo {
+    position: relative;
+    background: var(--branco);
+    color: var(--texto);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    border: 2px solid var(--dourado);
+  }
+  .fita-urgencia {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    white-space: nowrap;
+    background: var(--verde-detalhe);
+    color: var(--azul-escuro);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    z-index: 2;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+  }
+  .cartao-combo-topo { background: var(--pink); padding: 1.1rem 1.4rem; }
+  .cartao-combo-topo h3 { color: var(--branco); margin: 0; font-size: 1.3rem; }
+  .cartao-combo-corpo { padding: 1.4rem 1.4rem 0.2rem 1.4rem; }
+  .cartao-combo-qtd {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 0;
+  }
+  .cartao-combo-qtd-sub {
+    font-size: 0.9rem;
+    color: var(--texto);
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(0,73,164,0.15);
+  }
+  .cartao-combo-corpo ul { margin-bottom: 1rem; }
+  .cartao-combo-corpo ul li { padding-left: 1.4rem; position: relative; margin-bottom: 0.5rem; font-weight: 600; }
+  .cartao-combo-corpo ul li::before { content: "✓"; position: absolute; left: 0; color: var(--dourado); font-weight: 700; }
+  .cartao-combo-beneficio { font-style: italic; font-size: 0.9rem; color: var(--azul-escuro); }
+  .cartao-combo-preco { padding: 0 1.4rem; font-family: 'Fraunces', serif; color: var(--pink); margin: 0; }
+  .cartao-combo-preco span:first-child { font-size: 1.1rem; vertical-align: top; }
+  .cartao-combo-preco strong { font-size: 2.6rem; font-weight: 700; }
+  .cartao-combo-economia {
+    display: inline-block;
+    margin: 0.3rem 1.4rem 1.2rem 1.4rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 999px;
+    background: var(--verde-detalhe);
+    color: var(--azul-escuro);
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+  .cartao-combo .botao { margin: 0 1.4rem 1.4rem 1.4rem; width: calc(100% - 2.8rem); justify-content: center; }
+  .grid-etapas-funil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .etapa-funil {
+    background: var(--branco);
+    color: var(--texto);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(212,175,55,0.4);
+    box-shadow: var(--sombra-suave-sm);
+  }
+  .etapa-funil-cabecalho { padding: 0.9rem 1rem 0.6rem 1rem; }
+  .etapa-funil-cabecalho h4 { font-family: 'Fraunces', serif; color: var(--pink); font-size: 1.15rem; margin: 0; }
+  .etapa-funil .video-wrap { margin: 0 1rem; width: calc(100% - 2rem); }
+  .etapa-funil-descricao { padding: 0.8rem 1rem 1.2rem 1rem; font-size: 0.88rem; margin: 0; }
+  @media (max-width: 900px) {
+    .oferta-fim-de-ano-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .grid-etapas-funil { grid-template-columns: 1fr; }
+  }
+  @keyframes fluxo-gradiente-oferta {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes pulso-selo-oferta {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(228,0,124,0.55); }
+    50% { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(228,0,124,0); }
+  }
+  @keyframes flutuar-adesivo-festivo {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-10px) rotate(4deg); }
+  }
+
   /* ---------- CONTATO ---------- */
   .secao-contato { background: var(--cinza-rosado); }
   .contato-grid {
@@ -1158,6 +1331,7 @@
     <nav aria-label="Navegação principal">
       <ul class="menu-links" id="menu-links">
         <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#oferta-fim-de-ano">Oferta de fim de ano</a></li>
         <li><a href="#portfolio">Portfólio</a></li>
         <li><a href="#fotos">Fotos</a></li>
         <li><a href="#servicos">Serviços</a></li>
@@ -1209,6 +1383,38 @@
       <div class="sobre-texto-wrap reveal">
         <div id="sobre-texto"></div>
         <ul class="sobre-lista" id="sobre-lista"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4B. OFERTA DE FIM DE ANO (Black Friday + Natal) -->
+  <section id="oferta-fim-de-ano" class="secao-oferta-fim-de-ano">
+    <span class="adesivo-festivo adesivo-festivo-1" aria-hidden="true">🎁</span>
+    <span class="adesivo-festivo adesivo-festivo-2" aria-hidden="true">✨</span>
+    <span class="adesivo-festivo adesivo-festivo-3" aria-hidden="true">🎄</span>
+    <span class="adesivo-festivo adesivo-festivo-4" aria-hidden="true">🎉</span>
+    <span class="adesivo-festivo adesivo-festivo-5" aria-hidden="true">🎁</span>
+    <span class="adesivo-festivo adesivo-festivo-6" aria-hidden="true">❄️</span>
+    <div class="container">
+      <span class="selo-oferta-fim-de-ano" id="oferta-selo"></span>
+      <span class="rotulo-secao">Fim de ano</span>
+      <h2 class="titulo-secao reveal" id="oferta-titulo"></h2>
+      <p class="oferta-fim-de-ano-subtitulo reveal" id="oferta-fim-de-ano-subtitulo"></p>
+      <div class="oferta-fim-de-ano-grid">
+        <div class="cartao-combo reveal visivel">
+          <span class="fita-urgencia">Vagas limitadas</span>
+          <div class="cartao-combo-topo"><h3 id="oferta-combo-nome"></h3></div>
+          <div class="cartao-combo-corpo">
+            <p class="cartao-combo-qtd" id="oferta-combo-qtd"></p>
+            <p class="cartao-combo-qtd-sub">sendo:</p>
+            <ul id="oferta-combo-itens"></ul>
+            <p class="cartao-combo-beneficio" id="oferta-combo-beneficio"></p>
+          </div>
+          <p class="cartao-combo-preco"><span>R$</span><strong id="oferta-combo-preco"></strong><span id="oferta-combo-centavos"></span></p>
+          <p class="cartao-combo-economia" id="oferta-combo-economia"></p>
+          <a href="#contato" class="botao botao--magenta">Garantir minha vaga</a>
+        </div>
+        <div class="grid-etapas-funil" id="grid-etapas-funil"></div>
       </div>
     </div>
   </section>
@@ -1600,7 +1806,7 @@
     // EDITE AQUI: seção de investimento (valores unitários e pacotes)
     investimento: {
       unitarios: [
-        { item: "1 vídeo", valor: "R$ 200,00" },
+        { item: "1 vídeo", valor: "R$ 260,00" },
         { item: "3 fotos", valor: "R$ 79,00" },
         { item: "Gancho extra", valor: "R$ 49,00" },
         { item: "Renovação de ads (3 meses)", valor: "R$ 75,00" },
@@ -1613,22 +1819,45 @@
           destaque: false,
           itens: ["1 vídeo", "3 fotos", "Roteiro personalizado", "Gravação", "Edição", "3 meses de uso para ads"],
           economia: "Economize R$ 59,00",
-          preco: "R$ 220,00"
+          preco: "R$ 280,00"
         },
         {
           nome: "Pacote Gold",
           destaque: true,
           itens: ["5 vídeos", "5 fotos", "Roteiro personalizado", "Gravação", "Edição", "6 meses de uso para ads"],
-          economia: "Economize R$ 406,00",
-          preco: "R$ 800,00"
+          economia: "Economize R$ 479,00",
+          preco: "R$ 900,00"
         },
         {
           nome: "Pacote Silver",
           destaque: false,
           itens: ["3 vídeos", "3 fotos", "Roteiro personalizado", "Gravação", "Edição", "6 meses de uso para ads"],
-          economia: "Economize R$ 254,00",
-          preco: "R$ 500,00"
+          economia: "Economize R$ 184,00",
+          preco: "R$ 750,00"
         }
+      ]
+    },
+
+    // EDITE AQUI: oferta de fim de ano (Black Friday + Natal). Para trocar os vídeos de
+    // exemplo de cada etapa do funil, troque o "youtube" pelo ID do vídeo desejado (mesmo
+    // formato usado em portfolio.itens: o trecho depois de youtu.be/ ou de shorts/).
+    ofertaFimAno: {
+      selo: "✨ Edição limitada",
+      titulo: "Oferta Black Friday & Natal",
+      subtitulo: "Aproveite o pico de vendas do fim de ano com um combo de vídeos pensado para cobrir toda a jornada de compra da sua cliente, do primeiro contato até a decisão final.",
+      combo: {
+        nome: "Combo Funil",
+        quantidade: "3 VÍDEOS",
+        itens: ["1 vídeo de topo", "1 vídeo de meio", "1 vídeo de fundo"],
+        beneficio: "Direito de uso em ADS por 04 meses",
+        preco: "600",
+        centavos: ",00",
+        economia: "Economize R$ 180,00"
+      },
+      etapas: [
+        { rotulo: "Topo", descricao: "Atrair novas clientes e gerar desejo imediato (até 20 segs).", youtube: "67gefR0jKv4" },
+        { rotulo: "Meio", descricao: "Educar sobre o produto e gerar confiança.", youtube: "72wtptvLtNE" },
+        { rotulo: "Fundo", descricao: "Induzir a compra com escassez e oportunidade única.", youtube: "k5Nn2hnWfAQ" }
       ]
     },
 
@@ -1863,6 +2092,52 @@
       <span class="economia">${p.economia}</span>
       <span class="preco">${p.preco}</span>
     </div>`).join("");
+
+  // Oferta de fim de ano (Black Friday + Natal)
+  // Decora a última letra de "Natal" com um chapezinho de Papai Noel (puramente visual)
+  document.getElementById("oferta-titulo").innerHTML = config.ofertaFimAno.titulo.replace(
+    "Natal",
+    `Nata<span class="letra-com-chapeu">l<svg class="chapeu-noel" viewBox="0 0 30 26" aria-hidden="true" focusable="false">
+      <path d="M2 22 Q0 9 14 2 Q27 -4 29 6 Q19 6 14 13 Q9 19 9 23 Z" fill="var(--pink)"/>
+      <circle cx="27.5" cy="6" r="4" fill="var(--branco)"/>
+      <rect x="0" y="18" width="14" height="7" rx="3.5" fill="var(--branco)"/>
+    </svg></span>`
+  );
+  document.getElementById("oferta-selo").textContent = config.ofertaFimAno.selo;
+  document.getElementById("oferta-fim-de-ano-subtitulo").textContent = config.ofertaFimAno.subtitulo;
+  document.getElementById("oferta-combo-nome").textContent = config.ofertaFimAno.combo.nome;
+  document.getElementById("oferta-combo-qtd").textContent = config.ofertaFimAno.combo.quantidade;
+  document.getElementById("oferta-combo-itens").innerHTML =
+    config.ofertaFimAno.combo.itens.map(item => `<li>${item}</li>`).join("");
+  document.getElementById("oferta-combo-beneficio").textContent = config.ofertaFimAno.combo.beneficio;
+  document.getElementById("oferta-combo-preco").textContent = config.ofertaFimAno.combo.preco;
+  document.getElementById("oferta-combo-centavos").textContent = config.ofertaFimAno.combo.centavos;
+  document.getElementById("oferta-combo-economia").textContent = config.ofertaFimAno.combo.economia;
+
+  const grupoEtapasFunil = document.getElementById("grid-etapas-funil");
+  grupoEtapasFunil.innerHTML = config.ofertaFimAno.etapas.map(etapa => `
+    <div class="etapa-funil reveal visivel">
+      <div class="etapa-funil-cabecalho"><h4>${etapa.rotulo}</h4></div>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/${etapa.youtube}?enablejsapi=1&playsinline=1&controls=0&modestbranding=1&rel=0&disablekb=1&iv_load_policy=3" title="Exemplo de vídeo de ${etapa.rotulo} de funil" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        <div class="video-overlay" aria-hidden="true"></div>
+      </div>
+      <p class="etapa-funil-descricao">${etapa.descricao}</p>
+    </div>`).join("");
+
+  grupoEtapasFunil.querySelectorAll(".video-wrap").forEach(wrap => {
+    const iframe = wrap.querySelector("iframe");
+    const overlay = wrap.querySelector(".video-overlay");
+    wrap.addEventListener("mouseenter", () => {
+      iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
+      iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [100] }), "*");
+      iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+    });
+    wrap.addEventListener("mouseleave", () => {
+      iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+    });
+    if (overlay) overlay.addEventListener("contextmenu", (e) => e.preventDefault());
+  });
 
   // Contato: botões diretos
   document.getElementById("contato-whatsapp").href =
