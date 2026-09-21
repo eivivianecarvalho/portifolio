@@ -4,89 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>Acesso restrito | meu.painel</title>
+  <title>Acesso restrito</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/styles.css" />
-
-  <style>
-    body.tela-login {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .caixa-login {
-      width: 100%;
-      max-width: 400px;
-      padding: 40px 36px;
-      text-align: center;
-    }
-
-    .logo {
-      font-family: var(--fonte-titulo);
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--cor-grafite);
-      margin-bottom: 28px;
-    }
-
-    .logo span {
-      color: var(--cor-coral);
-    }
-
-    .caixa-login h1 {
-      font-size: 26px;
-      margin-bottom: 8px;
-    }
-
-    .caixa-login p.subtitulo {
-      color: var(--cor-texto-suave);
-      font-size: 14px;
-      margin: 0 0 28px;
-    }
-
-    form {
-      text-align: left;
-    }
-
-    .link-esqueci {
-      display: block;
-      text-align: right;
-      font-size: 13px;
-      margin: -8px 0 20px;
-    }
-
-    .voltar-login {
-      display: inline-block;
-      margin-top: 18px;
-      font-size: 13px;
-      color: var(--cor-texto-suave);
-    }
-
-    .oculto {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="../css/admin.css" />
 </head>
 <body class="tela-login">
 
   <div class="caixa-login cartao">
-    <div class="logo">meu<span>.</span>painel</div>
+    <div class="logo">Viviane<span>.</span>admin</div>
 
     <h1>Acesso restrito</h1>
-    <p class="subtitulo">Faça login para ver os números do seu portfólio.</p>
+    <p class="subtitulo">Entre para ver o painel do seu portfólio.</p>
 
-    <!-- Faixa de mensagens (erro ou sucesso) -->
     <div id="mensagem-erro" class="faixa-erro oculto"></div>
     <div id="mensagem-sucesso" class="faixa-sucesso oculto"></div>
 
-    <!-- Formulário de login -->
     <form id="form-login">
       <div class="campo">
         <label for="email">E-mail</label>
@@ -103,7 +39,6 @@
       <button type="submit" id="botao-entrar" class="botao" style="width: 100%;">Entrar</button>
     </form>
 
-    <!-- Formulário de recuperação de senha (escondido por padrão) -->
     <form id="form-recuperar" class="oculto">
       <div class="campo">
         <label for="email-recuperar">E-mail</label>
@@ -116,9 +51,8 @@
     </form>
   </div>
 
-  <!-- Supabase via CDN, depois a lógica de autenticação compartilhada -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/auth.js"></script>
+  <script src="../js/banco.js"></script>
 
   <script>
     const formLogin = document.getElementById('form-login');
@@ -134,35 +68,31 @@
       mensagemErro.classList.add('oculto');
       mensagemSucesso.classList.add('oculto');
     }
-
     function mostrarErro(texto) {
       esconderMensagens();
       mensagemErro.textContent = texto;
       mensagemErro.classList.remove('oculto');
     }
-
     function mostrarSucesso(texto) {
       esconderMensagens();
       mensagemSucesso.textContent = texto;
       mensagemSucesso.classList.remove('oculto');
     }
 
-    // Se já existir sessão ativa, pula direto para o painel.
+    // Se já existir sessão ativa, pula direto para o admin.
     (async () => {
       const { data } = await sb.auth.getSession();
       if (data.session) {
-        window.location.href = 'painel.html';
+        window.location.href = '/admin/';
       }
     })();
 
-    // Alterna entre o formulário de login e o de recuperação de senha.
     linkEsqueci.addEventListener('click', (evento) => {
       evento.preventDefault();
       esconderMensagens();
       formLogin.classList.add('oculto');
       formRecuperar.classList.remove('oculto');
     });
-
     linkVoltar.addEventListener('click', (evento) => {
       evento.preventDefault();
       esconderMensagens();
@@ -170,7 +100,6 @@
       formLogin.classList.remove('oculto');
     });
 
-    // Envio do login.
     formLogin.addEventListener('submit', async (evento) => {
       evento.preventDefault();
       esconderMensagens();
@@ -182,8 +111,8 @@
       botaoEntrar.textContent = 'Entrando...';
 
       try {
-        await window.Auth.login(email, senha);
-        window.location.href = 'painel.html';
+        await window.Banco.login(email, senha);
+        window.location.href = '/admin/';
       } catch (erro) {
         mostrarErro(erro.message || 'Não foi possível entrar. Tente novamente.');
         botaoEntrar.disabled = false;
@@ -191,7 +120,6 @@
       }
     });
 
-    // Envio da recuperação de senha.
     formRecuperar.addEventListener('submit', async (evento) => {
       evento.preventDefault();
       esconderMensagens();
@@ -202,7 +130,7 @@
       botaoRecuperar.textContent = 'Enviando...';
 
       try {
-        await window.Auth.recuperarSenha(email);
+        await window.Banco.recuperarSenha(email);
         mostrarSucesso('Enviamos um link de recuperação para o seu e-mail.');
       } catch (erro) {
         mostrarErro(erro.message || 'Não foi possível enviar o e-mail. Tente novamente.');

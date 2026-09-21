@@ -1382,7 +1382,9 @@
     // ao resultado (ex: o modal de captura). O formulário do rodapé ignora o
     // retorno e mantém o comportamento de sempre (não bloqueia a navegação).
     function registrarLead(lead) {
-      return fetch(`${SUPABASE_URL}/rest/v1/portfolio_leads`, {
+      // Grava no formato antigo (portfolio_leads), pro painel antigo em
+      // /login continuar funcionando normalmente.
+      const gravarAntigo = fetch(`${SUPABASE_URL}/rest/v1/portfolio_leads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1391,6 +1393,50 @@
         },
         body: JSON.stringify(lead),
       }).then(res => res.ok).catch(() => false);
+
+      // Grava também na tabela nova "marcas", como "lead", pro admin novo
+      // em /admin mostrar esse contato na sua base.
+      fetch(`${SUPABASE_URL}/rest/v1/marcas`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          nome: lead.name || null,
+          instagram: null,
+          email: lead.email || null,
+          telefone: lead.phone || null,
+          situacao: "lead",
+          obs: lead.message || null,
+          ultimo_contato: new Date().toISOString().slice(0, 10),
+        }),
+      }).catch(() => {
+        // Falha aqui nunca deve atrapalhar a navegação do visitante.
+      });
+
+      return gravarAntigo;
+    }
+
+    // Registra uma visita simples na tabela "visitas", sem serviço externo e
+    // sem pedir nada pro visitante.
+    function registrarVisita() {
+      const origem = document.referrer
+        ? (() => { try { return new URL(document.referrer).hostname; } catch { return "Direto"; } })()
+        : "Direto";
+      fetch(`${SUPABASE_URL}/rest/v1/visitas`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          pagina: window.location.pathname || "/",
+          origem: origem,
+        }),
+      }).catch(() => {});
     }
 
     // Evita contar o mesmo vídeo várias vezes se o visitante passar o mouse
@@ -1403,6 +1449,7 @@
     }
 
     registrarEvento("page_view");
+    registrarVisita();
 
     return { registrarEvento, registrarLead, registrarVideoViewUmaVez };
   })();
@@ -1722,19 +1769,49 @@
   setaEsquerda.addEventListener("click", () => rolarGaleria(-1));
   setaDireita.addEventListener("click", () => rolarGaleria(1));
 
-  filtrosContainer.innerHTML = config.portfolio.categorias.map((cat, i) =>
-    `<button class="filtro-btn" data-categoria="${cat}" aria-pressed="${i === 0}">${cat}</button>`
-  ).join("");
+  // Carrega os vídeos do admin (tabela "videos") antes de montar a galeria.
+  // Se der qualquer problema (banco fora do ar, tabela ainda não criada),
+  // mantém a lista que já estava escrita aqui em cima como reserva, pra o
+  // portfólio nunca ficar em branco.
+  (async function carregarECriarPortfolio() {
+    try {
+      const resposta = await fetch(
+        `${SUPABASE_URL}/rest/v1/videos?select=*&visivel=eq.true&order=ordem.asc`,
+        { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      if (resposta.ok) {
+        const linhas = await resposta.json();
+        if (Array.isArray(linhas) && linhas.length > 0) {
+          config.portfolio.itens = linhas.map((v) => ({
+            titulo: v.titulo,
+            categoria: v.nicho || "Geral",
+            youtube: v.link,
+          }));
+          const categoriasUnicas = [];
+          config.portfolio.itens.forEach((item) => {
+            if (!categoriasUnicas.includes(item.categoria)) categoriasUnicas.push(item.categoria);
+          });
+          config.portfolio.categorias = ["Todos", ...categoriasUnicas];
+        }
+      }
+    } catch (erro) {
+      console.warn("Não foi possível carregar os vídeos do admin, usando a lista local.", erro);
+    }
 
-  filtrosContainer.addEventListener("click", (e) => {
-    const btn = e.target.closest(".filtro-btn");
-    if (!btn) return;
-    filtrosContainer.querySelectorAll(".filtro-btn").forEach(b => b.setAttribute("aria-pressed", "false"));
-    btn.setAttribute("aria-pressed", "true");
-    renderPortfolio(btn.dataset.categoria);
-  });
+    filtrosContainer.innerHTML = config.portfolio.categorias.map((cat, i) =>
+      `<button class="filtro-btn" data-categoria="${cat}" aria-pressed="${i === 0}">${cat}</button>`
+    ).join("");
 
-  renderPortfolio("Todos");
+    filtrosContainer.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filtro-btn");
+      if (!btn) return;
+      filtrosContainer.querySelectorAll(".filtro-btn").forEach(b => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      renderPortfolio(btn.dataset.categoria);
+    });
+
+    renderPortfolio("Todos");
+  })();
 
   // Galeria de fotos (estilo mural: fotos com moldura branca giradas + figurinhas decorativas)
   const figurinhasFotos = [
@@ -1887,7 +1964,7 @@
      Reaproveita exatamente analytics.registrarLead (mesma função, schema e
      validação de backend do formulário do rodapé). Único ponto diferente é
      o campo "source", que já existe no schema com os valores aceitos
-     "contact" (rodapé) e "popup" (este modal) — ver setup.sql do painel.
+     "contact" (rodapé) e "popup" (este modal), ver setup.sql do painel.
      Fica isolado num try/catch: se algo aqui falhar, o resto do site (menu,
      portfólio, formulário do rodapé etc.) continua funcionando normalmente.
      ========================================================================= */
