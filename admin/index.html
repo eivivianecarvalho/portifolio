@@ -411,6 +411,42 @@
       margin-bottom: 18px;
     }
 
+    /* ---------- Prospecção ---------- */
+    .faixa-metricas-flex {
+      display: flex;
+      flex-wrap: wrap;
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+      background: var(--branco);
+      box-shadow: var(--sombra-sm);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .faixa-metricas-flex .metrica {
+      flex: 1 1 130px;
+      padding: 12px 14px;
+      border-right: 1px solid var(--borda);
+      border-bottom: 1px solid var(--borda);
+    }
+    .faixa-metricas-flex .metrica .valor { font-size: 18px; }
+
+    .select-status-prospeccao {
+      border: none;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .select-status-prospeccao.status-a-enviar { background: rgba(61,55,51,0.08); color: var(--texto-suave); }
+    .select-status-prospeccao.status-enviado { background: rgba(0,73,164,0.10); color: var(--azul); }
+    .select-status-prospeccao.status-respondeu { background: rgba(212,175,55,0.20); color: var(--aviso); }
+    .select-status-prospeccao.status-proposta { background: rgba(228,0,124,0.12); color: var(--pink); }
+    .select-status-prospeccao.status-fechado { background: rgba(45,122,79,0.14); color: var(--sucesso); }
+    .select-status-prospeccao.status-sem-interesse { background: rgba(196,69,60,0.10); color: var(--erro); }
+
     /* ---------- Mensagens (caixa de entrada) ---------- */
     .lista-mensagens {
       display: flex;
@@ -508,6 +544,10 @@
             <button class="nav-item" data-tab="mensagens">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               Mensagens
+            </button>
+            <button class="nav-item" data-tab="prospeccao">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              Prospecção
             </button>
           </div>
 
@@ -620,6 +660,43 @@
           <span class="pilula" style="background:rgba(228,0,124,0.10); color:var(--pink);" id="contador-nao-lidas">0 não lidas</span>
         </div>
         <div class="lista-mensagens" id="lista-mensagens"></div>
+      </section>
+
+      <!-- ========= ABA: PROSPECÇÃO ========= -->
+      <section class="painel-aba" id="aba-prospeccao">
+        <div id="aviso-erro-prospeccao" class="faixa-erro oculto"></div>
+
+        <div class="faixa-metricas-flex" id="metricas-prospeccao"></div>
+
+        <div class="ferramentas-lista">
+          <input type="search" id="busca-prospeccao" placeholder="Buscar por nome..." />
+          <select id="filtro-nicho-prospeccao"><option value="todos">Todos os nichos</option></select>
+          <select id="filtro-origem-prospeccao"><option value="todas">Todas as origens</option></select>
+          <select id="filtro-status-prospeccao">
+            <option value="todos">Todos os status</option>
+            <option value="a_enviar">A enviar</option>
+            <option value="enviado">Enviado</option>
+            <option value="respondeu">Respondeu</option>
+            <option value="proposta">Proposta</option>
+            <option value="fechado">Fechado</option>
+            <option value="sem_interesse">Sem interesse</option>
+          </select>
+          <div style="flex:1"></div>
+          <input type="file" id="input-csv-prospeccao" accept=".csv" class="oculto" />
+          <button type="button" class="botao botao-secundario" id="botao-importar-csv-prospeccao">Importar CSV</button>
+          <button type="button" class="botao" id="botao-nova-prospeccao">+ Adicionar marca</button>
+        </div>
+
+        <div class="cartao">
+          <div class="tabela-wrap">
+            <table class="tabela" id="tabela-prospeccao">
+              <thead>
+                <tr><th>Nome</th><th>Instagram</th><th>Seguidores</th><th>Nicho</th><th>Origem</th><th>Status</th><th>Data</th><th></th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- ========= ABA: CALENDÁRIO ========= -->
