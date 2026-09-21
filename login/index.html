@@ -79,11 +79,16 @@
       mensagemSucesso.classList.remove('oculto');
     }
 
-    // Se já existir sessão ativa, pula direto para o admin.
+    // Se o link tiver "?voltar=painel" (mandado pelo painel antigo quando a
+    // sessão expira), volta pra lá depois de entrar. Senão, vai pro admin novo.
+    const parametros = new URLSearchParams(window.location.search);
+    const destino = parametros.get('voltar') === 'painel' ? '/login/painel.html' : '/admin/';
+
+    // Se já existir sessão ativa, pula direto pro destino certo.
     (async () => {
       const { data } = await sb.auth.getSession();
       if (data.session) {
-        window.location.href = '/admin/';
+        window.location.href = destino;
       }
     })();
 
@@ -112,7 +117,7 @@
 
       try {
         await window.Banco.login(email, senha);
-        window.location.href = '/admin/';
+        window.location.href = destino;
       } catch (erro) {
         mostrarErro(erro.message || 'Não foi possível entrar. Tente novamente.');
         botaoEntrar.disabled = false;

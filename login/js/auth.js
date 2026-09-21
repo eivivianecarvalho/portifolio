@@ -46,7 +46,9 @@ window.Auth = {
     const { data, error } = await sb.auth.getSession();
 
     if (error || !data.session) {
-      window.location.href = 'index.html';
+      // "voltar=painel" avisa a tela de login que, depois de entrar, o
+      // destino certo é este painel antigo, não o /admin novo.
+      window.location.href = 'index.html?voltar=painel';
       return null;
     }
 
@@ -58,7 +60,7 @@ window.Auth = {
    */
   async logout() {
     await sb.auth.signOut();
-    window.location.href = 'index.html';
+    window.location.href = 'index.html?voltar=painel';
   },
 
   /**
