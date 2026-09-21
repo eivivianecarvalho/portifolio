@@ -411,6 +411,74 @@
       margin-bottom: 18px;
     }
 
+    /* ---------- Mensagens (caixa de entrada) ---------- */
+    .lista-mensagens {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cartao-mensagem {
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+      padding: 14px 16px;
+      background: var(--branco);
+      cursor: pointer;
+    }
+    .cartao-mensagem.nao-lida {
+      border-left: 3px solid var(--pink);
+    }
+    .cartao-mensagem .topo-msg {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cartao-mensagem .remetente {
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cartao-mensagem .data-msg {
+      font-size: 11px;
+      color: var(--texto-suave);
+      white-space: nowrap;
+    }
+    .cartao-mensagem .preview-msg {
+      font-size: 12.5px;
+      color: var(--texto-suave);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cartao-mensagem .corpo-msg {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--borda);
+      font-size: 13px;
+    }
+    .cartao-mensagem.aberta .corpo-msg { display: block; }
+    .cartao-mensagem.aberta .preview-msg { display: none; }
+    .acoes-msg {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .badge-nao-lida {
+      background: var(--pink);
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
     /* ---------- Modal grande (referência) ---------- */
     .modal-caixa.grande {
       max-width: 640px;
@@ -436,6 +504,10 @@
             <button class="nav-item" data-tab="marcas">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
               Marcas
+            </button>
+            <button class="nav-item" data-tab="mensagens">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Mensagens
             </button>
           </div>
 
@@ -538,6 +610,16 @@
             </table>
           </div>
         </div>
+      </section>
+
+      <!-- ========= ABA: MENSAGENS ========= -->
+      <section class="painel-aba" id="aba-mensagens">
+        <div id="aviso-erro-mensagens" class="faixa-erro oculto"></div>
+        <div class="cartao" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span style="font-size:13px; color:var(--texto-suave);">Mensagens recebidas pelo formulário do seu site</span>
+          <span class="pilula" style="background:rgba(228,0,124,0.10); color:var(--pink);" id="contador-nao-lidas">0 não lidas</span>
+        </div>
+        <div class="lista-mensagens" id="lista-mensagens"></div>
       </section>
 
       <!-- ========= ABA: CALENDÁRIO ========= -->

@@ -74,6 +74,10 @@ function formatarDataCompleta(iso) {
   const [ano, mes, dia] = iso.split('-');
   return `${dia}/${mes}/${ano}`;
 }
+function formatarDataHoraCompleta(iso) {
+  if (!iso) return '-';
+  return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
 // Escapa texto antes de colocar em innerHTML, importante porque "marcas" e
 // "visitas" recebem dados de qualquer visitante pelo site público.
 function escaparHtml(texto) {
@@ -438,6 +442,7 @@ async function recarregarMarcas() {
     aviso.classList.remove('oculto');
   }
   renderizarMarcas();
+  renderizarMensagens();
 }
 
 function marcasFiltradas() {
@@ -485,6 +490,81 @@ function renderizarMarcas() {
   tbody.querySelectorAll('[data-apagar-marca]').forEach((btn) => {
     btn.addEventListener('click', () => apagarRegistro('marcas', btn.dataset.apagarMarca, recarregarMarcas));
   });
+}
+
+/* ========================================================================
+   ABA MENSAGENS (caixa de entrada)
+   Reaproveita os dados que já vêm de "marcas" (o mesmo formulário do site
+   grava nome/e-mail/telefone/observação ali). Aqui é só outra forma de ver
+   essas mesmas linhas, focada na mensagem em si.
+   ======================================================================== */
+function mensagensDeMarcas() {
+  return todasMarcas
+    .filter((m) => m.obs && m.obs.trim() !== '')
+    .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+}
+
+function renderizarMensagens() {
+  const lista = mensagensDeMarcas();
+  const naoLidas = lista.filter((m) => !m.lida).length;
+  const contador = document.getElementById('contador-nao-lidas');
+  if (contador) contador.textContent = `${naoLidas} não lida${naoLidas === 1 ? '' : 's'}`;
+
+  const container = document.getElementById('lista-mensagens');
+  if (!container) return;
+
+  if (lista.length === 0) {
+    container.innerHTML = '<p class="estado-vazio">Nenhuma mensagem recebida ainda.</p>';
+    return;
+  }
+
+  container.innerHTML = lista.map((m) => {
+    const telefoneDigitos = (m.telefone || '').replace(/\D/g, '');
+    return `
+      <div class="cartao-mensagem ${!m.lida ? 'nao-lida' : ''}" data-id="${m.id}">
+        <div class="topo-msg">
+          <span class="remetente">${escaparHtml(m.nome) || 'Sem nome'} ${!m.lida ? '<span class="badge-nao-lida">nova</span>' : ''}</span>
+          <span class="data-msg">${formatarDataHoraCompleta(m.created_at)}</span>
+        </div>
+        <div class="preview-msg">${escaparHtml(m.obs)}</div>
+        <div class="corpo-msg">
+          <p style="margin:0 0 10px; white-space:pre-wrap;">${escaparHtml(m.obs)}</p>
+          <p style="font-size:12px; color:var(--texto-suave); margin:0;">${escaparHtml(m.email) || 'Sem e-mail'}${m.telefone ? ' · ' + escaparHtml(m.telefone) : ''}</p>
+          <div class="acoes-msg">
+            <a class="botao botao-secundario" href="mailto:${encodeURIComponent(m.email || '')}" onclick="event.stopPropagation()">Responder por e-mail</a>
+            ${telefoneDigitos ? `<a class="botao botao-secundario" href="https://wa.me/${telefoneDigitos}" target="_blank" rel="noopener" onclick="event.stopPropagation()">WhatsApp</a>` : ''}
+            <button type="button" class="botao botao-secundario" data-ver-em-marcas="${m.id}">Ver em Marcas</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.cartao-mensagem').forEach((cartao) => {
+    cartao.addEventListener('click', async () => {
+      cartao.classList.toggle('aberta');
+      const msg = todasMarcas.find((m) => m.id === cartao.dataset.id);
+      if (msg && !msg.lida) await marcarMensagemLida(cartao.dataset.id);
+    });
+  });
+  container.querySelectorAll('[data-ver-em-marcas]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelector('.nav-item[data-tab="marcas"]').click();
+      abrirModal('marca', todasMarcas.find((m) => m.id === btn.dataset.verEmMarcas));
+    });
+  });
+}
+
+async function marcarMensagemLida(id) {
+  try {
+    const { error } = await sb.from('marcas').update({ lida: true }).eq('id', id);
+    if (error) throw error;
+    const m = todasMarcas.find((mm) => mm.id === id);
+    if (m) m.lida = true;
+    renderizarMensagens();
+  } catch (erro) {
+    console.error('Não foi possível marcar a mensagem como lida:', erro);
+  }
 }
 
 function configurarMarcasUI() {
@@ -996,7 +1076,7 @@ function configurarChecklistUI() {
    NAVEGAÇÃO: abas principais e menu mobile.
    ======================================================================== */
 function configurarAbas() {
-  const titulos = { portfolio: 'Portfólio', marcas: 'Marcas', calendario: 'Calendário', campanhas: 'Campanhas', checklist: 'Checklist' };
+  const titulos = { portfolio: 'Portfólio', marcas: 'Marcas', mensagens: 'Mensagens', calendario: 'Calendário', campanhas: 'Campanhas', checklist: 'Checklist' };
   document.querySelectorAll('.nav-item').forEach((botao) => {
     botao.addEventListener('click', () => {
       const aba = botao.dataset.tab;
