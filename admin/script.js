@@ -4,7 +4,8 @@
    Checklist. Depende de js/banco.js (já carregado antes deste arquivo).
    ========================================================================== */
 
-const sb = window.Banco.sb;
+// "sb" já existe como variável global, criada pelo js/banco.js (que é
+// carregado antes deste arquivo). Não precisa criar de novo aqui.
 
 /* ---------------------------------------------------------------------
    Estado em memória (carregado uma vez, refiltrado/redesenhado na tela).
